@@ -39,8 +39,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - 🧭 Theme layer (like Botble `themes/`).
 
 ## Framework adapters
-- ✅ `LoaderAdapter` interface + `LaravelLoaderAdapter`.
-- 🔶 `LumenLoaderAdapter`.
+- ✅ `LoaderAdapter` interface + `LaravelLoaderAdapter` (autoload via a shared trait).
+- ✅ `LumenLoaderAdapter` — works against the bare container contract (uses `register()` when the app
+  exposes it, else instantiates the provider and calls `register()`/`boot()` itself).
 - 🧭 `SymfonyLoaderAdapter` (bundle registration) — proves the abstraction.
 
 ## Management surface

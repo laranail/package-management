@@ -20,10 +20,18 @@ interface LoaderAdapter
 }
 ```
 
-- **`LaravelLoaderAdapter`** (ships): `ClassLoader::setPsr4()->register()` + `$app->register($provider)`
-  + Laravel publishing/migrations.
-- **`LumenLoaderAdapter`** (planned): registers via the Lumen application bootstrap; no Blade/facade
-  auto-registration.
+- **`LaravelLoaderAdapter`** (ships): runtime PSR-4 (shared trait) + `$app->register($provider)`, so
+  Laravel handles deferred providers, boot ordering and publishing.
+- **`LumenLoaderAdapter`** (ships): same runtime PSR-4, but registers against the bare container —
+  Lumen's `Application::register()` when present, otherwise it instantiates the provider and calls
+  `register()`/`boot()` itself (booting through the container for DI). Lumen has no package
+  auto-discovery, so bind it explicitly:
+  ```php
+  use Simtabi\Laranail\Package\Management\Adapters\LumenLoaderAdapter;
+  use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+
+  $app->singleton(LoaderAdapter::class, fn ($app) => new LumenLoaderAdapter($app));
+  ```
 - **`SymfonyLoaderAdapter`** (future): maps providers to Symfony bundles / DI extensions.
 
 ## Adding a framework
