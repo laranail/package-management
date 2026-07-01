@@ -1,0 +1,90 @@
+{
+    "name": "laranail/package-management",
+    "description": "Runtime loader/manager for laranail packages, modules and plugins — drop-in discovery, activation and backend/frontend wiring of platform extensions.",
+    "keywords": [
+        "laravel",
+        "laranail",
+        "package-management",
+        "modules",
+        "plugins",
+        "extensions",
+        "loader"
+    ],
+    "homepage": "https://opensource.simtabi.com/package-management/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simtabi LLC",
+            "email": "opensource@simtabi.com",
+            "homepage": "https://opensource.simtabi.com",
+            "role": "Organization"
+        },
+        {
+            "name": "Imani Manyara",
+            "email": "imani@simtabi.com",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/laranail/package-management/issues",
+        "source": "https://github.com/laranail/package-management",
+        "docs": "https://opensource.simtabi.com/package-management/docs/"
+    },
+    "require": {
+        "php": "^8.4.1 || ^8.5",
+        "composer-runtime-api": "^2.2",
+        "illuminate/console": "^13.0",
+        "illuminate/contracts": "^13.0",
+        "illuminate/filesystem": "^13.0",
+        "illuminate/support": "^13.0",
+        "laranail/console": "^1.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^11.0",
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan": "^2.0",
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.18",
+        "rector/rector": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Simtabi\\Laranail\\Package\\Management\\": "src/"
+        },
+        "files": [
+            "helpers/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Simtabi\\Laranail\\Package\\Management\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --no-coverage",
+        "lint": [
+            "@pint",
+            "@phpstan"
+        ],
+        "pint": "vendor/bin/pint --test",
+        "pint-fix": "vendor/bin/pint",
+        "phpstan": "vendor/bin/phpstan analyse --no-progress",
+        "rector": "vendor/bin/rector process --dry-run"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Simtabi\\Laranail\\Package\\Management\\Providers\\ManagementServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
