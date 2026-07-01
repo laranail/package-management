@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Simtabi\Laranail\Package\Management\Extension;
+use Simtabi\Laranail\Package\Management\ExtensionManager;
+
 /*
 |--------------------------------------------------------------------------
 | package-management helpers
@@ -24,5 +27,27 @@ if (! function_exists('extension_path')) {
         $full = $base . DIRECTORY_SEPARATOR . $name;
 
         return $path === '' ? $full : $full . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
+    }
+}
+
+if (! function_exists('extension')) {
+    /**
+     * Resolve a discovered extension by id (composer name / module alias / plugin id).
+     */
+    function extension(string $id): ?Extension
+    {
+        return app(ExtensionManager::class)->find($id);
+    }
+}
+
+if (! function_exists('is_extension_active')) {
+    /**
+     * Whether an extension is discovered and active.
+     */
+    function is_extension_active(string $id): bool
+    {
+        $extension = app(ExtensionManager::class)->find($id);
+
+        return $extension !== null && $extension->enabled;
     }
 }

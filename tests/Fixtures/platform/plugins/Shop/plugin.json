@@ -1,0 +1,13 @@
+{
+    "id": "acme/shop",
+    "name": "Shop",
+    "namespace": "Acme\\Shop\\",
+    "provider": "Acme\\Shop\\Providers\\ShopServiceProvider",
+    "version": "1.0.0",
+    "description": "A generated shop plugin.",
+    "author": "Simtabi LLC",
+    "url": "https://opensource.simtabi.com",
+    "require": [],
+    "minimum_core_version": "1.0.0",
+    "type": "plugin"
+}

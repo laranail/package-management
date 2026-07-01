@@ -1,0 +1,6 @@
+{
+    "name": "Alpha",
+    "alias": "alpha",
+    "version": "1.0.0",
+    "providers": ["Fake\\Alpha\\Providers\\AlphaServiceProvider"]
+}
