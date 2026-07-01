@@ -16,6 +16,8 @@ use Simtabi\Laranail\Package\Management\ExtensionManager;
  * @method static Extension|null find(string $id)
  * @method static void enable(string $id)
  * @method static void disable(string $id)
+ * @method static void install(string $id)
+ * @method static void update(string $id)
  *
  * @see ExtensionManager
  */

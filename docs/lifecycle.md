@@ -18,9 +18,12 @@ discovered ──enable──▶ active ──disable──▶ inactive ──re
   dependencies are active (else fail) → register provider → run hooks → persist to the store.
 - **disable / deactivate** — reverse-dependency guard (refuse if an active extension requires it) →
   run hooks → remove from the store.
-- **install** — first activation: run migrations, publish assets/translations, then activate.
-- **remove** — deactivate → drop the extension's migrations → delete files → clean published assets.
-- **update** — `updating` hook → swap files → run new migrations → `updated` hook.
+- **install** — activate (dependency-checked), then run the extension's own
+  `database/migrations` via the adapter's `RunsMigrations` capability; fires `ExtensionInstalled`.
+  Adapters without a migration runner (e.g. Lumen) degrade to activate-only.
+- **update** — run any pending migrations for an already-installed extension; fires `ExtensionUpdated`.
+- **remove** *(planned)* — migration rollback needs per-extension batch tracking, and file deletion is
+  deliberately out of scope (remove the directory / `composer remove`); today, use `disable`.
 
 ## Hooks (optional per extension)
 

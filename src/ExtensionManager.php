@@ -10,8 +10,11 @@ use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
 /**
@@ -78,11 +81,7 @@ final readonly class ExtensionManager
 
     public function enable(string $id): void
     {
-        $extension = $this->repository->find($id);
-
-        if (! $extension instanceof Extension) {
-            throw new RuntimeException("Unknown extension [{$id}].");
-        }
+        $extension = $this->requireExtension($id);
 
         foreach ($extension->require as $dependency) {
             if (! $this->store->isActive($dependency)) {
@@ -114,6 +113,47 @@ final readonly class ExtensionManager
             $this->resolveHook($extension)?->deactivated($extension);
             $this->events->dispatch(new ExtensionDeactivated($extension));
         }
+    }
+
+    /**
+     * Install: activate the extension (validating dependencies) and run its own
+     * migrations, if the adapter supports it. Schema is applied after activation so
+     * the extension is registered before its migrations reference its classes.
+     */
+    public function install(string $id): void
+    {
+        $extension = $this->requireExtension($id);
+
+        $this->enable($id);
+
+        if ($this->adapter instanceof RunsMigrations) {
+            $this->adapter->runMigrations($extension);
+        }
+
+        $this->events->dispatch(new ExtensionInstalled($extension));
+    }
+
+    /** Update: run any pending migrations for an already-installed extension. */
+    public function update(string $id): void
+    {
+        $extension = $this->requireExtension($id);
+
+        if ($this->adapter instanceof RunsMigrations) {
+            $this->adapter->runMigrations($extension);
+        }
+
+        $this->events->dispatch(new ExtensionUpdated($extension));
+    }
+
+    private function requireExtension(string $id): Extension
+    {
+        $extension = $this->repository->find($id);
+
+        if (! $extension instanceof Extension) {
+            throw new RuntimeException("Unknown extension [{$id}].");
+        }
+
+        return $extension;
     }
 
     /** Resolve an extension's declared lifecycle hook (if any) from the container. */

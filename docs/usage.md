@@ -7,6 +7,7 @@ php artisan laranail::package-management.list         # list discovered extensio
 php artisan laranail::package-management.discover      # rescan the platform paths and report the count
 php artisan laranail::package-management.enable Blog   # activate an extension (+ its dependencies)
 php artisan laranail::package-management.disable Blog  # deactivate (guarded by reverse-deps)
+php artisan laranail::package-management.install Blog  # activate + run the extension's own migrations
 php artisan laranail::package-management.cache         # compile the discovered-extensions cache
 php artisan laranail::package-management.cache --clear # delete the compiled cache
 ```

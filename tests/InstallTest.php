@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Simtabi\Laranail\Package\Management\Tests;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\ExtensionManager;
+
+class InstallTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private string $activationFile;
+
+    protected function setUp(): void
+    {
+        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-install-' . getmypid() . '-' . uniqid() . '.json';
+        parent::setUp();
+    }
+
+    protected function tearDown(): void
+    {
+        @unlink($this->activationFile);
+        parent::tearDown();
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/install/packages',
+            'modules' => __DIR__ . '/Fixtures/install/modules',
+            'plugins' => __DIR__ . '/Fixtures/install/plugins',
+        ]);
+        $app['config']->set('package-management.activation.file', $this->activationFile);
+        $app['config']->set('package-management.cache.enabled', false);
+
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+    }
+
+    private function manager(): ExtensionManager
+    {
+        return $this->app->make(ExtensionManager::class);
+    }
+
+    public function test_install_runs_migrations_and_activates(): void
+    {
+        $this->assertFalse(Schema::hasTable('migrated_items'));
+
+        $this->manager()->install('migrated');
+
+        $this->assertTrue(Schema::hasTable('migrated_items'), 'install should run the extension migrations');
+        $this->assertTrue(is_extension_active('migrated'), 'install should activate the extension');
+    }
+
+    public function test_update_is_idempotent(): void
+    {
+        $manager = $this->manager();
+        $manager->install('migrated');
+
+        // no pending migrations remain — running update again must not error
+        $manager->update('migrated');
+
+        $this->assertTrue(Schema::hasTable('migrated_items'));
+    }
+
+    public function test_install_dispatches_the_installed_event(): void
+    {
+        Event::fake([ExtensionInstalled::class]);
+        $this->app->forgetInstance(ExtensionManager::class);
+
+        $this->app->make(ExtensionManager::class)->install('migrated');
+
+        Event::assertDispatched(ExtensionInstalled::class, static fn (ExtensionInstalled $e): bool => $e->extension->id === 'migrated');
+    }
+}
