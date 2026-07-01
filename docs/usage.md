@@ -32,6 +32,28 @@ Extensions::enable('vendor/blog');
 Extensions::disable('vendor/blog');
 ```
 
+### Activation state + settings (`database` store)
+
+`Extensions::*` is the **guarded lifecycle** (dependency checks, events, hooks, migrations, asset
+publishing). The **`ExtensionState` facade** is the raw activation-state + settings API backing the
+`database` store — use it for inspection and per-extension settings, not to bypass the lifecycle guards:
+
+```php
+use Simtabi\Laranail\Package\Management\Facades\ExtensionState;
+
+ExtensionState::active();                          // list<string> of active ids
+ExtensionState::isActive('vendor/blog');           // bool
+ExtensionState::activate('vendor/blog');           // raw activate (no dependency guard)
+ExtensionState::deactivate('vendor/blog');
+ExtensionState::recordInstall('vendor/blog', '1.2.0');
+ExtensionState::putSettings('vendor/blog', ['per_page' => 15]);
+ExtensionState::settings('vendor/blog');           // array
+```
+
+Both facades ultimately write through the same Actions → Service → Repository → `ExtensionState` model
+path; `Extensions::enable/install` just adds the guards, events, hooks, migrations, and asset publishing
+on top.
+
 Helpers (function_exists-guarded so they compose with the scaffolder's):
 
 ```php

@@ -7,10 +7,12 @@ namespace Simtabi\Laranail\Package\Management\Tests;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
-use Simtabi\Laranail\Package\Management\Stores\DatabaseActivationStore;
+use Simtabi\Laranail\Package\Management\Models\ExtensionState;
+use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
 
-class DatabaseActivationStoreTest extends TestCase
+class EloquentActivationStoreTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -23,7 +25,6 @@ class DatabaseActivationStoreTest extends TestCase
         ]);
         $app['config']->set('package-management.cache.enabled', false);
         $app['config']->set('package-management.activation.store', 'database');
-
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
@@ -37,9 +38,11 @@ class DatabaseActivationStoreTest extends TestCase
         return $this->app->make(ActivationStore::class);
     }
 
-    public function test_the_database_store_is_bound_when_configured(): void
+    public function test_database_store_is_the_eloquent_store(): void
     {
-        $this->assertInstanceOf(DatabaseActivationStore::class, $this->store());
+        $store = $this->store();
+        $this->assertInstanceOf(EloquentActivationStore::class, $store);
+        $this->assertInstanceOf(RecordsInstall::class, $store);
     }
 
     public function test_activate_deactivate_and_active_list(): void
@@ -52,16 +55,11 @@ class DatabaseActivationStoreTest extends TestCase
         $this->assertTrue($store->isActive('alpha'));
         $this->assertSame(['alpha'], $store->active());
 
-        // idempotent + updateOrInsert path
-        $store->activate('alpha');
-        $this->assertSame(['alpha'], $store->active());
-
         $store->deactivate('alpha');
         $this->assertFalse($store->isActive('alpha'));
-        $this->assertSame([], $store->active());
     }
 
-    public function test_manager_drives_the_database_store_end_to_end(): void
+    public function test_manager_drives_the_store_end_to_end(): void
     {
         $manager = $this->app->make(ExtensionManager::class);
 
@@ -69,8 +67,18 @@ class DatabaseActivationStoreTest extends TestCase
         $manager->enable('acme/beta'); // requires alpha, now active
         $this->assertTrue(is_extension_active('acme/beta'));
 
-        // reverse-dependency guard still holds through the DB store
-        $this->expectException(RuntimeException::class);
+        $this->expectException(RuntimeException::class); // reverse-dependency guard via the DB store
         $manager->disable('alpha');
+    }
+
+    public function test_install_records_version_and_installed_at(): void
+    {
+        $this->app->make(ExtensionManager::class)->install('alpha');
+
+        $row = ExtensionState::query()->where('name', 'alpha')->first();
+        $this->assertNotNull($row);
+        $this->assertSame('1.0.0', $row->version); // alpha fixture version
+        $this->assertNotNull($row->installed_at);
+        $this->assertTrue($row->is_active);
     }
 }

@@ -6,10 +6,11 @@ namespace Simtabi\Laranail\Package\Management\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 use Override;
+use Simtabi\Laranail\Package\Management\Actions\ActivateExtension;
+use Simtabi\Laranail\Package\Management\Actions\DeactivateExtension;
 use Simtabi\Laranail\Package\Management\Adapters\LaravelLoaderAdapter;
 use Simtabi\Laranail\Package\Management\Commands\CacheExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Commands\DisableExtensionCommand;
@@ -18,11 +19,15 @@ use Simtabi\Laranail\Package\Management\Commands\EnableExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\InstallExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\ListExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
+use Simtabi\Laranail\Package\Management\ExtensionStateManager;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
-use Simtabi\Laranail\Package\Management\Stores\DatabaseActivationStore;
+use Simtabi\Laranail\Package\Management\Repositories\EloquentExtensionStateRepository;
+use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
+use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
 use Simtabi\Laranail\Package\Management\Stores\FileActivationStore;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
@@ -40,15 +45,19 @@ final class ManagementServiceProvider extends ServiceProvider
         $this->app->singleton(ManifestReader::class, static fn (): ManifestReader => new ManifestReader(new Filesystem));
         $this->app->singleton(DependencyResolver::class, static fn (): DependencyResolver => new DependencyResolver);
 
+        // Eloquent activation-state subsystem (Actions → Service → Repository → Model),
+        // used by the database store + exposed via the ExtensionState facade.
+        $this->app->bind(ExtensionStateRepositoryInterface::class, EloquentExtensionStateRepository::class);
+        $this->app->singleton(ExtensionStateService::class);
+        $this->app->singleton(ActivateExtension::class);
+        $this->app->singleton(DeactivateExtension::class);
+        $this->app->singleton(ExtensionStateManager::class);
+
         $this->app->singleton(ActivationStore::class, static function (Application $app): ActivationStore {
             $activation = (array) config('package-management.activation', []);
 
             if (($activation['store'] ?? 'file') === 'database') {
-                return new DatabaseActivationStore(
-                    $app->make(ConnectionResolverInterface::class),
-                    (string) ($activation['table'] ?? 'laranail_extension_states'),
-                    isset($activation['connection']) ? (string) $activation['connection'] : null,
-                );
+                return $app->make(EloquentActivationStore::class);
             }
 
             return new FileActivationStore(new Filesystem, (string) ($activation['file'] ?? ''));

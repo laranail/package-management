@@ -11,6 +11,7 @@ use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
@@ -126,6 +127,10 @@ final readonly class ExtensionManager
         $extension = $this->requireExtension($id);
 
         $this->enable($id);
+
+        if ($this->store instanceof RecordsInstall) {
+            $this->store->recordInstall($id, $extension->version);
+        }
 
         if ($this->adapter instanceof RunsMigrations) {
             $this->adapter->runMigrations($extension);

@@ -14,7 +14,13 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->boolean('is_active')->default(false);
+            $table->string('version')->nullable();
+            $table->json('settings')->nullable();
+            $table->timestamp('installed_at')->nullable();
+            $table->timestamp('activated_at')->nullable();
             $table->timestamps();
+
+            $table->index('is_active');
         });
     }
 

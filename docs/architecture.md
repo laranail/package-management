@@ -59,7 +59,7 @@ The two packages share one contract: the **manifest schemas** ([manifests.md](ma
 | **`ManifestReader`** | Parse + validate `composer.json` / `module.json` / `plugin.json` against the schema; merge into one `Extension`. |
 | **`ExtensionRepository`** | Discover extensions under the configured `platform/*` paths; produce/read the **compiled manifest cache**; query by role/name/enabled. |
 | **`DependencyResolver`** | Topologically sort by `require`; detect cycles + missing deps; enforce `minimum_core_version`. |
-| **`ActivationStore` (interface)** | Read/write the active set. `FileActivationStore` (default JSON) + `DatabaseActivationStore` (optional). |
+| **`ActivationStore` (interface)** | Read/write the active set. `FileActivationStore` (default JSON) + `EloquentActivationStore` — the latter bridges to the Eloquent **state subsystem**: Facade → `ExtensionStateManager` → Actions (writes) / `ExtensionStateService` (reads) → `ExtensionStateRepositoryInterface` → `ExtensionState` model. |
 | **`LoaderAdapter` (interface)** | Framework bridge: register PSR-4 (Composer `ClassLoader`) + register providers + publish/boot. `LaravelLoaderAdapter` ships first. |
 | **`ExtensionManager`** | Orchestrates the lifecycle: `activate/deactivate/install/remove/update` + hooks + events. |
 | **`ManagementServiceProvider`** | Entry point: config, discovery, registration, CLI, facade, helpers. |

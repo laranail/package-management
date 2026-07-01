@@ -19,8 +19,11 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 
 ## Activation lifecycle
 - ✅ Activation-state store behind an interface — `FileActivationStore` (JSON) default.
-- ✅ `DatabaseActivationStore` adapter (state table + migration) for DB-backed projects; reads degrade
-  gracefully until the table is migrated.
+- ✅ Eloquent-backed database store (`store = 'database'`): a properly-layered subsystem — **Facade →
+  Manager → Actions (writes) / Service (reads) → Repository → `ExtensionState` model** over a rich state
+  table (name, is_active, version, settings, installed_at, activated_at) with a factory + seeder; reads
+  degrade gracefully until the table is migrated; installed version is recorded on `install` via the
+  `RecordsInstall` store capability. Exposed to host apps as the `ExtensionState` facade (+ settings).
 - ✅ `activate` / `deactivate` with dependency + reverse-dependency guards.
 - ✅ Per-extension lifecycle hook (`LifecycleHook::activated/deactivated`), declared via the manifest
   `hook` FQCN and resolved from the container.

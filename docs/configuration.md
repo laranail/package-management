@@ -36,7 +36,9 @@ active-set count changes and can be cleared with `laranail::package-management.c
 ## `activation`
 
 Which extensions are active. `file` (default) keeps a JSON file so the loader has **no database
-requirement**; `database` is a pluggable adapter that stores state in a table.
+requirement**; `database` uses the **Eloquent-backed store** — the `ExtensionState` model (rich state
+table) behind a layered subsystem (Facade → Manager → Actions/Service → Repository), also exposed to
+host apps via the [`ExtensionState` facade](usage.md).
 
 ```php
 'activation' => [
@@ -44,10 +46,6 @@ requirement**; `database` is a pluggable adapter that stores state in a table.
 
     // file store
     'file' => storage_path('app/laranail/extensions_statuses.json'),
-
-    // database store (used when store = 'database')
-    'table'      => 'laranail_extension_states',
-    'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
 ],
 ```
 
@@ -60,7 +58,8 @@ php artisan vendor:publish \
 php artisan migrate
 ```
 
-Reads degrade to "nothing active" until the table exists, so enabling the database store on a fresh
-app never fatals the boot before you migrate.
+The model uses the default connection and the fixed `laranail_extension_states` table. Reads degrade to
+"nothing active" until the table exists, so enabling the database store on a fresh app never fatals the
+boot before you migrate.
 
 [← Docs index](../README.md#documentation)

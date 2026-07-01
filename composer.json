@@ -51,7 +51,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Simtabi\\Laranail\\Package\\Management\\": "src/"
+            "Simtabi\\Laranail\\Package\\Management\\": "src/",
+            "Simtabi\\Laranail\\Package\\Management\\Database\\Factories\\": "database/factories/",
+            "Simtabi\\Laranail\\Package\\Management\\Database\\Seeders\\": "database/seeders/"
         },
         "files": [
             "helpers/helpers.php"

@@ -41,8 +41,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | Which extensions are active. `file` (default) keeps a JSON file so the
-    | loader has zero database requirement; `database` is a pluggable adapter
-    | for projects that prefer a settings table.
+    | loader has zero database requirement; `database` uses the Eloquent-backed
+    | store (model + migration, Actions → Service → Repository), also exposed via
+    | the `ExtensionState` facade. Run the package migration for the DB store.
     |
     */
     'activation' => [
@@ -50,10 +51,6 @@ return [
 
         // file store
         'file' => storage_path('app/laranail/extensions_statuses.json'),
-
-        // database store (used when store = 'database')
-        'table' => 'laranail_extension_states',
-        'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
     ],
 
 ];
