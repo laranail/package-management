@@ -19,7 +19,8 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 
 ## Activation lifecycle
 - ✅ Activation-state store behind an interface — `FileActivationStore` (JSON) default.
-- 🔶 `DatabaseActivationStore` adapter (settings table) for DB-backed projects.
+- ✅ `DatabaseActivationStore` adapter (state table + migration) for DB-backed projects; reads degrade
+  gracefully until the table is migrated.
 - ✅ `activate` / `deactivate` with dependency + reverse-dependency guards.
 - 🔶 `install` / `remove` / `update` (migrations run/rollback, asset (un)publish).
 - 🔶 Lifecycle hooks per extension (`activate/activated/deactivate/deactivated/remove/removed/updating/updated`).

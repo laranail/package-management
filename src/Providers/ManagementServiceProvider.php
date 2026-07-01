@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Providers;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -19,6 +20,7 @@ use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Stores\DatabaseActivationStore;
 use Simtabi\Laranail\Package\Management\Stores\FileActivationStore;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
@@ -36,10 +38,19 @@ final class ManagementServiceProvider extends ServiceProvider
         $this->app->singleton(ManifestReader::class, static fn (): ManifestReader => new ManifestReader(new Filesystem));
         $this->app->singleton(DependencyResolver::class, static fn (): DependencyResolver => new DependencyResolver);
 
-        $this->app->singleton(ActivationStore::class, static fn (): ActivationStore => new FileActivationStore(
-            new Filesystem,
-            (string) config('package-management.activation.file'),
-        ));
+        $this->app->singleton(ActivationStore::class, static function (Application $app): ActivationStore {
+            $activation = (array) config('package-management.activation', []);
+
+            if (($activation['store'] ?? 'file') === 'database') {
+                return new DatabaseActivationStore(
+                    $app->make(ConnectionResolverInterface::class),
+                    (string) ($activation['table'] ?? 'laranail_extension_states'),
+                    isset($activation['connection']) ? (string) $activation['connection'] : null,
+                );
+            }
+
+            return new FileActivationStore(new Filesystem, (string) ($activation['file'] ?? ''));
+        });
 
         $this->app->singleton(LoaderAdapter::class, static fn (Application $app): LoaderAdapter => new LaravelLoaderAdapter($app));
 
@@ -74,6 +85,11 @@ final class ManagementServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // The database activation store needs its state table.
+        if (config('package-management.activation.store') === 'database') {
+            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+        }
+
         // Register every active module/plugin (dependency order) into the host.
         $this->app->make(ExtensionManager::class)->boot();
 
@@ -81,6 +97,10 @@ final class ManagementServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../../config/package-management.php' => config_path('package-management.php'),
             ], 'package-management-config');
+
+            $this->publishes([
+                __DIR__ . '/../../database/migrations' => database_path('migrations'),
+            ], 'package-management-migrations');
 
             $this->commands([
                 ListExtensionsCommand::class,

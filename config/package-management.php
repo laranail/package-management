@@ -25,9 +25,9 @@ return [
     | Compiled manifest cache
     |--------------------------------------------------------------------------
     |
-    | The discovered + resolved extension manifest is compiled to a PHP file for
-    | fast boots. Invalidated automatically when the active-set count changes;
-    | clear explicitly with `laranail::package-management.cache --clear`.
+    | The *discovered* extension set is compiled to a PHP file for fast boots
+    | (activation state is applied fresh from the store on every request, so it is
+    | never baked in). Rebuild or clear with `laranail::package-management.cache`.
     |
     */
     'cache' => [
@@ -47,7 +47,13 @@ return [
     */
     'activation' => [
         'store' => env('PACKAGE_MANAGEMENT_STORE', 'file'),
+
+        // file store
         'file' => storage_path('app/laranail/extensions_statuses.json'),
+
+        // database store (used when store = 'database')
+        'table' => 'laranail_extension_states',
+        'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
     ],
 
 ];
