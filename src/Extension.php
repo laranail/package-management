@@ -33,6 +33,12 @@ final readonly class Extension
         return rtrim($this->path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'src';
     }
 
+    /** Filesystem-safe id (e.g. `acme/blog` → `acme-blog`), used for published-asset paths. */
+    public function slug(): string
+    {
+        return str_replace('/', '-', $this->id);
+    }
+
     /** Packages are Composer-autoloaded already; only modules/plugins are runtime-loaded. */
     public function isRuntimeLoaded(): bool
     {

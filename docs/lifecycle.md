@@ -19,8 +19,9 @@ discovered ──enable──▶ active ──disable──▶ inactive ──re
 - **disable / deactivate** — reverse-dependency guard (refuse if an active extension requires it) →
   run hooks → remove from the store.
 - **install** — activate (dependency-checked), then run the extension's own
-  `database/migrations` via the adapter's `RunsMigrations` capability; fires `ExtensionInstalled`.
-  Adapters without a migration runner (e.g. Lumen) degrade to activate-only.
+  `database/migrations` (adapter `RunsMigrations`) and publish its `public/` assets to
+  `public/vendor/{slug}` (adapter `PublishesAssets`); fires `ExtensionInstalled`. Adapters lacking a
+  capability (e.g. Lumen) degrade to activate-only.
 - **update** — run any pending migrations for an already-installed extension; fires `ExtensionUpdated`.
 - **remove** *(planned)* — migration rollback needs per-extension batch tracking, and file deletion is
   deliberately out of scope (remove the directory / `composer remove`); today, use `disable`.

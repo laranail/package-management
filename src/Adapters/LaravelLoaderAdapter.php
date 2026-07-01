@@ -6,8 +6,10 @@ namespace Simtabi\Laranail\Package\Management\Adapters;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Filesystem\Filesystem;
 use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Extension;
 
@@ -16,9 +18,9 @@ use Simtabi\Laranail\Package\Management\Extension;
  * registration through the full framework container — `$app->register()` handles
  * deferred providers, boot ordering and publishing. Missing provider classes are
  * skipped so a stale manifest never fatals the host boot. Also runs an extension's
- * own migrations on install/update.
+ * own migrations and publishes its `public/` assets on install.
  */
-final class LaravelLoaderAdapter implements LoaderAdapter, RunsMigrations
+final class LaravelLoaderAdapter implements LoaderAdapter, PublishesAssets, RunsMigrations
 {
     use RegistersRuntimeAutoload;
 
@@ -52,5 +54,16 @@ final class LaravelLoaderAdapter implements LoaderAdapter, RunsMigrations
         }
 
         $migrator->run([$path]);
+    }
+
+    public function publishAssets(Extension $extension): void
+    {
+        $source = rtrim($extension->path, DIRECTORY_SEPARATOR) . '/public';
+
+        if (! is_dir($source)) {
+            return;
+        }
+
+        (new Filesystem)->copyDirectory($source, public_path('vendor/' . $extension->slug()));
     }
 }

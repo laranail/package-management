@@ -10,6 +10,7 @@ use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
@@ -128,6 +129,10 @@ final readonly class ExtensionManager
 
         if ($this->adapter instanceof RunsMigrations) {
             $this->adapter->runMigrations($extension);
+        }
+
+        if ($this->adapter instanceof PublishesAssets) {
+            $this->adapter->publishAssets($extension);
         }
 
         $this->events->dispatch(new ExtensionInstalled($extension));

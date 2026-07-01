@@ -25,11 +25,11 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ Per-extension lifecycle hook (`LifecycleHook::activated/deactivated`), declared via the manifest
   `hook` FQCN and resolved from the container.
 - ✅ Events: `ExtensionActivated` / `ExtensionDeactivated` / `ExtensionInstalled` / `ExtensionUpdated`.
-- ✅ `install` (activate + run the extension's own `database/migrations`) / `update` (run pending
-  migrations) via the optional `RunsMigrations` adapter capability (Laravel ships it; other adapters
-  degrade to activate-only).
-- 🔶 `remove` (migration rollback — needs per-extension batch tracking) + asset (un)publish + the
-  extended hook set (`installed/removed/updating/updated`).
+- ✅ `install` (activate + run the extension's own `database/migrations` + publish its `public/` assets
+  to `public/vendor/{slug}`) / `update` (run pending migrations), via the optional `RunsMigrations` +
+  `PublishesAssets` adapter capabilities (Laravel ships both; other adapters degrade gracefully).
+- 🔶 `remove` (migration rollback + asset unpublish — needs per-extension batch tracking; file deletion
+  out of scope) + the extended hook set (`installed/removed/updating/updated`).
 
 ## Backend glue
 - ✅ Service-provider registration (routes/config/commands come via the provider).
