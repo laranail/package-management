@@ -33,6 +33,7 @@ class LoaderTest extends TestCase
             'plugins' => __DIR__ . '/Fixtures/platform/plugins',
         ]);
         $app['config']->set('package-management.activation.file', $this->activationFile);
+        $app['config']->set('package-management.cache.enabled', false);
     }
 
     private function manager(): ExtensionManager

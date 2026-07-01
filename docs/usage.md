@@ -3,12 +3,17 @@
 ## CLI
 
 ```bash
-php artisan laranail::package-management.list        # list discovered extensions (role, version, state)
-php artisan laranail::package-management.discover     # rebuild the compiled manifest cache
-php artisan laranail::package-management.enable Blog  # activate an extension (+ its dependencies)
-php artisan laranail::package-management.disable Blog # deactivate (guarded by reverse-deps)
-php artisan laranail::package-management.cache --clear
+php artisan laranail::package-management.list         # list discovered extensions (role, version, state)
+php artisan laranail::package-management.discover      # rescan the platform paths and report the count
+php artisan laranail::package-management.enable Blog   # activate an extension (+ its dependencies)
+php artisan laranail::package-management.disable Blog  # deactivate (guarded by reverse-deps)
+php artisan laranail::package-management.cache         # compile the discovered-extensions cache
+php artisan laranail::package-management.cache --clear # delete the compiled cache
 ```
+
+The compiled cache (`config('package-management.cache')`) stores the *discovered* set only; activation
+state is applied fresh from the store each request, so enable/disable never needs a rebuild — only
+adding or removing an extension directory does.
 
 `module:*` / `plugin:*` aliases are provided for familiarity.
 

@@ -9,6 +9,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Simtabi\Laranail\Package\Management\Adapters\LaravelLoaderAdapter;
+use Simtabi\Laranail\Package\Management\Commands\CacheExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Commands\DisableExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\DiscoverExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Commands\EnableExtensionCommand;
@@ -44,6 +45,8 @@ final class ManagementServiceProvider extends ServiceProvider
 
         $this->app->singleton(ExtensionRepository::class, static function (Application $app): ExtensionRepository {
             $paths = (array) config('package-management.paths', []);
+            $cache = (array) config('package-management.cache', []);
+            $cachePath = (string) ($cache['path'] ?? '');
 
             return new ExtensionRepository(
                 new Filesystem,
@@ -54,6 +57,10 @@ final class ManagementServiceProvider extends ServiceProvider
                     'module' => (string) ($paths['modules'] ?? ''),
                     'plugin' => (string) ($paths['plugins'] ?? ''),
                 ],
+                (bool) ($cache['enabled'] ?? false),
+                $cachePath === '' || str_starts_with($cachePath, DIRECTORY_SEPARATOR)
+                    ? $cachePath
+                    : $app->basePath($cachePath),
             );
         });
 
@@ -80,6 +87,7 @@ final class ManagementServiceProvider extends ServiceProvider
                 EnableExtensionCommand::class,
                 DisableExtensionCommand::class,
                 DiscoverExtensionsCommand::class,
+                CacheExtensionsCommand::class,
             ]);
         }
     }

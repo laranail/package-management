@@ -8,7 +8,8 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ Normalize `composer.json` / `module.json` / `plugin.json` into one `Extension` VO.
 - ✅ Runtime PSR-4 registration via Composer's `ClassLoader` — no per-extension `composer dump`.
 - ✅ Register each active extension's service provider(s), skipping missing classes (never fatal).
-- ✅ Compiled manifest cache (`bootstrap/cache/laranail-extensions.php`) with a validity check.
+- ✅ Compiled manifest cache (`bootstrap/cache/laranail-extensions.php`): stores the discovered set
+  (activation applied fresh each request), built/cleared via the `…​.cache` command.
 
 ## Dependency management
 - ✅ Topological sort over `require` for deterministic load order.

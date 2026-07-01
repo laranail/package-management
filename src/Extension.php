@@ -61,4 +61,25 @@ final readonly class Extension
             'enabled' => $this->enabled,
         ];
     }
+
+    /**
+     * Rehydrate from a {@see toArray()} payload — used by the compiled manifest cache.
+     * The `enabled` flag is intentionally not restored; activation is applied fresh
+     * from the ActivationStore on every request.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            id: (string) ($data['id'] ?? ''),
+            name: (string) ($data['name'] ?? ''),
+            namespace: (string) ($data['namespace'] ?? ''),
+            providers: array_values(array_map(strval(...), (array) ($data['providers'] ?? []))),
+            version: (string) ($data['version'] ?? '0.0.0'),
+            require: array_values(array_map(strval(...), (array) ($data['require'] ?? []))),
+            role: (string) ($data['role'] ?? 'package'),
+            path: (string) ($data['path'] ?? ''),
+        );
+    }
 }
