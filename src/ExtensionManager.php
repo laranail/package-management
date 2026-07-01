@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management;
 
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
 use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
 /**
  * Orchestrates the runtime loader: registers active modules/plugins in dependency
- * order and drives the activation lifecycle. The public runtime API behind the
- * `Extensions` facade + helpers.
+ * order and drives the activation lifecycle (dependency guards, per-extension hooks
+ * and events). The public runtime API behind the `Extensions` facade + helpers.
  */
 final readonly class ExtensionManager
 {
@@ -21,6 +26,8 @@ final readonly class ExtensionManager
         private DependencyResolver $resolver,
         private LoaderAdapter $adapter,
         private ActivationStore $store,
+        private Dispatcher $events,
+        private Container $container,
     ) {}
 
     /**
@@ -85,17 +92,39 @@ final readonly class ExtensionManager
 
         $this->store->activate($id);
         $this->repository->forget();
+
+        $this->resolveHook($extension)?->activated($extension);
+        $this->events->dispatch(new ExtensionActivated($extension));
     }
 
     public function disable(string $id): void
     {
-        foreach ($this->repository->active() as $extension) {
-            if (in_array($id, $extension->require, true)) {
-                throw new RuntimeException("Cannot disable [{$id}]: [{$extension->id}] requires it.");
+        $extension = $this->repository->find($id);
+
+        foreach ($this->repository->active() as $active) {
+            if (in_array($id, $active->require, true)) {
+                throw new RuntimeException("Cannot disable [{$id}]: [{$active->id}] requires it.");
             }
         }
 
         $this->store->deactivate($id);
         $this->repository->forget();
+
+        if ($extension instanceof Extension) {
+            $this->resolveHook($extension)?->deactivated($extension);
+            $this->events->dispatch(new ExtensionDeactivated($extension));
+        }
+    }
+
+    /** Resolve an extension's declared lifecycle hook (if any) from the container. */
+    private function resolveHook(Extension $extension): ?LifecycleHook
+    {
+        if ($extension->hook === null || ! class_exists($extension->hook)) {
+            return null;
+        }
+
+        $hook = $this->container->make($extension->hook);
+
+        return $hook instanceof LifecycleHook ? $hook : null;
     }
 }

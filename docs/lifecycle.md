@@ -24,16 +24,35 @@ discovered ──enable──▶ active ──disable──▶ inactive ──re
 
 ## Hooks (optional per extension)
 
-An extension may ship a `Plugin` / `Module` class with static hooks, called (guarded by
-`class_exists`) at the matching transition:
+An extension may declare a lifecycle handler in its manifest (`"hook": "<FQCN>"`). The class implements
+`Simtabi\Laranail\Package\Management\Contracts\LifecycleHook` and is resolved from the container (so it
+gets constructor DI) at the matching transition — the place to seed data, publish assets or warm caches:
 
-```
-activate()  activated()  deactivate()  deactivated()
-remove()    removed()     updating()    updated()
+```php
+use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
+use Simtabi\Laranail\Package\Management\Extension;
+
+final class ShopHook implements LifecycleHook
+{
+    public function activated(Extension $extension): void { /* seed, publish, … */ }
+
+    public function deactivated(Extension $extension): void { /* clean up */ }
+}
 ```
 
-Each transition also fires an event (`ExtensionActivated`, `ExtensionDeactivated`, …) for host apps to
-react to.
+`activated` / `deactivated` ship today; `installed` / `removed` / `updating` / `updated` are planned
+alongside install/remove/update. A missing or non-`LifecycleHook` class is ignored (never fatal).
+
+## Events
+
+Each transition also fires an event for host apps to react to — `ExtensionActivated` /
+`ExtensionDeactivated` (each carrying the `Extension`). Listen with the normal event dispatcher:
+
+```php
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
+
+Event::listen(ExtensionActivated::class, fn ($e) => logger()->info("enabled {$e->extension->id}"));
+```
 
 ## Dependency ordering
 

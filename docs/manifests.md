@@ -55,6 +55,7 @@ nwidart-compatible manifest for the module runtime. Activation-gated.
 | `providers` | string[] | ✓ | FQCN service providers |
 | `priority` | int | — | load-order hint (dependencies still win) |
 | `files` | string[] | — | files to `include` at boot |
+| `hook` | string | — | FQCN implementing `LifecycleHook` (activate/deactivate) |
 | `description`, `keywords` | | — | metadata |
 
 ## `plugin.json` (role: **plugin**)
@@ -88,6 +89,7 @@ dependencies + a minimum-runtime guard.
 | `require` | string[] | — | extension `id`s that must be active first (topologically ordered) |
 | `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version |
 | `type` | string | — | `plugin` \| `nova` \| `filament` (panel plugins) |
+| `hook` | string | — | FQCN implementing `LifecycleHook` (activate/deactivate) |
 | `author`, `url`, `description` | | — | metadata |
 
 ## Which manifests each flavor emits

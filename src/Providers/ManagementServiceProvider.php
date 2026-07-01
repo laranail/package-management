@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Providers;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Filesystem\Filesystem;
@@ -80,6 +81,8 @@ final class ManagementServiceProvider extends ServiceProvider
             $app->make(DependencyResolver::class),
             $app->make(LoaderAdapter::class),
             $app->make(ActivationStore::class),
+            $app->make(Dispatcher::class),
+            $app,
         ));
     }
 

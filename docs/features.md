@@ -22,9 +22,11 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ `DatabaseActivationStore` adapter (state table + migration) for DB-backed projects; reads degrade
   gracefully until the table is migrated.
 - ✅ `activate` / `deactivate` with dependency + reverse-dependency guards.
-- 🔶 `install` / `remove` / `update` (migrations run/rollback, asset (un)publish).
-- 🔶 Lifecycle hooks per extension (`activate/activated/deactivate/deactivated/remove/removed/updating/updated`).
-- 🔶 Events (`ExtensionActivated`, `ExtensionDeactivated`, …).
+- ✅ Per-extension lifecycle hook (`LifecycleHook::activated/deactivated`), declared via the manifest
+  `hook` FQCN and resolved from the container.
+- ✅ Events: `ExtensionActivated` / `ExtensionDeactivated` dispatched on the transition.
+- 🔶 `install` / `remove` / `update` (migrations run/rollback, asset (un)publish) + the extended hook
+  set (`installed/removed/updating/updated`).
 
 ## Backend glue
 - ✅ Service-provider registration (routes/config/commands come via the provider).

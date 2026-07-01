@@ -57,6 +57,7 @@ final readonly class ManifestReader
             require: array_values((array) ($m['require'] ?? [])),
             role: 'module',
             path: $dir,
+            hook: isset($m['hook']) ? (string) $m['hook'] : null,
         );
     }
 
@@ -78,6 +79,7 @@ final readonly class ManifestReader
             require: array_values((array) ($p['require'] ?? [])),
             role: 'plugin',
             path: $dir,
+            hook: isset($p['hook']) ? (string) $p['hook'] : null,
         );
     }
 

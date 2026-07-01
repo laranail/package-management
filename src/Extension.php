@@ -24,6 +24,7 @@ final readonly class Extension
         public string $role,     // package | module | plugin
         public string $path,
         public bool $enabled = false,
+        public ?string $hook = null, // optional LifecycleHook FQCN
     ) {}
 
     /** PSR-4 source root registered on the runtime autoloader. */
@@ -42,7 +43,7 @@ final readonly class Extension
     {
         return new self(
             $this->id, $this->name, $this->namespace, $this->providers, $this->version,
-            $this->require, $this->role, $this->path, $enabled,
+            $this->require, $this->role, $this->path, $enabled, $this->hook,
         );
     }
 
@@ -59,6 +60,7 @@ final readonly class Extension
             'role' => $this->role,
             'path' => $this->path,
             'enabled' => $this->enabled,
+            'hook' => $this->hook,
         ];
     }
 
@@ -80,6 +82,7 @@ final readonly class Extension
             require: array_values(array_map(strval(...), (array) ($data['require'] ?? []))),
             role: (string) ($data['role'] ?? 'package'),
             path: (string) ($data['path'] ?? ''),
+            hook: isset($data['hook']) ? (string) $data['hook'] : null,
         );
     }
 }

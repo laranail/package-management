@@ -2,5 +2,6 @@
     "name": "Alpha",
     "alias": "alpha",
     "version": "1.0.0",
-    "providers": ["Fake\\Alpha\\Providers\\AlphaServiceProvider"]
+    "providers": ["Fake\\Alpha\\Providers\\AlphaServiceProvider"],
+    "hook": "Simtabi\\Laranail\\Package\\Management\\Tests\\Fixtures\\RecordingHook"
 }
