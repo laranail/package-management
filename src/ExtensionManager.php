@@ -14,13 +14,13 @@ use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
  * order and drives the activation lifecycle. The public runtime API behind the
  * `Extensions` facade + helpers.
  */
-final class ExtensionManager
+final readonly class ExtensionManager
 {
     public function __construct(
-        private readonly ExtensionRepository $repository,
-        private readonly DependencyResolver $resolver,
-        private readonly LoaderAdapter $adapter,
-        private readonly ActivationStore $store,
+        private ExtensionRepository $repository,
+        private DependencyResolver $resolver,
+        private LoaderAdapter $adapter,
+        private ActivationStore $store,
     ) {}
 
     /**
@@ -73,7 +73,7 @@ final class ExtensionManager
     {
         $extension = $this->repository->find($id);
 
-        if ($extension === null) {
+        if (! $extension instanceof Extension) {
             throw new RuntimeException("Unknown extension [{$id}].");
         }
 

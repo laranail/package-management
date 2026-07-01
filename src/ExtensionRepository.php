@@ -45,7 +45,7 @@ final class ExtensionRepository
             foreach ($this->files->directories($dir) as $extensionDir) {
                 $extension = $this->reader->read($extensionDir, $role);
 
-                if ($extension !== null) {
+                if ($extension instanceof Extension) {
                     $found[] = $extension->withEnabled(in_array($extension->id, $active, true));
                 }
             }

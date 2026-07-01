@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Package\Management\Providers;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Simtabi\Laranail\Package\Management\Adapters\LaravelLoaderAdapter;
 use Simtabi\Laranail\Package\Management\Commands\DisableExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\DiscoverExtensionsCommand;
@@ -26,6 +27,7 @@ use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
  */
 final class ManagementServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/package-management.php', 'package-management');
@@ -33,15 +35,15 @@ final class ManagementServiceProvider extends ServiceProvider
         $this->app->singleton(ManifestReader::class, static fn (): ManifestReader => new ManifestReader(new Filesystem));
         $this->app->singleton(DependencyResolver::class, static fn (): DependencyResolver => new DependencyResolver);
 
-        $this->app->singleton(ActivationStore::class, static fn (Application $app): ActivationStore => new FileActivationStore(
+        $this->app->singleton(ActivationStore::class, static fn (): ActivationStore => new FileActivationStore(
             new Filesystem,
-            (string) $app['config']->get('package-management.activation.file'),
+            (string) config('package-management.activation.file'),
         ));
 
         $this->app->singleton(LoaderAdapter::class, static fn (Application $app): LoaderAdapter => new LaravelLoaderAdapter($app));
 
         $this->app->singleton(ExtensionRepository::class, static function (Application $app): ExtensionRepository {
-            $paths = (array) $app['config']->get('package-management.paths', []);
+            $paths = (array) config('package-management.paths', []);
 
             return new ExtensionRepository(
                 new Filesystem,

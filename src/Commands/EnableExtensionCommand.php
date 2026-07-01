@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Commands;
 
+use Override;
 use Simtabi\Laranail\Console\Tools\Commands\Command;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
@@ -22,20 +23,23 @@ final class EnableExtensionCommand extends Command
 
     public function handle(ExtensionManager $manager): int
     {
+        $id = is_string($value = $this->argument('id')) ? $value : '';
+
         try {
-            $manager->enable((string) $this->argument('id'));
+            $manager->enable($id);
         } catch (Throwable $e) {
             $this->components->error($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $this->components->info(sprintf('Enabled [%s].', $this->argument('id')));
+        $this->components->info(sprintf('Enabled [%s].', $id));
 
         return self::SUCCESS;
     }
 
     /** @return array<int, array<int, mixed>> */
+    #[Override]
     protected function getArguments()
     {
         return [

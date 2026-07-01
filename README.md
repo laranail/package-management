@@ -30,9 +30,19 @@ Drop generated extensions under `platform/{packages,modules,plugins}/` and the l
 
 ## Documentation
 
-- [Architecture](docs/ARCHITECTURE.md) — the discover → resolve → register → activate → wire pipeline, and the diagram.
-- [Manifests](docs/manifests.md) — the authoritative `composer.json` / `module.json` / `plugin.json` schemas (the contract with the scaffolder).
-- [Installation](docs/installation.md) · [Usage](docs/usage.md) · [Lifecycle](docs/lifecycle.md) · [Extending (framework adapters)](docs/extending.md) · [Features](docs/features.md)
+Hosted at [`opensource.simtabi.com/package-management/docs/`](https://opensource.simtabi.com/package-management/docs/)
+(product page: [`opensource.simtabi.com/package-management/`](https://opensource.simtabi.com/package-management/)).
+The same pages live under [`docs/`](docs/):
+
+- [Installation](docs/installation.md) — requirements, install, platform layout
+- [Configuration](docs/configuration.md) — discovery paths, compiled cache, activation store
+- [Usage](docs/usage.md) — the CLI + the programmatic API
+- [Architecture](docs/architecture.md) — the discover → resolve → register → activate → wire pipeline + diagram
+- [Manifests](docs/manifests.md) — the authoritative `composer.json` / `module.json` / `plugin.json` schemas (the scaffolder contract)
+- [Lifecycle](docs/lifecycle.md) — activation states, transitions, hooks, dependency ordering
+- [Extending](docs/extending.md) — framework adapters (Laravel / Lumen / Symfony)
+- [Features](docs/features.md) — the full capability set + phasing
+- [Release](docs/release.md) — how releases are cut
 
 ## Credits
 

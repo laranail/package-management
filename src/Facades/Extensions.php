@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 
 /**
@@ -12,7 +13,7 @@ use Simtabi\Laranail\Package\Management\ExtensionManager;
  * @method static array active()
  * @method static array modules()
  * @method static array plugins()
- * @method static \Simtabi\Laranail\Package\Management\Extension|null find(string $id)
+ * @method static Extension|null find(string $id)
  * @method static void enable(string $id)
  * @method static void disable(string $id)
  *

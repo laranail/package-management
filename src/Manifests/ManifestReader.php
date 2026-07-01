@@ -13,9 +13,9 @@ use Simtabi\Laranail\Package\Management\Extension;
  * into an Extension. A malformed manifest yields null (skipped, never fatal). The
  * schemas are documented in docs/manifests.md — the contract with the scaffolder.
  */
-final class ManifestReader
+final readonly class ManifestReader
 {
-    public function __construct(private readonly Filesystem $files) {}
+    public function __construct(private Filesystem $files) {}
 
     public function read(string $dir, string $role): ?Extension
     {

@@ -11,11 +11,11 @@ use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
  * Default activation store: a JSON array of active extension ids. No database
  * requirement. Writes atomically so an interrupted write can't corrupt state.
  */
-final class FileActivationStore implements ActivationStore
+final readonly class FileActivationStore implements ActivationStore
 {
     public function __construct(
-        private readonly Filesystem $files,
-        private readonly string $path,
+        private Filesystem $files,
+        private string $path,
     ) {}
 
     /** @return list<string> */
@@ -27,7 +27,7 @@ final class FileActivationStore implements ActivationStore
 
         $data = json_decode((string) $this->files->get($this->path), true);
 
-        return is_array($data) ? array_values(array_filter($data, 'is_string')) : [];
+        return is_array($data) ? array_values(array_filter($data, is_string(...))) : [];
     }
 
     public function isActive(string $id): bool

@@ -46,7 +46,8 @@
         "phpstan/phpstan": "^2.0",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.18",
-        "rector/rector": "^2.0"
+        "rector/rector": "^2.0",
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
@@ -65,8 +66,10 @@
         "test": "phpunit --no-coverage",
         "lint": [
             "@pint",
-            "@phpstan"
+            "@phpstan",
+            "@rector"
         ],
+        "audit": "@composer audit",
         "pint": "vendor/bin/pint --test",
         "pint-fix": "vendor/bin/pint",
         "phpstan": "vendor/bin/phpstan analyse --no-progress",
