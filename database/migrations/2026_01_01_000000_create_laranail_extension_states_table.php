@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('laranail_extension_states', function (Blueprint $table): void {
+        Schema::connection($this->connection())->create($this->table(), function (Blueprint $table): void {
             $table->id();
             $table->string('name')->unique();
             $table->boolean('is_active')->default(false);
@@ -26,6 +26,18 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('laranail_extension_states');
+        Schema::connection($this->connection())->dropIfExists($this->table());
+    }
+
+    private function table(): string
+    {
+        return (string) config('laranail.package-management.activation.table', 'laranail_extension_states');
+    }
+
+    private function connection(): ?string
+    {
+        $connection = config('laranail.package-management.activation.connection');
+
+        return $connection === null ? null : (string) $connection;
     }
 };

@@ -52,6 +52,10 @@ return [
         // file store
         'file' => storage_path('app/laranail/extensions_statuses.json'),
 
+        // database store — table + connection (null = the app's default connection)
+        'table' => env('PACKAGE_MANAGEMENT_TABLE', 'laranail_extension_states'),
+        'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
+
         // wrap the database state repository in a caching decorator (reads cached, writes flush)
         'cache' => env('PACKAGE_MANAGEMENT_STATE_CACHE', false),
     ],

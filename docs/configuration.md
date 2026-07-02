@@ -46,6 +46,13 @@ host apps via the [`ExtensionState` facade](usage.md).
 
     // file store
     'file' => storage_path('app/laranail/extensions_statuses.json'),
+
+    // database store — table + connection (null = the app's default connection)
+    'table' => env('PACKAGE_MANAGEMENT_TABLE', 'laranail_extension_states'),
+    'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
+
+    // wrap the DB state repository in a caching decorator (see docs/extensibility.md)
+    'cache' => env('PACKAGE_MANAGEMENT_STATE_CACHE', false),
 ],
 ```
 
@@ -56,7 +63,8 @@ For the **database** store, just migrate — the package's migration is auto-loa
 php artisan migrate
 ```
 
-The model uses the default connection and the fixed `laranail_extension_states` table. Reads degrade to
+The table name and connection are config-driven (`activation.table` / `activation.connection`) — both the
+model and the migration honour them, so the package drops into any app's schema. Reads degrade to
 "nothing active" until the table exists, so enabling the database store on a fresh app never fatals the
 boot before you migrate.
 

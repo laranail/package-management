@@ -31,6 +31,20 @@ class ExtensionState extends Model
 
     protected $table = 'laranail_extension_states';
 
+    /** @param  array<string, mixed>  $attributes */
+    public function __construct(array $attributes = [])
+    {
+        // table + connection are config-driven so the package is drop-in reusable
+        $this->setTable((string) config('laranail.package-management.activation.table', $this->table));
+
+        $connection = config('laranail.package-management.activation.connection');
+        if ($connection !== null) {
+            $this->setConnection((string) $connection);
+        }
+
+        parent::__construct($attributes);
+    }
+
     /** @var list<string> */
     protected $fillable = [
         'name',
