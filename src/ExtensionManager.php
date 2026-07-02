@@ -8,6 +8,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\InstallHook;
 use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
@@ -95,7 +96,10 @@ final readonly class ExtensionManager
         $this->store->activate($id);
         $this->repository->forget();
 
-        $this->resolveHook($extension)?->activated($extension);
+        if (($hook = $this->resolveHook($extension)) instanceof LifecycleHook) {
+            $hook->activated($extension);
+        }
+
         $this->events->dispatch(new ExtensionActivated($extension));
     }
 
@@ -113,7 +117,10 @@ final readonly class ExtensionManager
         $this->repository->forget();
 
         if ($extension instanceof Extension) {
-            $this->resolveHook($extension)?->deactivated($extension);
+            if (($hook = $this->resolveHook($extension)) instanceof LifecycleHook) {
+                $hook->deactivated($extension);
+            }
+
             $this->events->dispatch(new ExtensionDeactivated($extension));
         }
     }
@@ -139,6 +146,10 @@ final readonly class ExtensionManager
 
         if ($this->adapter instanceof PublishesAssets) {
             $this->adapter->publishAssets($extension);
+        }
+
+        if (($hook = $this->resolveHook($extension)) instanceof InstallHook) {
+            $hook->installed($extension);
         }
 
         $this->events->dispatch(new ExtensionInstalled($extension));
@@ -175,6 +186,10 @@ final readonly class ExtensionManager
         $this->store->forget($id);
         $this->repository->forget();
 
+        if (($hook = $this->resolveHook($extension)) instanceof InstallHook) {
+            $hook->removed($extension);
+        }
+
         $this->events->dispatch(new ExtensionRemoved($extension));
     }
 
@@ -189,8 +204,12 @@ final readonly class ExtensionManager
         return $extension;
     }
 
-    /** Resolve an extension's declared lifecycle hook (if any) from the container. */
-    private function resolveHook(Extension $extension): ?LifecycleHook
+    /**
+     * Resolve an extension's declared hook object (if any) from the container. The
+     * class may implement {@see LifecycleHook} and/or {@see InstallHook}; callers narrow
+     * to the interface for the transition at hand.
+     */
+    private function resolveHook(Extension $extension): ?object
     {
         if ($extension->hook === null || ! class_exists($extension->hook)) {
             return null;
@@ -198,6 +217,6 @@ final readonly class ExtensionManager
 
         $hook = $this->container->make($extension->hook);
 
-        return $hook instanceof LifecycleHook ? $hook : null;
+        return is_object($hook) ? $hook : null;
     }
 }

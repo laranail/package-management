@@ -40,8 +40,10 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ `remove` (uninstall): deactivate + unpublish assets + forget the management-state row, while
   **preserving** the extension's own database tables (removing a plugin must not destroy user data);
   fires `ExtensionRemoved`.
-- 🔶 Optional migration rollback on remove (needs per-extension batch tracking) + the extended hook set
-  (`installed/removed/updating/updated`).
+- ✅ Extended per-extension hooks via the optional `InstallHook` (`installed` / `removed`), alongside
+  `LifecycleHook` (`activated` / `deactivated`) — one `hook` class may implement either or both.
+- 🔶 Optional migration rollback on remove (needs per-extension batch tracking) + `updating`/`updated`
+  hooks.
 
 ## Backend glue
 - ✅ Service-provider registration (routes/config/commands come via the provider).

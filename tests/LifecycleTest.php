@@ -54,6 +54,19 @@ class LifecycleTest extends TestCase
         $this->assertContains('deactivated:alpha', RecordingHook::$calls);
     }
 
+    public function test_install_and_remove_invoke_the_extended_hooks(): void
+    {
+        $manager = $this->manager();
+
+        $manager->install('alpha'); // alpha declares RecordingHook (Lifecycle + Install)
+        $this->assertContains('activated:alpha', RecordingHook::$calls);
+        $this->assertContains('installed:alpha', RecordingHook::$calls);
+
+        $manager->remove('alpha');
+        $this->assertContains('deactivated:alpha', RecordingHook::$calls);
+        $this->assertContains('removed:alpha', RecordingHook::$calls);
+    }
+
     public function test_extension_without_a_hook_activates_cleanly(): void
     {
         // acme/shop has no hook — must not error, and must fire no hook calls

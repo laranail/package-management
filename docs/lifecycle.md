@@ -46,8 +46,23 @@ final class ShopHook implements LifecycleHook
 }
 ```
 
-`activated` / `deactivated` ship today; `installed` / `removed` / `updating` / `updated` are planned
-alongside install/remove/update. A missing or non-`LifecycleHook` class is ignored (never fatal).
+A `hook` class may also implement `InstallHook` (`installed` / `removed`), invoked by the install/remove
+flows — the place for an extension to seed reference data or tidy up on uninstall:
+
+```php
+use Simtabi\Laranail\Package\Management\Contracts\InstallHook;
+
+final class ShopHook implements LifecycleHook, InstallHook
+{
+    public function activated(Extension $e): void {}
+    public function deactivated(Extension $e): void {}
+    public function installed(Extension $e): void { /* seed */ }
+    public function removed(Extension $e): void { /* clean up */ }
+}
+```
+
+`activated`/`deactivated`/`installed`/`removed` ship today; `updating`/`updated` are planned. A missing
+or non-hook class is ignored (never fatal), and either interface may be implemented independently.
 
 ## Events
 
