@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Package\Management\Facades;
 use Illuminate\Support\Facades\Facade;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Package\Management\Support\ExtensionQuery;
 
 /**
  * @method static array all()
@@ -14,6 +15,9 @@ use Simtabi\Laranail\Package\Management\ExtensionManager;
  * @method static array modules()
  * @method static array plugins()
  * @method static Extension|null find(string $id)
+ * @method static ExtensionQuery query()
+ * @method static array<string, list<string>> graph()
+ * @method static list<Extension> dependents(string $id)
  * @method static void enable(string $id)
  * @method static void disable(string $id)
  * @method static void install(string $id)

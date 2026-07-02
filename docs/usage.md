@@ -38,6 +38,17 @@ Extensions::enable('vendor/blog');
 Extensions::disable('vendor/blog');
 ```
 
+### Querying
+
+```php
+Extensions::query()->role('plugin')->active()->get();  // list<Extension>, immutable/chainable
+Extensions::query()->inactive()->ids();                // list<string>
+Extensions::query()->where(fn ($e) => $e->priority > 0)->count();
+
+Extensions::graph();                    // ['vendor/blog' => ['vendor/core'], …] — require adjacency
+Extensions::dependents('vendor/core');  // list<Extension> that require vendor/core (reverse deps)
+```
+
 ### Activation state + settings (`database` store)
 
 `Extensions::*` is the **guarded lifecycle** (dependency checks, events, hooks, migrations, asset

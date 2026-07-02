@@ -28,6 +28,7 @@ use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionUpdating;
 use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
+use Simtabi\Laranail\Package\Management\Support\ExtensionQuery;
 
 /**
  * Orchestrates the runtime loader: registers active modules/plugins in dependency
@@ -107,6 +108,37 @@ class ExtensionManager
     public function find(string $id): ?Extension
     {
         return $this->repository->find($id);
+    }
+
+    /** Fluent query over the discovered set: `->query()->role('plugin')->active()->get()`. */
+    public function query(): ExtensionQuery
+    {
+        return new ExtensionQuery($this->all());
+    }
+
+    /**
+     * The dependency adjacency: each id → the ids it declares in `require`.
+     *
+     * @return array<string, list<string>>
+     */
+    public function graph(): array
+    {
+        $graph = [];
+        foreach ($this->all() as $extension) {
+            $graph[$extension->id] = array_values($extension->require);
+        }
+
+        return $graph;
+    }
+
+    /**
+     * Reverse dependencies: extensions that declare $id in their `require`.
+     *
+     * @return list<Extension>
+     */
+    public function dependents(string $id): array
+    {
+        return $this->query()->requiring($id)->get();
     }
 
     /** Fluent DSL: register a runtime manifest-processing stage (see {@see ManifestPipeline}). */
