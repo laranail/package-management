@@ -73,7 +73,8 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 ## Management surface
 - ✅ `Extensions` facade + helpers (`extension()`, `is_extension_active()`, `extension_path()`).
 - ✅ Opt-in web **management UI** (`config ui.enabled`): a Blade page that lists extensions and drives
-  the lifecycle — enable / disable / install / remove — at a configurable prefix + middleware.
+  the full lifecycle — enable / disable / install / update / remove **and install-from-VCS** (CLI↔UI
+  parity) — at a configurable prefix + middleware.
 - 🔶 Query API: list by role, enabled/disabled, dependency graph.
 - ✅ **VCS installer** — install from GitHub / GitLab / Bitbucket (pluggable `SourceDriver`s) with a
   rollback stack (no orphaned files/tables): `laranail::package-management.install-from <url>`. See

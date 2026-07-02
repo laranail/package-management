@@ -41,7 +41,27 @@ class UiTest extends TestCase
         $this->get('/ext')
             ->assertOk()
             ->assertSee('alpha')
-            ->assertSee('acme/beta');
+            ->assertSee('acme/beta')
+            ->assertSee('Install from a repository'); // the VCS install form is rendered
+    }
+
+    public function test_update_via_the_ui(): void
+    {
+        $this->withoutMiddleware(VerifyCsrfToken::class);
+
+        $this->post('/ext/update', ['id' => 'alpha'])
+            ->assertRedirect()
+            ->assertSessionHas('status', fn (string $s): bool => str_contains($s, 'Updated [alpha]'));
+    }
+
+    public function test_install_from_a_bad_url_flashes_the_error(): void
+    {
+        $this->withoutMiddleware(VerifyCsrfToken::class);
+
+        // an unparseable repo flashes the message rather than fataling
+        $this->post('/ext/install-from', ['url' => 'not-a-repo'])
+            ->assertRedirect()
+            ->assertSessionHas('status', fn (string $s): bool => str_contains($s, 'Cannot parse a repository'));
     }
 
     public function test_enable_and_disable_via_the_ui(): void

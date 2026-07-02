@@ -57,6 +57,11 @@
                                 <input type="hidden" name="id" value="{{ $extension->id }}">
                                 <button type="submit">Install</button>
                             </form>
+                            <form method="POST" action="{{ route('laranail.extensions.update') }}">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $extension->id }}">
+                                <button type="submit">Update</button>
+                            </form>
                             <form method="POST" action="{{ route('laranail.extensions.remove') }}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $extension->id }}">
@@ -68,5 +73,20 @@
             </tbody>
         </table>
     @endif
+
+    <h1 style="margin-top: 2rem;">Install from a repository</h1>
+    <form method="POST" action="{{ route('laranail.extensions.install-from') }}" style="display: block; margin-top: .5rem;">
+        @csrf
+        <input type="text" name="url" placeholder="owner/repo or a full GitHub/GitLab/Bitbucket URL" size="48" required>
+        <input type="text" name="ref" placeholder="ref (branch/tag/commit)" size="18">
+        <select name="as">
+            <option value="">auto-detect role</option>
+            <option value="package">package</option>
+            <option value="module">module</option>
+            <option value="plugin">plugin</option>
+        </select>
+        <label><input type="checkbox" name="force" value="1"> force</label>
+        <button type="submit">Install from VCS</button>
+    </form>
 </body>
 </html>

@@ -193,7 +193,9 @@ final class ManagementServiceProvider extends PackageServiceProvider
                 Route::post('/enable', [ExtensionController::class, 'enable'])->name('laranail.extensions.enable');
                 Route::post('/disable', [ExtensionController::class, 'disable'])->name('laranail.extensions.disable');
                 Route::post('/install', [ExtensionController::class, 'install'])->name('laranail.extensions.install');
+                Route::post('/update', [ExtensionController::class, 'update'])->name('laranail.extensions.update');
                 Route::post('/remove', [ExtensionController::class, 'remove'])->name('laranail.extensions.remove');
+                Route::post('/install-from', [ExtensionController::class, 'installFrom'])->name('laranail.extensions.install-from');
             });
     }
 }
