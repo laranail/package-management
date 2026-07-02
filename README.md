@@ -19,6 +19,13 @@ One generated repo can be consumed three ways by the manifests it carries:
 | module | `module.json` | this loader's module runtime (activation-gated) |
 | plugin | `plugin.json` | this loader's plugin runtime / host ecosystem |
 
+### Domain model
+
+The first-class noun is the **extension** — the role-neutral umbrella over the three roles above
+(`Extension->role` is `package` | `module` | `plugin`). "package-management" is the *activity* (this
+package manages extensions), not a domain type; "package" is reserved for the role. Hence `Extension*`
+everywhere. See [ADR 0001](docs/adr/0001-extension-as-the-abstraction.md) for the full rationale.
+
 ## Install
 
 ```bash

@@ -11,6 +11,10 @@ ecosystem. It is the counterpart to `laranail/package-scaffolder`:
 
 The two packages share one contract: the **manifest schemas** ([manifests.md](manifests.md)).
 
+The first-class domain type is the **extension** — the role-neutral umbrella over package/module/plugin;
+see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `Extension*` and not
+`Package*`.
+
 ## Design goals
 
 1. **Drop-in.** `composer require laranail/package-management`, drop extensions under `platform/`, done.
