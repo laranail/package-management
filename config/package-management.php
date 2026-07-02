@@ -51,6 +51,23 @@ return [
 
         // file store
         'file' => storage_path('app/laranail/extensions_statuses.json'),
+
+        // wrap the database state repository in a caching decorator (reads cached, writes flush)
+        'cache' => env('PACKAGE_MANAGEMENT_STATE_CACHE', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Manifest pipeline
+    |--------------------------------------------------------------------------
+    |
+    | Ordered stages each discovered extension passes through (normalize / validate
+    | / enrich). Class-strings only here (cache-safe); add runtime stages/closures
+    | via Extensions::pipe() or container-tag `laranail.manifest.stages`.
+    |
+    */
+    'pipeline' => [
+        'stages' => [],
     ],
 
     /*

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management;
 
+use BadMethodCallException;
+use Closure;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
@@ -14,11 +17,16 @@ use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivating;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivating;
 use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
 use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoving;
 use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionUpdating;
+use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
 /**
@@ -26,18 +34,23 @@ use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
  * order and drives the activation lifecycle (dependency guards, per-extension hooks
  * and events). The public runtime API behind the `Extensions` facade + helpers.
  */
-final readonly class ExtensionManager
+// non-final so the `Extensions` facade is spyable/mockable in consumer tests (the spy seam)
+class ExtensionManager
 {
+    use Macroable {
+        __call as macroCall;
+    }
+
     /** The running loader ("core") version, checked against each extension's `minimum_core_version`. */
     public const string VERSION = '1.0.0';
 
     public function __construct(
-        private ExtensionRepository $repository,
-        private DependencyResolver $resolver,
-        private LoaderAdapter $adapter,
-        private ActivationStore $store,
-        private Dispatcher $events,
-        private Container $container,
+        private readonly ExtensionRepository $repository,
+        private readonly DependencyResolver $resolver,
+        private readonly LoaderAdapter $adapter,
+        private readonly ActivationStore $store,
+        private readonly Dispatcher $events,
+        private readonly Container $container,
     ) {}
 
     /**
@@ -96,6 +109,24 @@ final readonly class ExtensionManager
         return $this->repository->find($id);
     }
 
+    /** Fluent DSL: register a runtime manifest-processing stage (see {@see ManifestPipeline}). */
+    public function pipe(string|Closure $stage): self
+    {
+        $this->container->make(ManifestPipeline::class)->pipe($stage);
+
+        return $this;
+    }
+
+    /** @param  array<int, mixed>  $parameters */
+    public function __call(string $method, array $parameters): mixed
+    {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
+        throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $method));
+    }
+
     public function enable(string $id): void
     {
         $extension = $this->requireExtension($id);
@@ -112,6 +143,8 @@ final readonly class ExtensionManager
                 throw new RuntimeException("Extension [{$id}] requires [{$dependency}], which is not active.");
             }
         }
+
+        $this->events->dispatch(new ExtensionActivating($extension));
 
         $this->store->activate($id);
         $this->repository->forget();
@@ -131,6 +164,10 @@ final readonly class ExtensionManager
             if (in_array($id, $active->require, true)) {
                 throw new RuntimeException("Cannot disable [{$id}]: [{$active->id}] requires it.");
             }
+        }
+
+        if ($extension instanceof Extension) {
+            $this->events->dispatch(new ExtensionDeactivating($extension));
         }
 
         $this->store->deactivate($id);
@@ -153,6 +190,8 @@ final readonly class ExtensionManager
     public function install(string $id): void
     {
         $extension = $this->requireExtension($id);
+
+        $this->events->dispatch(new ExtensionInstalling($extension));
 
         $this->enable($id);
 
@@ -209,6 +248,8 @@ final readonly class ExtensionManager
     public function remove(string $id): void
     {
         $extension = $this->requireExtension($id);
+
+        $this->events->dispatch(new ExtensionRemoving($extension));
 
         $this->disable($id);
 

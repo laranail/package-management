@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Package\Management;
 use Illuminate\Filesystem\Filesystem;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
 
 /**
  * Discovers extensions by scanning each role's container directory and reading its
@@ -31,6 +32,7 @@ final class ExtensionRepository
         private readonly array $paths,
         private readonly bool $cacheEnabled = false,
         private readonly string $cachePath = '',
+        private readonly ?ManifestPipeline $pipeline = null,
     ) {}
 
     /** @return list<Extension> */
@@ -143,7 +145,7 @@ final class ExtensionRepository
                 $extension = $this->reader->read($extensionDir, $role);
 
                 if ($extension instanceof Extension) {
-                    $found[] = $extension;
+                    $found[] = $this->pipeline?->process($extension) ?? $extension;
                 }
             }
         }

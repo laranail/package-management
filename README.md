@@ -80,6 +80,7 @@ The same pages live under [`docs/`](docs/):
 - [Lifecycle](docs/lifecycle.md) — activation states, transitions, hooks, dependency ordering
 - [Extending](docs/extending.md) — framework adapters (Laravel / Lumen / Symfony)
 - [Installer](docs/installer.md) — install extensions from GitHub / GitLab / Bitbucket
+- [Extensibility](docs/extensibility.md) — macros, manifest pipeline, caching decorator, events, spy seam
 - [Features](docs/features.md) — the full capability set + phasing
 - [Release](docs/release.md) — how releases are cut
 

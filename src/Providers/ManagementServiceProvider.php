@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Providers;
 
+use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Override;
 use Simtabi\Laranail\Package\Management\Actions\ActivateExtension;
@@ -24,13 +26,20 @@ use Simtabi\Laranail\Package\Management\Commands\UpdateExtensionCommand;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\ExtensionStateManager;
 use Simtabi\Laranail\Package\Management\Http\Controllers\ExtensionController;
 use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
 use Simtabi\Laranail\Package\Management\Installer\SourceDriverManager;
+use Simtabi\Laranail\Package\Management\Listeners\FlushExtensionStateCache;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
+use Simtabi\Laranail\Package\Management\Repositories\CachingExtensionStateRepository;
 use Simtabi\Laranail\Package\Management\Repositories\EloquentExtensionStateRepository;
 use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
 use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
@@ -107,6 +116,8 @@ final class ManagementServiceProvider extends PackageServiceProvider
 
         $this->app->singleton(LoaderAdapter::class, static fn (Application $app): LoaderAdapter => new LaravelLoaderAdapter($app));
 
+        $this->app->singleton(ManifestPipeline::class);
+
         $this->app->singleton(ExtensionRepository::class, static function (Application $app): ExtensionRepository {
             $paths = (array) config('laranail.package-management.paths', []);
             $cache = (array) config('laranail.package-management.cache', []);
@@ -125,6 +136,7 @@ final class ManagementServiceProvider extends PackageServiceProvider
                 $cachePath === '' || str_starts_with($cachePath, DIRECTORY_SEPARATOR)
                     ? $cachePath
                     : $app->basePath($cachePath),
+                $app->make(ManifestPipeline::class),
             );
         });
 
@@ -145,8 +157,26 @@ final class ManagementServiceProvider extends PackageServiceProvider
     #[Override]
     public function packageBooted(): void
     {
+        // Decorate the state repository with the caching layer BEFORE anything resolves it
+        // (config is available here — after any host getEnvironmentSetUp override).
+        if ((bool) config('laranail.package-management.activation.cache')) {
+            $this->app->extend(
+                ExtensionStateRepositoryInterface::class,
+                static fn (ExtensionStateRepositoryInterface $repo, Application $app): ExtensionStateRepositoryInterface => new CachingExtensionStateRepository($repo, $app->make(CacheFactory::class)->store()),
+            );
+        }
+
         // Register every active module/plugin (dependency order) into the host.
         $this->app->make(ExtensionManager::class)->boot();
+
+        if ((bool) config('laranail.package-management.activation.cache')) {
+            Event::listen([
+                ExtensionActivated::class,
+                ExtensionDeactivated::class,
+                ExtensionInstalled::class,
+                ExtensionRemoved::class,
+            ], FlushExtensionStateCache::class);
+        }
 
         if ((bool) config('laranail.package-management.ui.enabled', false)) {
             $this->registerUiRoutes();
