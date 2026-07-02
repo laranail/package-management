@@ -109,8 +109,9 @@ as a Nova/Filament plugin. Panels are Laravel-only.
 
 ## Validation
 
-`ManifestReader` validates required fields + types and skips (with a warning) any manifest that fails
-— a malformed extension never fatals the host boot. `provider`/`providers` classes are only registered
-when `class_exists()` (a stale manifest or an un-dumped autoload is skipped, not fatal).
+`ManifestReader` checks the required fields (module/package need `name`; plugin needs `name` +
+`provider`) and **silently skips** (returns `null` for) any manifest that fails — a malformed extension
+never fatals the host boot, and there is no logging/throwing. `provider`/`providers` classes are only
+registered when `class_exists()` (a stale manifest or an un-dumped autoload is skipped, not fatal).
 
 [← Docs index](../README.md#documentation)

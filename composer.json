@@ -71,17 +71,22 @@
         }
     },
     "scripts": {
+        "setup": "@composer install",
         "test": "phpunit --no-coverage",
+        "test-coverage": "phpunit --coverage-html build/coverage",
+        "test-dirty": "phpunit --no-coverage --order-by=defects --stop-on-defect",
         "lint": [
             "@pint",
             "@phpstan",
             "@rector"
         ],
         "audit": "@composer audit",
+        "composer-audit": "@composer audit --no-interaction",
         "pint": "vendor/bin/pint --test",
         "pint-fix": "vendor/bin/pint",
         "phpstan": "vendor/bin/phpstan analyse --no-progress",
-        "rector": "vendor/bin/rector process --dry-run"
+        "rector": "vendor/bin/rector process --dry-run",
+        "rector-fix": "vendor/bin/rector process"
     },
     "extra": {
         "laravel": {

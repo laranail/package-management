@@ -1,6 +1,9 @@
-# Package Management
+# laranail/package-management
 
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Latest version on Packagist](https://img.shields.io/packagist/v/laranail/package-management.svg)](https://packagist.org/packages/laranail/package-management)
+[![Tests](https://github.com/laranail/package-management/actions/workflows/tests.yml/badge.svg)](https://github.com/laranail/package-management/actions/workflows/tests.yml)
+[![Static analysis](https://github.com/laranail/package-management/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/laranail/package-management/actions/workflows/static-analysis.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Runtime **loader / manager** for the laranail scaffolding ecosystem. Drop it into any project and it
 discovers, registers, activates, and wires generated **packages · modules · plugins** into the host
@@ -26,17 +29,42 @@ The first-class noun is the **extension** — the role-neutral umbrella over the
 package manages extensions), not a domain type; "package" is reserved for the role. Hence `Extension*`
 everywhere. See [ADR 0001](docs/adr/0001-extension-as-the-abstraction.md) for the full rationale.
 
-## Install
+## Requirements
+
+- PHP `^8.4.1 || ^8.5`
+- Laravel `^13` (the shipping adapter; Lumen and Symfony via a `LoaderAdapter` — see
+  [extending.md](docs/extending.md))
+
+## Installation
 
 ```bash
 composer require laranail/package-management
 php artisan vendor:publish --tag=laranail::package-management-config
 ```
 
-Built on [`laranail/package-tools`](https://opensource.simtabi.com/package-tools/) — config resolves under
-the vendor-namespaced key `config('laranail.package-management.*')`.
+The `ManagementServiceProvider` is auto-discovered. Built on
+[`laranail/package-tools`](https://opensource.simtabi.com/package-tools/) — config resolves under the
+vendor-namespaced key `config('laranail.package-management.*')`. For the database activation store, also
+run `php artisan migrate`.
 
-Drop generated extensions under `platform/{packages,modules,plugins}/` and the loader discovers them.
+## Quick start
+
+Drop generated extensions (from `laranail/package-scaffolder`) under `platform/{packages,modules,plugins}/`,
+then discover + activate them:
+
+```bash
+php artisan laranail::package-management.discover        # rescan + rebuild the manifest cache
+php artisan laranail::package-management.list            # id · role · version · state
+php artisan laranail::package-management.install acme/blog   # activate + migrate + publish assets + seed settings
+```
+
+```php
+use Simtabi\Laranail\Package\Management\Facades\Extensions;
+
+Extensions::all();                       // list<Extension>
+Extensions::enable('acme/blog');         // dependency-guarded activation
+is_extension_active('acme/blog');        // helper
+```
 
 ## Documentation
 

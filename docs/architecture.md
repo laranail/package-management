@@ -35,9 +35,9 @@ see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `
   ManagementServiceProvider::boot()
         │
         ▼
-  ExtensionRepository::discover(platform/{packages,modules,plugins}/*)
+  ExtensionRepository::all()  — scans platform/{packages,modules,plugins}/*
         │   read composer.json / module.json / plugin.json  →  Extension[]  (value objects)
-        │   (compiled cache: bootstrap/cache/laranail-extensions.php, validity-checked)
+        │   (compiled cache: bootstrap/cache/laranail-extensions.php; rebuild via the .cache / .discover commands)
         ▼
   DependencyResolver::sort($extensions)           ActivationStore::active()
         │   topological order over `require`            │   file (default) | database

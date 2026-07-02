@@ -34,7 +34,8 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ `activate` / `deactivate` with dependency + reverse-dependency guards.
 - ✅ Per-extension lifecycle hook (`LifecycleHook::activated/deactivated`), declared via the manifest
   `hook` FQCN and resolved from the container.
-- ✅ Events: `ExtensionActivated` / `ExtensionDeactivated` / `ExtensionInstalled` / `ExtensionUpdated`.
+- ✅ Events: `ExtensionActivated` / `ExtensionDeactivated` / `ExtensionInstalled` / `ExtensionUpdated` /
+  `ExtensionRemoved`.
 - ✅ `install` (activate + run the extension's own `database/migrations` + publish its `public/` assets
   to `public/vendor/{slug}` + seed manifest **default settings** into the state, defaults filling gaps)
   / `update` (run pending migrations), via optional `RunsMigrations` / `PublishesAssets` /
@@ -52,8 +53,8 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ Service-provider registration (routes/config/commands come via the provider).
 - 🔶 Convention wiring: web/api/admin routes, migrations, translations, config publish.
 - 🔶 Permissions/policies registration; admin-menu contribution.
-- ✅ Artisan CLI: `laranail::package-management.{list,enable,disable,discover}` (+ `cache`, `install`,
-  `remove` as those land) with `module:*`/`plugin:*` aliases.
+- ✅ Artisan CLI: `laranail::package-management.{list,enable,disable,discover,cache,install,remove}` —
+  each with a `package-management:<verb>` plain-colon alias.
 
 ## Frontend glue
 - 🔶 View + Blade-component namespace registration per extension.

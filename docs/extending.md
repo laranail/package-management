@@ -12,13 +12,15 @@ interface LoaderAdapter
     // Register an extension's PSR-4 namespace at runtime (Composer ClassLoader).
     public function registerAutoload(Extension $extension): void;
 
-    // Register the extension's provider/bootstrap with the host framework.
-    public function registerProvider(Extension $extension): void;
-
-    // Publish/boot backend + frontend resources (routes, migrations, views, assets).
-    public function boot(Extension $extension): void;
+    // Register the extension's service provider(s) with the host framework.
+    public function registerProviders(Extension $extension): void;
 }
 ```
+
+Migration running and asset publishing are **not** on this base interface — they are optional
+capabilities an adapter may also implement: `Contracts\RunsMigrations`, `Contracts\PublishesAssets`,
+`Contracts\RecordsInstall`, `Contracts\SeedsSettings`. The manager checks `instanceof` and skips the step
+when unsupported, so an adapter degrades gracefully.
 
 - **`LaravelLoaderAdapter`** (ships): runtime PSR-4 (shared trait) + `$app->register($provider)`, so
   Laravel handles deferred providers, boot ordering and publishing.

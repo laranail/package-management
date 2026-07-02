@@ -17,18 +17,19 @@ The compiled cache (`config('laranail.package-management.cache')`) stores the *d
 state is applied fresh from the store each request, so enable/disable never needs a rebuild — only
 adding or removing an extension directory does.
 
-`module:*` / `plugin:*` aliases are provided for familiarity.
+Each command also has a plain-colon alias (`package-management:<verb>`) for environments that don't
+accept the `::` separator.
 
 ## Programmatic API
 
 ```php
 use Simtabi\Laranail\Package\Management\Facades\Extensions;
 
-Extensions::all();                 // Collection<Extension>
-Extensions::modules();             // by role
-Extensions::plugins();
+Extensions::all();                 // list<Extension>
+Extensions::modules();             // list<Extension> (role = module)
+Extensions::plugins();             // list<Extension> (role = plugin)
 Extensions::find('vendor/blog');   // ?Extension
-Extensions::active();              // active set
+Extensions::active();              // list<Extension> (active)
 Extensions::enable('vendor/blog');
 Extensions::disable('vendor/blog');
 ```
