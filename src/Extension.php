@@ -13,6 +13,7 @@ final readonly class Extension
     /**
      * @param  list<string>  $providers  service-provider FQCNs
      * @param  list<string>  $require  extension ids that must load first
+     * @param  array<string, mixed>  $defaultSettings  manifest default settings, seeded on install
      */
     public function __construct(
         public string $id,
@@ -25,6 +26,7 @@ final readonly class Extension
         public string $path,
         public bool $enabled = false,
         public ?string $hook = null, // optional LifecycleHook FQCN
+        public array $defaultSettings = [],
     ) {}
 
     /** PSR-4 source root registered on the runtime autoloader. */
@@ -49,7 +51,7 @@ final readonly class Extension
     {
         return new self(
             $this->id, $this->name, $this->namespace, $this->providers, $this->version,
-            $this->require, $this->role, $this->path, $enabled, $this->hook,
+            $this->require, $this->role, $this->path, $enabled, $this->hook, $this->defaultSettings,
         );
     }
 
@@ -67,6 +69,7 @@ final readonly class Extension
             'path' => $this->path,
             'enabled' => $this->enabled,
             'hook' => $this->hook,
+            'defaultSettings' => $this->defaultSettings,
         ];
     }
 
@@ -89,6 +92,7 @@ final readonly class Extension
             role: (string) ($data['role'] ?? 'package'),
             path: (string) ($data['path'] ?? ''),
             hook: isset($data['hook']) ? (string) $data['hook'] : null,
+            defaultSettings: (array) ($data['defaultSettings'] ?? []),
         );
     }
 }

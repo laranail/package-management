@@ -33,4 +33,11 @@ interface ExtensionStateRepositoryInterface
 
     /** @param  array<string, mixed>  $settings */
     public function putSettings(string $name, array $settings): void;
+
+    /**
+     * Seed default settings — defaults only fill gaps, existing values win.
+     *
+     * @param  array<string, mixed>  $defaults
+     */
+    public function seedSettings(string $name, array $defaults): void;
 }

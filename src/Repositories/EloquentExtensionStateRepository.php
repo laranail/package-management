@@ -98,6 +98,15 @@ final class EloquentExtensionStateRepository implements ExtensionStateRepository
         $state->save();
     }
 
+    /** @param  array<string, mixed>  $defaults */
+    public function seedSettings(string $name, array $defaults): void
+    {
+        $state = ExtensionState::query()->firstOrNew(['name' => $name]);
+        // defaults fill gaps; existing values win (a reinstall never clobbers customisations)
+        $state->settings = array_merge($defaults, $state->settings ?? []);
+        $state->save();
+    }
+
     /** Whether the state table exists yet (cached once true). */
     private function tableReady(): bool
     {

@@ -6,14 +6,16 @@ namespace Simtabi\Laranail\Package\Management\Stores;
 
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
+use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
 use Simtabi\Laranail\Package\Management\ExtensionStateManager;
 
 /**
  * Database activation store: bridges the loader's ActivationStore contract to the
  * Eloquent-backed state subsystem (Manager → Actions/Service → Repository → Model).
- * Also records installed versions via {@see RecordsInstall}.
+ * Also records installed versions ({@see RecordsInstall}) + seeds manifest default
+ * settings ({@see SeedsSettings}).
  */
-final readonly class EloquentActivationStore implements ActivationStore, RecordsInstall
+final readonly class EloquentActivationStore implements ActivationStore, RecordsInstall, SeedsSettings
 {
     public function __construct(private ExtensionStateManager $manager) {}
 
@@ -46,5 +48,11 @@ final readonly class EloquentActivationStore implements ActivationStore, Records
     public function recordInstall(string $id, ?string $version): void
     {
         $this->manager->recordInstall($id, $version);
+    }
+
+    /** @param  array<string, mixed>  $defaults */
+    public function seedSettings(string $id, array $defaults): void
+    {
+        $this->manager->seedSettings($id, $defaults);
     }
 }

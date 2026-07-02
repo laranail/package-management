@@ -75,7 +75,8 @@ dependencies + a minimum-runtime guard.
     "url": "https://opensource.simtabi.com",
     "require": [],
     "minimum_core_version": "1.0.0",
-    "type": "plugin"
+    "type": "plugin",
+    "settings": { "per_page": 15 }
 }
 ```
 
@@ -90,6 +91,7 @@ dependencies + a minimum-runtime guard.
 | `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version |
 | `type` | string | — | `plugin` \| `nova` \| `filament` (panel plugins) |
 | `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
+| `settings` | object | — | default settings, seeded into the extension's state on install (defaults fill gaps; user values win). DB store only. |
 | `author`, `url`, `description` | | — | metadata |
 
 ## Which manifests each flavor emits

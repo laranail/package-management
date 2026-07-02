@@ -56,4 +56,10 @@ final readonly class ExtensionStateService
     {
         $this->states->putSettings($name, $settings);
     }
+
+    /** @param  array<string, mixed>  $defaults */
+    public function seedSettings(string $name, array $defaults): void
+    {
+        $this->states->seedSettings($name, $defaults);
+    }
 }

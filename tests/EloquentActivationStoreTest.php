@@ -9,6 +9,7 @@ use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
 use Simtabi\Laranail\Package\Management\Models\ExtensionState;
 use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
 
@@ -80,5 +81,30 @@ class EloquentActivationStoreTest extends TestCase
         $this->assertSame('1.0.0', $row->version); // alpha fixture version
         $this->assertNotNull($row->installed_at);
         $this->assertTrue($row->is_active);
+    }
+
+    public function test_install_seeds_manifest_default_settings(): void
+    {
+        // acme/shop's plugin.json declares settings { per_page: 20, theme: shop }
+        $this->app->make(ExtensionManager::class)->install('acme/shop');
+
+        $this->assertSame(
+            ['per_page' => 20, 'theme' => 'shop'],
+            ExtensionStateFacade::settings('acme/shop'),
+        );
+    }
+
+    public function test_reinstall_does_not_clobber_user_settings(): void
+    {
+        $manager = $this->app->make(ExtensionManager::class);
+
+        $manager->install('acme/shop');
+        ExtensionStateFacade::putSettings('acme/shop', ['per_page' => 99]); // user override
+
+        $manager->install('acme/shop'); // reinstall
+
+        $settings = ExtensionStateFacade::settings('acme/shop');
+        $this->assertSame(99, $settings['per_page']);  // user value preserved
+        $this->assertSame('shop', $settings['theme']); // default gap-filled
     }
 }

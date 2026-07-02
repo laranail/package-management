@@ -36,8 +36,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
   `hook` FQCN and resolved from the container.
 - ✅ Events: `ExtensionActivated` / `ExtensionDeactivated` / `ExtensionInstalled` / `ExtensionUpdated`.
 - ✅ `install` (activate + run the extension's own `database/migrations` + publish its `public/` assets
-  to `public/vendor/{slug}`) / `update` (run pending migrations), via the optional `RunsMigrations` +
-  `PublishesAssets` adapter capabilities (Laravel ships both; other adapters degrade gracefully).
+  to `public/vendor/{slug}` + seed manifest **default settings** into the state, defaults filling gaps)
+  / `update` (run pending migrations), via optional `RunsMigrations` / `PublishesAssets` /
+  `RecordsInstall` / `SeedsSettings` capabilities (Laravel ships all; other adapters degrade gracefully).
 - ✅ `remove` (uninstall): deactivate + unpublish assets + forget the management-state row, while
   **preserving** the extension's own database tables (removing a plugin must not destroy user data);
   fires `ExtensionRemoved`.

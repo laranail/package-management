@@ -58,6 +58,7 @@ final readonly class ManifestReader
             role: 'module',
             path: $dir,
             hook: isset($m['hook']) ? (string) $m['hook'] : null,
+            defaultSettings: (array) ($m['settings'] ?? []),
         );
     }
 
@@ -80,6 +81,7 @@ final readonly class ManifestReader
             role: 'plugin',
             path: $dir,
             hook: isset($p['hook']) ? (string) $p['hook'] : null,
+            defaultSettings: (array) ($p['settings'] ?? []),
         );
     }
 

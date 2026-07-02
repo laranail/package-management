@@ -9,5 +9,9 @@
     "url": "https://opensource.simtabi.com",
     "require": [],
     "minimum_core_version": "1.0.0",
-    "type": "plugin"
+    "type": "plugin",
+    "settings": {
+        "per_page": 20,
+        "theme": "shop"
+    }
 }

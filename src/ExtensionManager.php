@@ -12,6 +12,7 @@ use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
 use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
+use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
@@ -136,6 +137,10 @@ final readonly class ExtensionManager
 
         if ($this->store instanceof RecordsInstall) {
             $this->store->recordInstall($id, $extension->version);
+        }
+
+        if ($this->store instanceof SeedsSettings && $extension->defaultSettings !== []) {
+            $this->store->seedSettings($id, $extension->defaultSettings);
         }
 
         if ($this->adapter instanceof RunsMigrations) {
