@@ -79,6 +79,7 @@ The same pages live under [`docs/`](docs/):
 - [Manifests](docs/manifests.md) — the authoritative `composer.json` / `module.json` / `plugin.json` schemas (the scaffolder contract)
 - [Lifecycle](docs/lifecycle.md) — activation states, transitions, hooks, dependency ordering
 - [Extending](docs/extending.md) — framework adapters (Laravel / Lumen / Symfony)
+- [Installer](docs/installer.md) — install extensions from GitHub / GitLab / Bitbucket
 - [Features](docs/features.md) — the full capability set + phasing
 - [Release](docs/release.md) — how releases are cut
 

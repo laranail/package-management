@@ -56,6 +56,25 @@ final class LaravelLoaderAdapter implements LoaderAdapter, PublishesAssets, Runs
         $migrator->run([$path]);
     }
 
+    public function rollbackMigrations(Extension $extension): void
+    {
+        $path = rtrim($extension->path, DIRECTORY_SEPARATOR) . '/database/migrations';
+
+        if (! is_dir($path)) {
+            return;
+        }
+
+        $migrator = $this->app->make('migrator');
+
+        if (! $migrator instanceof Migrator || ! $migrator->repositoryExists()) {
+            return;
+        }
+
+        // Rolls back the last batch resolved from this path. During an install rollback the
+        // extension's migrations ARE the last batch, so this cleanly undoes them.
+        $migrator->rollback([$path]);
+    }
+
     public function publishAssets(Extension $extension): void
     {
         $source = rtrim($extension->path, DIRECTORY_SEPARATOR) . '/public';

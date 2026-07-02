@@ -14,4 +14,7 @@ use Simtabi\Laranail\Package\Management\Extension;
 interface RunsMigrations
 {
     public function runMigrations(Extension $extension): void;
+
+    /** Roll back the extension's own migrations (used by the installer rollback + opt-in on remove). */
+    public function rollbackMigrations(Extension $extension): void;
 }

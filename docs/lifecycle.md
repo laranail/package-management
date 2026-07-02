@@ -60,9 +60,9 @@ final class ShopHook implements LifecycleHook
 ```
 
 `Contracts\InstallHook` (`installed` / `removed`) complements `Contracts\LifecycleHook` (`activated` /
-`deactivated`); implement either or both. `activated`/`deactivated`/`installed`/`removed` ship today;
-`updating`/`updated` are planned. A missing hook class — or one missing a given method — is simply
-skipped (never fatal).
+`deactivated`); implement either or both. All of `activated`/`deactivated`/`installed`/`removed`/
+`updating`/`updated` are duck-typed and invoked at their transition. A missing hook class — or one
+missing a given method — is simply skipped (never fatal).
 
 ## Events
 

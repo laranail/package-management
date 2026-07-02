@@ -17,8 +17,10 @@ use Simtabi\Laranail\Package\Management\Commands\DisableExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\DiscoverExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Commands\EnableExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\InstallExtensionCommand;
+use Simtabi\Laranail\Package\Management\Commands\InstallFromVcsCommand;
 use Simtabi\Laranail\Package\Management\Commands\ListExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Commands\RemoveExtensionCommand;
+use Simtabi\Laranail\Package\Management\Commands\UpdateExtensionCommand;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
@@ -26,6 +28,8 @@ use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\ExtensionStateManager;
 use Simtabi\Laranail\Package\Management\Http\Controllers\ExtensionController;
+use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
+use Simtabi\Laranail\Package\Management\Installer\SourceDriverManager;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
 use Simtabi\Laranail\Package\Management\Repositories\EloquentExtensionStateRepository;
 use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
@@ -61,6 +65,8 @@ final class ManagementServiceProvider extends PackageServiceProvider
                 CacheExtensionsCommand::class,
                 InstallExtensionCommand::class,
                 RemoveExtensionCommand::class,
+                UpdateExtensionCommand::class,
+                InstallFromVcsCommand::class,
             ])
             ->hasAboutSection('Package Management', function (): array {
                 $manager = $this->app->make(ExtensionManager::class);
@@ -130,6 +136,10 @@ final class ManagementServiceProvider extends PackageServiceProvider
             $app->make(Dispatcher::class),
             $app,
         ));
+
+        // VCS installer (source drivers + orchestration)
+        $this->app->singleton(SourceDriverManager::class);
+        $this->app->singleton(ExtensionInstaller::class);
     }
 
     #[Override]

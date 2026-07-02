@@ -68,4 +68,26 @@ return [
         'middleware' => ['web'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | VCS installer
+    |--------------------------------------------------------------------------
+    |
+    | Install extensions straight from a VCS provider. Tokens are read here (never
+    | logged) for private repos. See docs/installer.md.
+    |
+    */
+    'installer' => [
+        'default_provider' => env('PACKAGE_MANAGEMENT_VCS', 'github'),
+        'tokens' => [
+            'github' => env('GITHUB_TOKEN'),
+            'gitlab' => env('GITLAB_TOKEN'),
+            'bitbucket' => env('BITBUCKET_TOKEN'),
+        ],
+        'timeout' => 60,          // seconds
+        'max_bytes' => 104857600, // 100 MB archive cap
+        // remove() rolls back the extension's migrations only when this is true (data-safety default off)
+        'rollback_migrations_on_remove' => env('PACKAGE_MANAGEMENT_ROLLBACK_ON_REMOVE', false),
+    ],
+
 ];

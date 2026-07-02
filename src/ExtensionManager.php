@@ -18,6 +18,7 @@ use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
 use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionUpdating;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
 /**
@@ -183,8 +184,17 @@ final readonly class ExtensionManager
     {
         $extension = $this->requireExtension($id);
 
+        $this->events->dispatch(new ExtensionUpdating($extension));
+        if (($hook = $this->resolveHook($extension)) !== null && method_exists($hook, 'updating')) {
+            $hook->updating($extension);
+        }
+
         if ($this->adapter instanceof RunsMigrations) {
             $this->adapter->runMigrations($extension);
+        }
+
+        if (($hook = $this->resolveHook($extension)) !== null && method_exists($hook, 'updated')) {
+            $hook->updated($extension);
         }
 
         $this->events->dispatch(new ExtensionUpdated($extension));
@@ -201,6 +211,12 @@ final readonly class ExtensionManager
         $extension = $this->requireExtension($id);
 
         $this->disable($id);
+
+        // opt-in (config: data-safety default off) — roll back the extension's own migrations
+        if ($this->adapter instanceof RunsMigrations
+            && (bool) config('laranail.package-management.installer.rollback_migrations_on_remove', false)) {
+            $this->adapter->rollbackMigrations($extension);
+        }
 
         if ($this->adapter instanceof PublishesAssets) {
             $this->adapter->unpublishAssets($extension);

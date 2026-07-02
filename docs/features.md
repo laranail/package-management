@@ -46,8 +46,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ Per-extension hooks — `activated`/`deactivated`/`installed`/`removed`, **duck-typed** so a
   scaffolder-generated hook needs no dependency on the loader; `Contracts\LifecycleHook` /
   `Contracts\InstallHook` are the optional type-safe path.
-- 🔶 Optional migration rollback on remove (needs per-extension batch tracking) + `updating`/`updated`
-  hooks.
+- ✅ `updating` / `updated` hooks + `ExtensionUpdating` / `ExtensionUpdated` events on `update()`.
+- ✅ Optional migration rollback on remove (`RunsMigrations::rollbackMigrations`; opt-in via
+  `installer.rollback_migrations_on_remove`, default off for data-safety).
 
 ## Backend glue
 - ✅ Service-provider registration (routes/config/commands come via the provider).
@@ -74,7 +75,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ Opt-in web **management UI** (`config ui.enabled`): a Blade page that lists extensions and drives
   the lifecycle — enable / disable / install / remove — at a configurable prefix + middleware.
 - 🔶 Query API: list by role, enabled/disabled, dependency graph.
-- 🧭 Marketplace/installer (download + extract into `platform/plugins/`).
+- ✅ **VCS installer** — install from GitHub / GitLab / Bitbucket (pluggable `SourceDriver`s) with a
+  rollback stack (no orphaned files/tables): `laranail::package-management.install-from <url>`. See
+  [installer.md](installer.md).
 
 ## Non-goals
 - Generation/scaffolding (that's `laranail/package-scaffolder`).

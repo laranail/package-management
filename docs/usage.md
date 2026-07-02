@@ -8,9 +8,13 @@ php artisan laranail::package-management.discover      # rescan the platform pat
 php artisan laranail::package-management.enable Blog   # activate an extension (+ its dependencies)
 php artisan laranail::package-management.disable Blog  # deactivate (guarded by reverse-deps)
 php artisan laranail::package-management.install Blog  # activate + run the extension's own migrations
+php artisan laranail::package-management.update Blog   # run any pending migrations for an installed extension
 php artisan laranail::package-management.remove Blog   # deactivate + unpublish assets + forget state (keeps DB tables)
 php artisan laranail::package-management.cache         # compile the discovered-extensions cache
 php artisan laranail::package-management.cache --clear # delete the compiled cache
+
+# install straight from a VCS repo (GitHub / GitLab / Bitbucket) — see docs/installer.md
+php artisan laranail::package-management.install-from acme/blog --ref=v1.2.0 [--as=module] [--token=…] [--force]
 ```
 
 The compiled cache (`config('laranail.package-management.cache')`) stores the *discovered* set only; activation
