@@ -1,0 +1,10 @@
+{
+    "id": "acme/future",
+    "name": "Future",
+    "namespace": "Acme\\Future\\",
+    "provider": "Acme\\Future\\Providers\\FutureServiceProvider",
+    "version": "1.0.0",
+    "require": [],
+    "minimum_core_version": "9.9.9",
+    "type": "plugin"
+}

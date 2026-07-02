@@ -31,4 +31,14 @@ class SmokeTest extends TestCase
             str_replace(DIRECTORY_SEPARATOR, '/', extension_path('plugin', 'Shop', 'src')),
         );
     }
+
+    public function test_extension_path_honours_configured_paths(): void
+    {
+        // regression (B1): the helper must read the vendor-namespaced config key, not `package-management.*`
+        config(['laranail.package-management.paths.modules' => '/custom/modules']);
+        config(['laranail.package-management.paths.plugins' => '/custom/plugins']);
+
+        $this->assertSame('/custom/modules/Blog', extension_path('module', 'Blog'));
+        $this->assertSame('/custom/plugins/Shop/src', extension_path('plugin', 'Shop', 'src'));
+    }
 }

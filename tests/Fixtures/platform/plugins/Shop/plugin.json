@@ -10,6 +10,7 @@
     "require": [],
     "minimum_core_version": "1.0.0",
     "type": "plugin",
+    "priority": 5,
     "settings": {
         "per_page": 20,
         "theme": "shop"

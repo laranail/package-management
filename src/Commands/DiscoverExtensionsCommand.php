@@ -16,13 +16,13 @@ final class DiscoverExtensionsCommand extends Command
 
     protected $aliases = ['package-management:discover'];
 
-    protected $description = 'Rescan the platform paths and report discovered extensions.';
+    protected $description = 'Rescan the platform paths and rebuild the compiled manifest cache.';
 
     public function handle(ExtensionManager $manager): int
     {
-        $all = $manager->all();
+        $count = $manager->discover();
 
-        $this->components->info(sprintf('Discovered %d extension(s).', count($all)));
+        $this->components->info(sprintf('Discovered %d extension(s); manifest cache rebuilt.', $count));
 
         return self::SUCCESS;
     }

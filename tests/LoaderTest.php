@@ -123,6 +123,10 @@ class LoaderTest extends TestCase
         $this->assertSame('Acme\\Shop\\', $shop->namespace);
         $this->assertSame('Acme\\Shop\\Providers\\ShopServiceProvider', $shop->providers[0]);
         $this->assertSame('1.0.0', $shop->version);
+        // manifest fields read into the VO (G2): priority / type / minimum_core_version
+        $this->assertSame(5, $shop->priority);
+        $this->assertSame('plugin', $shop->type);
+        $this->assertSame('1.0.0', $shop->minimumCoreVersion);
     }
 
     public function test_boot_is_safe_when_provider_classes_are_missing(): void

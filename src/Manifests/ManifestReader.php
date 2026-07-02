@@ -59,6 +59,8 @@ final readonly class ManifestReader
             path: $dir,
             hook: isset($m['hook']) ? (string) $m['hook'] : null,
             defaultSettings: (array) ($m['settings'] ?? []),
+            priority: (int) ($m['priority'] ?? 0),
+            minimumCoreVersion: isset($m['minimum_core_version']) ? (string) $m['minimum_core_version'] : null,
         );
     }
 
@@ -82,6 +84,9 @@ final readonly class ManifestReader
             path: $dir,
             hook: isset($p['hook']) ? (string) $p['hook'] : null,
             defaultSettings: (array) ($p['settings'] ?? []),
+            priority: (int) ($p['priority'] ?? 0),
+            type: (string) ($p['type'] ?? ''),
+            minimumCoreVersion: isset($p['minimum_core_version']) ? (string) $p['minimum_core_version'] : null,
         );
     }
 

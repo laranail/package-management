@@ -27,6 +27,9 @@ final readonly class Extension
         public bool $enabled = false,
         public ?string $hook = null, // optional LifecycleHook FQCN
         public array $defaultSettings = [],
+        public int $priority = 0,             // load-order hint (dependencies still win)
+        public string $type = '',             // plugin | nova | filament (panel plugins)
+        public ?string $minimumCoreVersion = null, // required package-management version
     ) {}
 
     /** PSR-4 source root registered on the runtime autoloader. */
@@ -52,6 +55,7 @@ final readonly class Extension
         return new self(
             $this->id, $this->name, $this->namespace, $this->providers, $this->version,
             $this->require, $this->role, $this->path, $enabled, $this->hook, $this->defaultSettings,
+            $this->priority, $this->type, $this->minimumCoreVersion,
         );
     }
 
@@ -70,6 +74,9 @@ final readonly class Extension
             'enabled' => $this->enabled,
             'hook' => $this->hook,
             'defaultSettings' => $this->defaultSettings,
+            'priority' => $this->priority,
+            'type' => $this->type,
+            'minimumCoreVersion' => $this->minimumCoreVersion,
         ];
     }
 
@@ -93,6 +100,9 @@ final readonly class Extension
             path: (string) ($data['path'] ?? ''),
             hook: isset($data['hook']) ? (string) $data['hook'] : null,
             defaultSettings: (array) ($data['defaultSettings'] ?? []),
+            priority: (int) ($data['priority'] ?? 0),
+            type: (string) ($data['type'] ?? ''),
+            minimumCoreVersion: isset($data['minimumCoreVersion']) ? (string) $data['minimumCoreVersion'] : null,
         );
     }
 }

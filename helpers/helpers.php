@@ -23,7 +23,7 @@ if (! function_exists('extension_path')) {
      */
     function extension_path(string $role, string $name, string $path = ''): string
     {
-        $base = (string) config("package-management.paths.{$role}s", base_path("platform/{$role}s"));
+        $base = (string) config("laranail.package-management.paths.{$role}s", base_path("platform/{$role}s"));
         $full = $base . DIRECTORY_SEPARATOR . $name;
 
         return $path === '' ? $full : $full . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);

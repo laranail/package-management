@@ -27,6 +27,9 @@ use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
  */
 final readonly class ExtensionManager
 {
+    /** The running loader ("core") version, checked against each extension's `minimum_core_version`. */
+    public const string VERSION = '1.0.0';
+
     public function __construct(
         private ExtensionRepository $repository,
         private DependencyResolver $resolver,
@@ -47,6 +50,10 @@ final readonly class ExtensionManager
             static fn (Extension $e): bool => $e->isRuntimeLoaded(),
         ));
 
+        // priority is a load-order hint applied before the topological sort, so it
+        // orders extensions that have no dependency relationship (dependencies still win).
+        usort($runtime, static fn (Extension $a, Extension $b): int => $b->priority <=> $a->priority);
+
         foreach ($this->resolver->sort($runtime) as $extension) {
             $this->adapter->registerAutoload($extension);
             $this->adapter->registerProviders($extension);
@@ -57,6 +64,12 @@ final readonly class ExtensionManager
     public function all(): array
     {
         return $this->repository->all();
+    }
+
+    /** Rescan the platform paths and (re)build the compiled manifest cache; returns the count. */
+    public function discover(): int
+    {
+        return $this->repository->rebuildCache();
     }
 
     /** @return list<Extension> */
@@ -85,6 +98,13 @@ final readonly class ExtensionManager
     public function enable(string $id): void
     {
         $extension = $this->requireExtension($id);
+
+        if ($extension->minimumCoreVersion !== null
+            && version_compare(self::VERSION, $extension->minimumCoreVersion, '<')) {
+            throw new RuntimeException(
+                "Extension [{$id}] requires package-management >= {$extension->minimumCoreVersion} (running " . self::VERSION . ').',
+            );
+        }
 
         foreach ($extension->require as $dependency) {
             if (! $this->store->isActive($dependency)) {
