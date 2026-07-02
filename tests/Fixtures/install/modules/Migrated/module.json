@@ -2,5 +2,6 @@
     "name": "Migrated",
     "alias": "migrated",
     "version": "1.0.0",
-    "providers": []
+    "providers": [],
+    "hook": "Simtabi\\Laranail\\Package\\Management\\Tests\\Fixtures\\PlainRecordingHook"
 }

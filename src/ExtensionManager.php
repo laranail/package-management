@@ -8,8 +8,6 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use RuntimeException;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
-use Simtabi\Laranail\Package\Management\Contracts\InstallHook;
-use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
 use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
@@ -96,7 +94,7 @@ final readonly class ExtensionManager
         $this->store->activate($id);
         $this->repository->forget();
 
-        if (($hook = $this->resolveHook($extension)) instanceof LifecycleHook) {
+        if (($hook = $this->resolveHook($extension)) !== null && method_exists($hook, 'activated')) {
             $hook->activated($extension);
         }
 
@@ -117,7 +115,7 @@ final readonly class ExtensionManager
         $this->repository->forget();
 
         if ($extension instanceof Extension) {
-            if (($hook = $this->resolveHook($extension)) instanceof LifecycleHook) {
+            if (($hook = $this->resolveHook($extension)) !== null && method_exists($hook, 'deactivated')) {
                 $hook->deactivated($extension);
             }
 
@@ -148,7 +146,7 @@ final readonly class ExtensionManager
             $this->adapter->publishAssets($extension);
         }
 
-        if (($hook = $this->resolveHook($extension)) instanceof InstallHook) {
+        if (($hook = $this->resolveHook($extension)) !== null && method_exists($hook, 'installed')) {
             $hook->installed($extension);
         }
 
@@ -186,7 +184,7 @@ final readonly class ExtensionManager
         $this->store->forget($id);
         $this->repository->forget();
 
-        if (($hook = $this->resolveHook($extension)) instanceof InstallHook) {
+        if (($hook = $this->resolveHook($extension)) !== null && method_exists($hook, 'removed')) {
             $hook->removed($extension);
         }
 
@@ -205,9 +203,11 @@ final readonly class ExtensionManager
     }
 
     /**
-     * Resolve an extension's declared hook object (if any) from the container. The
-     * class may implement {@see LifecycleHook} and/or {@see InstallHook}; callers narrow
-     * to the interface for the transition at hand.
+     * Resolve an extension's declared hook object (if any) from the container. The hook
+     * is **duck-typed** — callers invoke whichever of `activated`/`deactivated`/
+     * `installed`/`removed` exist — so a generated extension's hook needs no dependency
+     * on this package. Implementing `Contracts\LifecycleHook` / `Contracts\InstallHook`
+     * is an optional, type-safe way to declare those methods.
      */
     private function resolveHook(Extension $extension): ?object
     {

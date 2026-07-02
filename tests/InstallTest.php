@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\PlainRecordingHook;
 
 class InstallTest extends TestCase
 {
@@ -23,6 +24,7 @@ class InstallTest extends TestCase
     {
         $this->activationFile = sys_get_temp_dir() . '/laranail-pm-install-' . getmypid() . '-' . uniqid() . '.json';
         $this->publicDir = sys_get_temp_dir() . '/laranail-pm-public-' . getmypid() . '-' . uniqid();
+        PlainRecordingHook::$calls = [];
         parent::setUp();
     }
 
@@ -71,6 +73,16 @@ class InstallTest extends TestCase
             'install should publish the extension public assets',
         );
         $this->assertTrue(is_extension_active('migrated'), 'install should activate the extension');
+    }
+
+    public function test_install_invokes_the_plain_duck_typed_hook(): void
+    {
+        // Migrated declares PlainRecordingHook — an interface-free class (as the
+        // scaffolder generates). The loader must still invoke it by duck-typing.
+        $this->manager()->install('migrated');
+
+        $this->assertContains('activated:migrated', PlainRecordingHook::$calls);
+        $this->assertContains('installed:migrated', PlainRecordingHook::$calls);
     }
 
     public function test_update_is_idempotent(): void

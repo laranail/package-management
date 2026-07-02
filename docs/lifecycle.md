@@ -30,9 +30,22 @@ discovered ──enable──▶ active ──disable──▶ inactive ──re
 
 ## Hooks (optional per extension)
 
-An extension may declare a lifecycle handler in its manifest (`"hook": "<FQCN>"`). The class implements
-`Simtabi\Laranail\Package\Management\Contracts\LifecycleHook` and is resolved from the container (so it
-gets constructor DI) at the matching transition — the place to seed data, publish assets or warm caches:
+An extension may declare a lifecycle handler in its manifest (`"hook": "<FQCN>"`). It is resolved from
+the container (so it gets constructor DI) and **duck-typed** — the loader calls whichever of
+`activated` / `deactivated` / `installed` / `removed` exist — so a scaffolder-generated hook needs
+**no dependency on this package** (a plain class with those methods, taking the Extension object):
+
+```php
+final class ShopHook  // no import, no interface — the scaffolder default
+{
+    public function activated(object $extension): void { /* warm caches, … */ }
+    public function installed(object $extension): void { /* seed reference data, … */ }
+    public function removed(object $extension): void { /* clean up */ }
+}
+```
+
+If you already depend on this package, implementing the interfaces is an optional, type-safe way to
+declare the same methods (`Extension` typed, IDE-checked):
 
 ```php
 use Simtabi\Laranail\Package\Management\Contracts\LifecycleHook;
@@ -46,23 +59,10 @@ final class ShopHook implements LifecycleHook
 }
 ```
 
-A `hook` class may also implement `InstallHook` (`installed` / `removed`), invoked by the install/remove
-flows — the place for an extension to seed reference data or tidy up on uninstall:
-
-```php
-use Simtabi\Laranail\Package\Management\Contracts\InstallHook;
-
-final class ShopHook implements LifecycleHook, InstallHook
-{
-    public function activated(Extension $e): void {}
-    public function deactivated(Extension $e): void {}
-    public function installed(Extension $e): void { /* seed */ }
-    public function removed(Extension $e): void { /* clean up */ }
-}
-```
-
-`activated`/`deactivated`/`installed`/`removed` ship today; `updating`/`updated` are planned. A missing
-or non-hook class is ignored (never fatal), and either interface may be implemented independently.
+`Contracts\InstallHook` (`installed` / `removed`) complements `Contracts\LifecycleHook` (`activated` /
+`deactivated`); implement either or both. `activated`/`deactivated`/`installed`/`removed` ship today;
+`updating`/`updated` are planned. A missing hook class — or one missing a given method — is simply
+skipped (never fatal).
 
 ## Events
 
