@@ -7,8 +7,11 @@ namespace Simtabi\Laranail\Package\Management\Tests;
 use Illuminate\Container\Container;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Simtabi\Laranail\Package\Management\Adapters\LumenLoaderAdapter;
+use Simtabi\Laranail\Package\Management\Adapters\SymfonyLoaderAdapter;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeProvider;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyService;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class LoaderAdapterTest extends BaseTestCase
 {
@@ -56,5 +59,24 @@ class LoaderAdapterTest extends BaseTestCase
         (new LumenLoaderAdapter($container))->registerProviders($this->extension(['No\\Such\\Provider']));
 
         $this->assertFalse($container->bound('fake.registered'));
+    }
+
+    public function test_symfony_adapter_sets_providers_as_container_services(): void
+    {
+        $container = new ContainerBuilder;
+
+        (new SymfonyLoaderAdapter($container))->registerProviders($this->extension([FakeSymfonyService::class]));
+
+        $this->assertTrue($container->has(FakeSymfonyService::class));
+        $this->assertInstanceOf(FakeSymfonyService::class, $container->get(FakeSymfonyService::class));
+    }
+
+    public function test_symfony_adapter_skips_missing_provider_classes(): void
+    {
+        $container = new ContainerBuilder;
+
+        (new SymfonyLoaderAdapter($container))->registerProviders($this->extension(['No\\Such\\Service']));
+
+        $this->assertFalse($container->has('No\\Such\\Service'));
     }
 }

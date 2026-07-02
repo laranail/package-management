@@ -64,7 +64,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ `LoaderAdapter` interface + `LaravelLoaderAdapter` (autoload via a shared trait).
 - ✅ `LumenLoaderAdapter` — works against the bare container contract (uses `register()` when the app
   exposes it, else instantiates the provider and calls `register()`/`boot()` itself).
-- 🧭 `SymfonyLoaderAdapter` (bundle registration) — proves the abstraction.
+- ✅ `SymfonyLoaderAdapter` — runtime PSR-4 + sets each provider as a Symfony container service
+  (`Container::set()`); Symfony compiles its container at build time, so this is the runtime surface
+  (a compiler pass is the build-time route for richer wiring).
 
 ## Management surface
 - ✅ `Extensions` facade + helpers (`extension()`, `is_extension_active()`, `extension_path()`).

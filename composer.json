@@ -49,7 +49,11 @@
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.18",
         "rector/rector": "^2.0",
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-latest",
+        "symfony/dependency-injection": "^7.0 || ^8.0"
+    },
+    "suggest": {
+        "symfony/dependency-injection": "Use the SymfonyLoaderAdapter to load extensions into a Symfony container."
     },
     "autoload": {
         "psr-4": {

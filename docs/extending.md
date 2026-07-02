@@ -32,7 +32,16 @@ interface LoaderAdapter
 
   $app->singleton(LoaderAdapter::class, fn ($app) => new LumenLoaderAdapter($app));
   ```
-- **`SymfonyLoaderAdapter`** (future): maps providers to Symfony bundles / DI extensions.
+- **`SymfonyLoaderAdapter`** (ships): same runtime PSR-4; sets each provider as a service instance on a
+  Symfony `ContainerInterface` (`$container->set($fqcn, new $provider())`). Symfony builds its container
+  at compile time, so runtime registration is limited to service instances — a compiler pass / bundle is
+  the build-time route for tags, autowiring and aliases. Providers must be no-arg constructible. Requires
+  `symfony/dependency-injection` (a `suggest`). Bind it in your kernel/container setup:
+  ```php
+  use Simtabi\Laranail\Package\Management\Adapters\SymfonyLoaderAdapter;
+
+  $adapter = new SymfonyLoaderAdapter($container);
+  ```
 
 ## Adding a framework
 
