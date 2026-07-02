@@ -70,8 +70,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 
 ## Management surface
 - ✅ `Extensions` facade + helpers (`extension()`, `is_extension_active()`, `extension_path()`).
+- ✅ Opt-in web **management UI** (`config ui.enabled`): a Blade page that lists extensions and drives
+  the lifecycle — enable / disable / install / remove — at a configurable prefix + middleware.
 - 🔶 Query API: list by role, enabled/disabled, dependency graph.
-- 🧭 Admin UI panel to list/enable/disable/update extensions (Botble-style).
 - 🧭 Marketplace/installer (download + extract into `platform/plugins/`).
 
 ## Non-goals

@@ -53,4 +53,19 @@ return [
         'file' => storage_path('app/laranail/extensions_statuses.json'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Management UI
+    |--------------------------------------------------------------------------
+    |
+    | An optional web surface to list + enable/disable/install/remove extensions.
+    | Opt-in (off by default); protect it with your own auth middleware.
+    |
+    */
+    'ui' => [
+        'enabled' => env('PACKAGE_MANAGEMENT_UI', false),
+        'prefix' => env('PACKAGE_MANAGEMENT_UI_PREFIX', 'laranail/extensions'),
+        'middleware' => ['web'],
+    ],
+
 ];

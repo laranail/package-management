@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Package\Management\Providers;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Route;
 use Override;
 use Simtabi\Laranail\Package\Management\Actions\ActivateExtension;
 use Simtabi\Laranail\Package\Management\Actions\DeactivateExtension;
@@ -24,6 +25,7 @@ use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\ExtensionStateManager;
+use Simtabi\Laranail\Package\Management\Http\Controllers\ExtensionController;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
 use Simtabi\Laranail\Package\Management\Repositories\EloquentExtensionStateRepository;
 use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
@@ -50,6 +52,7 @@ final class ManagementServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->discoversMigrations()
             ->runsMigrations()
+            ->hasViews('package-management')
             ->hasCommands([
                 ListExtensionsCommand::class,
                 EnableExtensionCommand::class,
@@ -134,5 +137,23 @@ final class ManagementServiceProvider extends PackageServiceProvider
     {
         // Register every active module/plugin (dependency order) into the host.
         $this->app->make(ExtensionManager::class)->boot();
+
+        if ((bool) config('laranail.package-management.ui.enabled', false)) {
+            $this->registerUiRoutes();
+        }
+    }
+
+    /** The opt-in management UI routes (config `ui.*`). */
+    private function registerUiRoutes(): void
+    {
+        Route::middleware((array) config('laranail.package-management.ui.middleware', ['web']))
+            ->prefix((string) config('laranail.package-management.ui.prefix', 'laranail/extensions'))
+            ->group(function (): void {
+                Route::get('/', [ExtensionController::class, 'index'])->name('laranail.extensions.index');
+                Route::post('/enable', [ExtensionController::class, 'enable'])->name('laranail.extensions.enable');
+                Route::post('/disable', [ExtensionController::class, 'disable'])->name('laranail.extensions.disable');
+                Route::post('/install', [ExtensionController::class, 'install'])->name('laranail.extensions.install');
+                Route::post('/remove', [ExtensionController::class, 'remove'])->name('laranail.extensions.remove');
+            });
     }
 }

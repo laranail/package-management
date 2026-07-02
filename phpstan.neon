@@ -11,4 +11,8 @@ parameters:
         # Facade @method tags + generic array docblocks are not enforced (laranail convention).
         -
             identifier: missingType.iterableValue
+        # larastan can't resolve a package-namespaced view-string during analysis.
+        -
+            message: '#Parameter \#1 \$view of function view expects view-string#'
+            path: src/Http/Controllers/ExtensionController.php
     treatPhpDocTypesAsCertain: false

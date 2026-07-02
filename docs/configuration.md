@@ -60,4 +60,21 @@ The model uses the default connection and the fixed `laranail_extension_states` 
 "nothing active" until the table exists, so enabling the database store on a fresh app never fatals the
 boot before you migrate.
 
+## `ui`
+
+An **opt-in** web surface to list + enable/disable/install/remove extensions. Off by default; protect
+it with your own auth middleware.
+
+```php
+'ui' => [
+    'enabled'    => env('PACKAGE_MANAGEMENT_UI', false),
+    'prefix'     => env('PACKAGE_MANAGEMENT_UI_PREFIX', 'laranail/extensions'),
+    'middleware' => ['web'],
+],
+```
+
+When enabled it registers `GET {prefix}` (the list) + `POST {prefix}/{enable,disable,install,remove}`
+(named `laranail.extensions.*`). Publish/override the Blade view with the
+`laranail::package-management-config` publish or the `package-management` view namespace.
+
 [← Docs index](../README.md#documentation)
