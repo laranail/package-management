@@ -3,6 +3,12 @@
 The full capability set of the runtime loader. Legend: **✅ core** (delivered in the first working
 core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 
+## Foundation
+- ✅ Built on `laranail/package-tools` (`PackageServiceProvider` + fluent `Package` builder) and
+  `laranail/console` (namespaced `laranail::…` command base).
+- ✅ Vendor-namespaced config via package-tools — `config('laranail.package-management.*')` — with
+  auto-loaded/auto-run migrations and declarative command registration.
+
 ## Discovery & registration
 - ✅ Scan `platform/{packages,modules,plugins}/*` (configurable paths) and read all manifests.
 - ✅ Normalize `composer.json` / `module.json` / `plugin.json` into one `Extension` VO.

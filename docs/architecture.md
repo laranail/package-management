@@ -62,7 +62,7 @@ The two packages share one contract: the **manifest schemas** ([manifests.md](ma
 | **`ActivationStore` (interface)** | Read/write the active set. `FileActivationStore` (default JSON) + `EloquentActivationStore` — the latter bridges to the Eloquent **state subsystem**: Facade → `ExtensionStateManager` → Actions (writes) / `ExtensionStateService` (reads) → `ExtensionStateRepositoryInterface` → `ExtensionState` model. |
 | **`LoaderAdapter` (interface)** | Framework bridge: register PSR-4 (Composer `ClassLoader`) + register providers + publish/boot. `LaravelLoaderAdapter` ships first. |
 | **`ExtensionManager`** | Orchestrates the lifecycle: `activate/deactivate/install/remove/update` + hooks + events. |
-| **`ManagementServiceProvider`** | Entry point: config, discovery, registration, CLI, facade, helpers. |
+| **`ManagementServiceProvider`** | Built on `laranail/package-tools`' `PackageServiceProvider`: `configurePackage()` (namespaced config, migrations, commands) + `packageRegistered()` (loader + state bindings) + `packageBooted()` (register active extensions). |
 | **CLI commands** | `laranail::package-management.{list,enable,disable,install,remove,discover,cache}` (+ aliases). |
 | **`Extensions` facade / helpers** | Ergonomic runtime API (`extension()`, `is_extension_active()`, `extension_path()`). |
 

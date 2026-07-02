@@ -18,13 +18,13 @@ class EloquentActivationStoreTest extends TestCase
 
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('package-management.paths', [
+        $app['config']->set('laranail.package-management.paths', [
             'packages' => __DIR__ . '/Fixtures/platform/packages',
             'modules' => __DIR__ . '/Fixtures/platform/modules',
             'plugins' => __DIR__ . '/Fixtures/platform/plugins',
         ]);
-        $app['config']->set('package-management.cache.enabled', false);
-        $app['config']->set('package-management.activation.store', 'database');
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.activation.store', 'database');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',

@@ -4,13 +4,14 @@
 composer require laranail/package-management
 ```
 
-The `ManagementServiceProvider` is auto-discovered. Publish the config to customise paths/cache/store:
+The `ManagementServiceProvider` (built on `laranail/package-tools`) is auto-discovered. Publish the
+config to customise paths/cache/store:
 
 ```bash
-php artisan vendor:publish \
-  --provider="Simtabi\Laranail\Package\Management\Providers\ManagementServiceProvider" \
-  --tag=package-management-config
+php artisan vendor:publish --tag=laranail::package-management-config
 ```
+
+Config resolves under the vendor-namespaced key `config('laranail.package-management.*')`.
 
 ## Requirements
 

@@ -33,14 +33,14 @@ class CacheTest extends TestCase
 
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('package-management.paths', [
+        $app['config']->set('laranail.package-management.paths', [
             'packages' => __DIR__ . '/Fixtures/platform/packages',
             'modules' => __DIR__ . '/Fixtures/platform/modules',
             'plugins' => __DIR__ . '/Fixtures/platform/plugins',
         ]);
-        $app['config']->set('package-management.activation.file', $this->activationFile);
-        $app['config']->set('package-management.cache.enabled', true);
-        $app['config']->set('package-management.cache.path', $this->cacheFile);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', true);
+        $app['config']->set('laranail.package-management.cache.path', $this->cacheFile);
     }
 
     private function repo(): ExtensionRepository

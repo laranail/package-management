@@ -8,10 +8,10 @@ class SmokeTest extends TestCase
 {
     public function test_the_provider_boots_and_merges_config(): void
     {
-        $this->assertIsArray(config('package-management.paths'));
-        $this->assertArrayHasKey('modules', config('package-management.paths'));
-        $this->assertArrayHasKey('packages', config('package-management.paths'));
-        $this->assertArrayHasKey('plugins', config('package-management.paths'));
+        $this->assertIsArray(config('laranail.package-management.paths'));
+        $this->assertArrayHasKey('modules', config('laranail.package-management.paths'));
+        $this->assertArrayHasKey('packages', config('laranail.package-management.paths'));
+        $this->assertArrayHasKey('plugins', config('laranail.package-management.paths'));
     }
 
     public function test_extension_path_helper_resolves_by_role(): void

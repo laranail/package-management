@@ -23,8 +23,11 @@ One generated repo can be consumed three ways by the manifests it carries:
 
 ```bash
 composer require laranail/package-management
-php artisan vendor:publish --provider="Simtabi\Laranail\Package\Management\Providers\ManagementServiceProvider" --tag=package-management-config
+php artisan vendor:publish --tag=laranail::package-management-config
 ```
+
+Built on [`laranail/package-tools`](https://opensource.simtabi.com/package-tools/) — config resolves under
+the vendor-namespaced key `config('laranail.package-management.*')`.
 
 Drop generated extensions under `platform/{packages,modules,plugins}/` and the loader discovers them.
 

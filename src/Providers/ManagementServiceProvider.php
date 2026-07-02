@@ -7,7 +7,6 @@ namespace Simtabi\Laranail\Package\Management\Providers;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\ServiceProvider;
 use Override;
 use Simtabi\Laranail\Package\Management\Actions\ActivateExtension;
 use Simtabi\Laranail\Package\Management\Actions\DeactivateExtension;
@@ -31,18 +30,40 @@ use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
 use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
 use Simtabi\Laranail\Package\Management\Stores\FileActivationStore;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
+use Simtabi\Laranail\Package\Tools\Package;
+use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
 
 /**
- * Entry point for laranail/package-management — the runtime loader. Binds the loader
- * pipeline, then on boot discovers + registers every active module/plugin.
+ * Entry point for laranail/package-management — the runtime loader. Built on
+ * laranail/package-tools: `configurePackage()` declares the package (namespaced config,
+ * migrations, commands); `packageRegistered()` wires the loader + state subsystem;
+ * `packageBooted()` discovers + registers every active module/plugin.
  */
-final class ManagementServiceProvider extends ServiceProvider
+final class ManagementServiceProvider extends PackageServiceProvider
 {
-    #[Override]
-    public function register(): void
+    public function configurePackage(Package $package): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/package-management.php', 'package-management');
+        // vendor/package name → config merges under `config('laranail.package-management.*')`
+        $package
+            ->name('laranail/package-management')
+            ->setPublishTagId('package-management')
+            ->hasConfigFile()
+            ->discoversMigrations()
+            ->runsMigrations()
+            ->hasCommands([
+                ListExtensionsCommand::class,
+                EnableExtensionCommand::class,
+                DisableExtensionCommand::class,
+                DiscoverExtensionsCommand::class,
+                CacheExtensionsCommand::class,
+                InstallExtensionCommand::class,
+                RemoveExtensionCommand::class,
+            ]);
+    }
 
+    #[Override]
+    public function packageRegistered(): void
+    {
         $this->app->singleton(ManifestReader::class, static fn (): ManifestReader => new ManifestReader(new Filesystem));
         $this->app->singleton(DependencyResolver::class, static fn (): DependencyResolver => new DependencyResolver);
 
@@ -55,7 +76,7 @@ final class ManagementServiceProvider extends ServiceProvider
         $this->app->singleton(ExtensionStateManager::class);
 
         $this->app->singleton(ActivationStore::class, static function (Application $app): ActivationStore {
-            $activation = (array) config('package-management.activation', []);
+            $activation = (array) config('laranail.package-management.activation', []);
 
             if (($activation['store'] ?? 'file') === 'database') {
                 return $app->make(EloquentActivationStore::class);
@@ -67,8 +88,8 @@ final class ManagementServiceProvider extends ServiceProvider
         $this->app->singleton(LoaderAdapter::class, static fn (Application $app): LoaderAdapter => new LaravelLoaderAdapter($app));
 
         $this->app->singleton(ExtensionRepository::class, static function (Application $app): ExtensionRepository {
-            $paths = (array) config('package-management.paths', []);
-            $cache = (array) config('package-management.cache', []);
+            $paths = (array) config('laranail.package-management.paths', []);
+            $cache = (array) config('laranail.package-management.cache', []);
             $cachePath = (string) ($cache['path'] ?? '');
 
             return new ExtensionRepository(
@@ -97,34 +118,10 @@ final class ManagementServiceProvider extends ServiceProvider
         ));
     }
 
-    public function boot(): void
+    #[Override]
+    public function packageBooted(): void
     {
-        // The database activation store needs its state table.
-        if (config('package-management.activation.store') === 'database') {
-            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-        }
-
         // Register every active module/plugin (dependency order) into the host.
         $this->app->make(ExtensionManager::class)->boot();
-
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../config/package-management.php' => config_path('package-management.php'),
-            ], 'package-management-config');
-
-            $this->publishes([
-                __DIR__ . '/../../database/migrations' => database_path('migrations'),
-            ], 'package-management-migrations');
-
-            $this->commands([
-                ListExtensionsCommand::class,
-                EnableExtensionCommand::class,
-                DisableExtensionCommand::class,
-                DiscoverExtensionsCommand::class,
-                CacheExtensionsCommand::class,
-                InstallExtensionCommand::class,
-                RemoveExtensionCommand::class,
-            ]);
-        }
     }
 }

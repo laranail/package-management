@@ -37,13 +37,13 @@ class InstallTest extends TestCase
     {
         $app->usePublicPath($this->publicDir);
 
-        $app['config']->set('package-management.paths', [
+        $app['config']->set('laranail.package-management.paths', [
             'packages' => __DIR__ . '/Fixtures/install/packages',
             'modules' => __DIR__ . '/Fixtures/install/modules',
             'plugins' => __DIR__ . '/Fixtures/install/plugins',
         ]);
-        $app['config']->set('package-management.activation.file', $this->activationFile);
-        $app['config']->set('package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
 
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [

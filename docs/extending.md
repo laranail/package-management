@@ -37,7 +37,7 @@ interface LoaderAdapter
 ## Adding a framework
 
 1. Implement `LoaderAdapter` for the framework.
-2. Bind it in the host (or auto-select from `config('package-management.adapter')`).
+2. Bind it in the host (or auto-select from `config('laranail.package-management.adapter')`).
 3. That's it — discovery, dependency resolution, activation store, cache, and the CLI are all
    framework-neutral and unchanged.
 

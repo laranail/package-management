@@ -13,7 +13,7 @@ php artisan laranail::package-management.cache         # compile the discovered-
 php artisan laranail::package-management.cache --clear # delete the compiled cache
 ```
 
-The compiled cache (`config('package-management.cache')`) stores the *discovered* set only; activation
+The compiled cache (`config('laranail.package-management.cache')`) stores the *discovered* set only; activation
 state is applied fresh from the store each request, so enable/disable never needs a rebuild — only
 adding or removing an extension directory does.
 

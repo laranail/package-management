@@ -15,7 +15,7 @@ class ExtensionStateTest extends TestCase
 
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('package-management.activation.store', 'database');
+        $app['config']->set('laranail.package-management.activation.store', 'database');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',

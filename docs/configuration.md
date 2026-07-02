@@ -1,11 +1,10 @@
 # Configuration
 
-Publish the config, then edit `config/package-management.php`:
+Built on `laranail/package-tools`: the config file `config/package-management.php` is merged under the
+vendor-namespaced key **`config('laranail.package-management.*')`**. Publish it to customise:
 
 ```bash
-php artisan vendor:publish \
-  --provider="Simtabi\Laranail\Package\Management\Providers\ManagementServiceProvider" \
-  --tag=package-management-config
+php artisan vendor:publish --tag=laranail::package-management-config
 ```
 
 ## `paths`
@@ -23,8 +22,9 @@ them and carry multiple manifests.
 
 ## `cache`
 
-The discovered + resolved manifest is compiled to a PHP file for fast boots; it's invalidated when the
-active-set count changes and can be cleared with `laranail::package-management.cache --clear`.
+The *discovered* extension set is compiled to a PHP file for fast boots (activation state is applied
+fresh from the store each request, never baked in). Build/clear it with
+`laranail::package-management.cache [--clear]`.
 
 ```php
 'cache' => [
@@ -49,12 +49,10 @@ host apps via the [`ExtensionState` facade](usage.md).
 ],
 ```
 
-For the **database** store, publish + run the migration:
+For the **database** store, just migrate — the package's migration is auto-loaded by package-tools
+(`discoversMigrations()` + `runsMigrations()`):
 
 ```bash
-php artisan vendor:publish \
-  --provider="Simtabi\Laranail\Package\Management\Providers\ManagementServiceProvider" \
-  --tag=package-management-migrations
 php artisan migrate
 ```
 
