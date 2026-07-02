@@ -87,7 +87,7 @@ dependencies + a minimum-runtime guard.
 | `namespace` | string | ✓ | PSR-4 root (trailing `\\`); registered on the runtime ClassLoader → `{path}/src` |
 | `provider` | string | ✓ | FQCN registered with the container |
 | `version` | semver | ✓ | |
-| `require` | string[] | — | extension `id`s that must be active first (topologically ordered) |
+| `require` | string[] \| object | — | extension `id`s that must be active first (topologically ordered). Either a list (`["acme/core"]`, presence only) or a map of id → semver constraint (`{"acme/core": "^1.2"}`), checked against the dependency's `version` on activation |
 | `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version |
 | `type` | string | — | `plugin` \| `nova` \| `filament` (panel plugins) |
 | `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |

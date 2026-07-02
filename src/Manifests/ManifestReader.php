@@ -47,6 +47,7 @@ final readonly class ManifestReader
         }
 
         $providers = array_values(array_filter((array) ($m['providers'] ?? [])));
+        [$require, $requireVersions] = $this->parseRequire($m['require'] ?? []);
 
         return new Extension(
             id: (string) ($m['alias'] ?? Str::kebab((string) $m['name'])),
@@ -54,13 +55,14 @@ final readonly class ManifestReader
             namespace: $this->namespaceFromProvider($providers[0] ?? ''),
             providers: $providers,
             version: (string) ($m['version'] ?? '0.0.0'),
-            require: array_values((array) ($m['require'] ?? [])),
+            require: $require,
             role: 'module',
             path: $dir,
             hook: isset($m['hook']) ? (string) $m['hook'] : null,
             defaultSettings: (array) ($m['settings'] ?? []),
             priority: (int) ($m['priority'] ?? 0),
             minimumCoreVersion: isset($m['minimum_core_version']) ? (string) $m['minimum_core_version'] : null,
+            requireVersions: $requireVersions,
         );
     }
 
@@ -72,6 +74,7 @@ final readonly class ManifestReader
         }
 
         $namespace = (string) ($p['namespace'] ?? $this->namespaceFromProvider((string) $p['provider']));
+        [$require, $requireVersions] = $this->parseRequire($p['require'] ?? []);
 
         return new Extension(
             id: (string) ($p['id'] ?? Str::kebab((string) $p['name'])),
@@ -79,7 +82,7 @@ final readonly class ManifestReader
             namespace: rtrim($namespace, '\\') . '\\',
             providers: [(string) $p['provider']],
             version: (string) ($p['version'] ?? '0.0.0'),
-            require: array_values((array) ($p['require'] ?? [])),
+            require: $require,
             role: 'plugin',
             path: $dir,
             hook: isset($p['hook']) ? (string) $p['hook'] : null,
@@ -87,6 +90,7 @@ final readonly class ManifestReader
             priority: (int) ($p['priority'] ?? 0),
             type: (string) ($p['type'] ?? ''),
             minimumCoreVersion: isset($p['minimum_core_version']) ? (string) $p['minimum_core_version'] : null,
+            requireVersions: $requireVersions,
         );
     }
 
@@ -109,6 +113,30 @@ final readonly class ManifestReader
             role: 'package',
             path: $dir,
         );
+    }
+
+    /**
+     * `require` accepts a **list** of ids (`["acme/core"]`, no version check) or a **map**
+     * of id => semver constraint (`{"acme/core": "^1.2"}`). Returns `[list<string> $ids, map]`.
+     *
+     * @return array{0: list<string>, 1: array<string, string>}
+     */
+    private function parseRequire(mixed $raw): array
+    {
+        $raw = (array) $raw;
+
+        if ($raw === [] || array_is_list($raw)) {
+            return [array_values(array_map(strval(...), $raw)), []];
+        }
+
+        $ids = [];
+        $versions = [];
+        foreach ($raw as $id => $constraint) {
+            $ids[] = (string) $id;
+            $versions[(string) $id] = (string) $constraint;
+        }
+
+        return [$ids, $versions];
     }
 
     /** `Vendor\Pkg\Providers\PkgServiceProvider` → `Vendor\Pkg\` (drop Providers\Xxx). */

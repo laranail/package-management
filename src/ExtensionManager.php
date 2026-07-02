@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\Package\Management;
 
 use BadMethodCallException;
 use Closure;
+use Composer\Semver\Semver;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Traits\Macroable;
@@ -173,6 +174,16 @@ class ExtensionManager
         foreach ($extension->require as $dependency) {
             if (! $this->store->isActive($dependency)) {
                 throw new RuntimeException("Extension [{$id}] requires [{$dependency}], which is not active.");
+            }
+
+            $constraint = $extension->requireVersions[$dependency] ?? null;
+            if (! in_array($constraint, [null, '', '*'], true)) {
+                $dep = $this->repository->find($dependency);
+                if ($dep instanceof Extension && ! Semver::satisfies($dep->version, $constraint)) {
+                    throw new RuntimeException(
+                        "Extension [{$id}] requires [{$dependency}] {$constraint}, but [{$dep->version}] is installed.",
+                    );
+                }
             }
         }
 

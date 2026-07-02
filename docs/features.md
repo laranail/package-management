@@ -22,7 +22,8 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ Topological sort over `require` for deterministic load order.
 - ✅ Cycle + missing-dependency detection (fail loudly at activate time).
 - ✅ `minimum_core_version` guard.
-- 🔶 Version-constraint checks on `require` (semver ranges).
+- ✅ Version-constraint checks on `require` (semver ranges) — the map form `{"acme/core": "^1.2"}` is
+  verified against the dependency's `version` on activation (via `composer/semver`).
 
 ## Activation lifecycle
 - ✅ Activation-state store behind an interface — `FileActivationStore` (JSON) default.

@@ -14,6 +14,7 @@ final readonly class Extension
      * @param  list<string>  $providers  service-provider FQCNs
      * @param  list<string>  $require  extension ids that must load first
      * @param  array<string, mixed>  $defaultSettings  manifest default settings, seeded on install
+     * @param  array<string, string>  $requireVersions  dep id => semver constraint (map require form)
      */
     public function __construct(
         public string $id,
@@ -30,6 +31,7 @@ final readonly class Extension
         public int $priority = 0,             // load-order hint (dependencies still win)
         public string $type = '',             // plugin | nova | filament (panel plugins)
         public ?string $minimumCoreVersion = null, // required package-management version
+        public array $requireVersions = [],   // dep id => semver constraint (from the map require form)
     ) {}
 
     /** PSR-4 source root registered on the runtime autoloader. */
@@ -55,7 +57,7 @@ final readonly class Extension
         return new self(
             $this->id, $this->name, $this->namespace, $this->providers, $this->version,
             $this->require, $this->role, $this->path, $enabled, $this->hook, $this->defaultSettings,
-            $this->priority, $this->type, $this->minimumCoreVersion,
+            $this->priority, $this->type, $this->minimumCoreVersion, $this->requireVersions,
         );
     }
 
@@ -77,6 +79,7 @@ final readonly class Extension
             'priority' => $this->priority,
             'type' => $this->type,
             'minimumCoreVersion' => $this->minimumCoreVersion,
+            'requireVersions' => $this->requireVersions,
         ];
     }
 
@@ -103,6 +106,7 @@ final readonly class Extension
             priority: (int) ($data['priority'] ?? 0),
             type: (string) ($data['type'] ?? ''),
             minimumCoreVersion: isset($data['minimumCoreVersion']) ? (string) $data['minimumCoreVersion'] : null,
+            requireVersions: array_map(strval(...), (array) ($data['requireVersions'] ?? [])),
         );
     }
 }
