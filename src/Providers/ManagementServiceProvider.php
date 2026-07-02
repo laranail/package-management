@@ -18,6 +18,7 @@ use Simtabi\Laranail\Package\Management\Commands\DiscoverExtensionsCommand;
 use Simtabi\Laranail\Package\Management\Commands\EnableExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\InstallExtensionCommand;
 use Simtabi\Laranail\Package\Management\Commands\ListExtensionsCommand;
+use Simtabi\Laranail\Package\Management\Commands\RemoveExtensionCommand;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
@@ -122,6 +123,7 @@ final class ManagementServiceProvider extends ServiceProvider
                 DiscoverExtensionsCommand::class,
                 CacheExtensionsCommand::class,
                 InstallExtensionCommand::class,
+                RemoveExtensionCommand::class,
             ]);
         }
     }

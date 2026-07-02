@@ -66,4 +66,9 @@ final class LaravelLoaderAdapter implements LoaderAdapter, PublishesAssets, Runs
 
         (new Filesystem)->copyDirectory($source, public_path('vendor/' . $extension->slug()));
     }
+
+    public function unpublishAssets(Extension $extension): void
+    {
+        (new Filesystem)->deleteDirectory(public_path('vendor/' . $extension->slug()));
+    }
 }

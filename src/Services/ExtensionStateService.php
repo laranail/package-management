@@ -35,6 +35,11 @@ final readonly class ExtensionStateService
         $this->states->markInactive($name);
     }
 
+    public function forget(string $name): void
+    {
+        $this->states->forget($name);
+    }
+
     public function recordInstall(string $name, ?string $version): void
     {
         $this->states->recordInstall($name, $version);

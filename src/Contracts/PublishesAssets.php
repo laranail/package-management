@@ -14,4 +14,7 @@ use Simtabi\Laranail\Package\Management\Extension;
 interface PublishesAssets
 {
     public function publishAssets(Extension $extension): void;
+
+    /** Remove an extension's previously-published assets (used on remove). */
+    public function unpublishAssets(Extension $extension): void;
 }

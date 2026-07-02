@@ -45,6 +45,11 @@ final readonly class ExtensionStateManager
         $this->deactivateAction->handle($name);
     }
 
+    public function forget(string $name): void
+    {
+        $this->states->forget($name);
+    }
+
     public function recordInstall(string $name, ?string $version): void
     {
         $this->states->recordInstall($name, $version);

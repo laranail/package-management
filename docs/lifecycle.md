@@ -23,8 +23,10 @@ discovered ──enable──▶ active ──disable──▶ inactive ──re
   `public/vendor/{slug}` (adapter `PublishesAssets`); fires `ExtensionInstalled`. Adapters lacking a
   capability (e.g. Lumen) degrade to activate-only.
 - **update** — run any pending migrations for an already-installed extension; fires `ExtensionUpdated`.
-- **remove** *(planned)* — migration rollback needs per-extension batch tracking, and file deletion is
-  deliberately out of scope (remove the directory / `composer remove`); today, use `disable`.
+- **remove** (uninstall) — deactivate, unpublish the extension's assets, and forget its management-state
+  row (activation flag, version, settings); fires `ExtensionRemoved`. The extension's own database
+  **tables are preserved** (removing a plugin must not destroy user data — drop them deliberately with a
+  migration if desired). Migration rollback + directory deletion remain out of scope.
 
 ## Hooks (optional per extension)
 

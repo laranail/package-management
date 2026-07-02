@@ -61,6 +61,13 @@ final class EloquentExtensionStateRepository implements ExtensionStateRepository
         ]);
     }
 
+    public function forget(string $name): void
+    {
+        if ($this->tableReady()) {
+            ExtensionState::query()->where('name', $name)->delete();
+        }
+    }
+
     public function recordInstall(string $name, ?string $version): ExtensionState
     {
         $state = ExtensionState::query()->firstOrNew(['name' => $name]);

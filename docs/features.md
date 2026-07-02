@@ -31,8 +31,11 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ `install` (activate + run the extension's own `database/migrations` + publish its `public/` assets
   to `public/vendor/{slug}`) / `update` (run pending migrations), via the optional `RunsMigrations` +
   `PublishesAssets` adapter capabilities (Laravel ships both; other adapters degrade gracefully).
-- 🔶 `remove` (migration rollback + asset unpublish — needs per-extension batch tracking; file deletion
-  out of scope) + the extended hook set (`installed/removed/updating/updated`).
+- ✅ `remove` (uninstall): deactivate + unpublish assets + forget the management-state row, while
+  **preserving** the extension's own database tables (removing a plugin must not destroy user data);
+  fires `ExtensionRemoved`.
+- 🔶 Optional migration rollback on remove (needs per-extension batch tracking) + the extended hook set
+  (`installed/removed/updating/updated`).
 
 ## Backend glue
 - ✅ Service-provider registration (routes/config/commands come via the provider).

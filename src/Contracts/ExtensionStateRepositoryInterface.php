@@ -23,6 +23,9 @@ interface ExtensionStateRepositoryInterface
 
     public function markInactive(string $name): void;
 
+    /** Delete the state row entirely. */
+    public function forget(string $name): void;
+
     public function recordInstall(string $name, ?string $version): ExtensionState;
 
     /** @return array<string, mixed> */

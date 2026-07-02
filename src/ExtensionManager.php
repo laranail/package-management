@@ -16,6 +16,7 @@ use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 
@@ -153,6 +154,28 @@ final readonly class ExtensionManager
         }
 
         $this->events->dispatch(new ExtensionUpdated($extension));
+    }
+
+    /**
+     * Remove (uninstall): deactivate, unpublish the extension's assets, and forget its
+     * management state (activation flag, version, settings). The extension's own
+     * database tables are **preserved** — removing an extension must not destroy user
+     * data; drop them deliberately with a migration if that's what you want.
+     */
+    public function remove(string $id): void
+    {
+        $extension = $this->requireExtension($id);
+
+        $this->disable($id);
+
+        if ($this->adapter instanceof PublishesAssets) {
+            $this->adapter->unpublishAssets($extension);
+        }
+
+        $this->store->forget($id);
+        $this->repository->forget();
+
+        $this->events->dispatch(new ExtensionRemoved($extension));
     }
 
     private function requireExtension(string $id): Extension

@@ -38,6 +38,11 @@ final readonly class EloquentActivationStore implements ActivationStore, Records
         $this->manager->deactivate($id);
     }
 
+    public function forget(string $id): void
+    {
+        $this->manager->forget($id);
+    }
+
     public function recordInstall(string $id, ?string $version): void
     {
         $this->manager->recordInstall($id, $version);

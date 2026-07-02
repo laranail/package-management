@@ -18,4 +18,7 @@ interface ActivationStore
     public function activate(string $id): void;
 
     public function deactivate(string $id): void;
+
+    /** Forget an extension's stored state entirely (used on remove/uninstall). */
+    public function forget(string $id): void;
 }

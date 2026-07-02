@@ -50,6 +50,12 @@ final readonly class FileActivationStore implements ActivationStore
         $this->write(array_values(array_diff($this->active(), [$id])));
     }
 
+    public function forget(string $id): void
+    {
+        // the file store's only state is active-list membership
+        $this->deactivate($id);
+    }
+
     /** @param  list<string>  $ids */
     private function write(array $ids): void
     {
