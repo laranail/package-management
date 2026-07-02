@@ -8,6 +8,7 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
   `laranail/console` (namespaced `laranail::…` command base).
 - ✅ Vendor-namespaced config via package-tools — `config('laranail.package-management.*')` — with
   auto-loaded/auto-run migrations and declarative command registration.
+- ✅ `php artisan about` section (discovered / active / modules / plugins counts + active store).
 
 ## Discovery & registration
 - ✅ Scan `platform/{packages,modules,plugins}/*` (configurable paths) and read all manifests.

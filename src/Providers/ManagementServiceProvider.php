@@ -58,7 +58,18 @@ final class ManagementServiceProvider extends PackageServiceProvider
                 CacheExtensionsCommand::class,
                 InstallExtensionCommand::class,
                 RemoveExtensionCommand::class,
-            ]);
+            ])
+            ->hasAboutSection('Package Management', function (): array {
+                $manager = $this->app->make(ExtensionManager::class);
+
+                return [
+                    'Discovered' => (string) count($manager->all()),
+                    'Active' => (string) count($manager->active()),
+                    'Modules' => (string) count($manager->modules()),
+                    'Plugins' => (string) count($manager->plugins()),
+                    'Store' => (string) config('laranail.package-management.activation.store', 'file'),
+                ];
+            });
     }
 
     #[Override]

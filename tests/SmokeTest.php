@@ -14,6 +14,12 @@ class SmokeTest extends TestCase
         $this->assertArrayHasKey('plugins', config('laranail.package-management.paths'));
     }
 
+    public function test_about_command_renders_the_package_section(): void
+    {
+        // validates the package-tools hasAboutSection callable (resolves the manager, counts extensions)
+        $this->artisan('about')->assertSuccessful();
+    }
+
     public function test_extension_path_helper_resolves_by_role(): void
     {
         $this->assertStringEndsWith(
