@@ -15,6 +15,7 @@ final readonly class Extension
      * @param  list<string>  $require  extension ids that must load first
      * @param  array<string, mixed>  $defaultSettings  manifest default settings, seeded on install
      * @param  array<string, string>  $requireVersions  dep id => semver constraint (map require form)
+     * @param  list<array<string, mixed>>  $menu  data-only nav entries a host may render (loader never renders them)
      */
     public function __construct(
         public string $id,
@@ -32,6 +33,7 @@ final readonly class Extension
         public string $type = '',             // plugin | nova | filament (panel plugins)
         public ?string $minimumCoreVersion = null, // required package-management version
         public array $requireVersions = [],   // dep id => semver constraint (from the map require form)
+        public array $menu = [],              // data-only nav entries; the HOST renders them, not the loader
     ) {}
 
     /** PSR-4 source root registered on the runtime autoloader. */
@@ -57,7 +59,7 @@ final readonly class Extension
         return new self(
             $this->id, $this->name, $this->namespace, $this->providers, $this->version,
             $this->require, $this->role, $this->path, $enabled, $this->hook, $this->defaultSettings,
-            $this->priority, $this->type, $this->minimumCoreVersion, $this->requireVersions,
+            $this->priority, $this->type, $this->minimumCoreVersion, $this->requireVersions, $this->menu,
         );
     }
 
@@ -80,6 +82,7 @@ final readonly class Extension
             'type' => $this->type,
             'minimumCoreVersion' => $this->minimumCoreVersion,
             'requireVersions' => $this->requireVersions,
+            'menu' => $this->menu,
         ];
     }
 
@@ -107,6 +110,7 @@ final readonly class Extension
             type: (string) ($data['type'] ?? ''),
             minimumCoreVersion: isset($data['minimumCoreVersion']) ? (string) $data['minimumCoreVersion'] : null,
             requireVersions: array_map(strval(...), (array) ($data['requireVersions'] ?? [])),
+            menu: array_values((array) ($data['menu'] ?? [])),
         );
     }
 }

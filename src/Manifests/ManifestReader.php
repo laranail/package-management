@@ -63,6 +63,7 @@ final readonly class ManifestReader
             priority: (int) ($m['priority'] ?? 0),
             minimumCoreVersion: isset($m['minimum_core_version']) ? (string) $m['minimum_core_version'] : null,
             requireVersions: $requireVersions,
+            menu: array_values((array) ($m['menu'] ?? [])),
         );
     }
 
@@ -91,6 +92,7 @@ final readonly class ManifestReader
             type: (string) ($p['type'] ?? ''),
             minimumCoreVersion: isset($p['minimum_core_version']) ? (string) $p['minimum_core_version'] : null,
             requireVersions: $requireVersions,
+            menu: array_values((array) ($p['menu'] ?? [])),
         );
     }
 

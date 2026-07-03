@@ -14,5 +14,8 @@
     "settings": {
         "per_page": 20,
         "theme": "shop"
-    }
+    },
+    "menu": [
+        { "label": "Shop", "url": "/admin/shop", "icon": "cart", "group": "Commerce", "order": 10 }
+    ]
 }

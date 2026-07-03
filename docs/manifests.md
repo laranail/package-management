@@ -56,6 +56,7 @@ nwidart-compatible manifest for the module runtime. Activation-gated.
 | `priority` | int | — | load-order hint (dependencies still win) |
 | `files` | string[] | — | files to `include` at boot |
 | `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
+| `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](host-integration.md)) |
 | `description`, `keywords` | | — | metadata |
 
 ## `plugin.json` (role: **plugin**)
@@ -92,6 +93,7 @@ dependencies + a minimum-runtime guard.
 | `type` | string | — | `plugin` \| `nova` \| `filament` (panel plugins) |
 | `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
 | `settings` | object | — | default settings, seeded into the extension's state on install (defaults fill gaps; user values win). DB store only. |
+| `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](host-integration.md)) |
 | `author`, `url`, `description` | | — | metadata |
 
 ## Which manifests each flavor emits
