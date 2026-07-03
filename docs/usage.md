@@ -81,6 +81,18 @@ extension('vendor/blog');                   // ?Extension
 is_extension_active('vendor/blog');         // bool
 ```
 
+### Frontend assets (Vite)
+
+`install()` publishes an extension's `public/` (including its Vite `build/`) to `public/vendor/{slug}/`.
+Load that extension's assets in a Blade view from its own build dir — a fresh `Vite` instance is used per
+call, so the app-global Vite is never mutated:
+
+```blade
+{!! extension_vite('vendor/blog', 'resources/js/app.js') !!}
+{{-- or several entrypoints, or a custom build dir: --}}
+{!! extension_vite('vendor/blog', ['resources/css/app.css', 'resources/js/app.js']) !!}
+```
+
 ## How loading works
 
 On boot the provider discovers extensions, resolves dependency order, registers PSR-4 + providers for

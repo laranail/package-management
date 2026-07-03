@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\HtmlString;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Package\Management\Support\ExtensionVite;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +29,19 @@ if (! function_exists('extension_path')) {
         $full = $base . DIRECTORY_SEPARATOR . $name;
 
         return $path === '' ? $full : $full . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
+    }
+}
+
+if (! function_exists('extension_vite')) {
+    /**
+     * Render an extension's Vite tags from its published build dir (`public/vendor/{slug}/build`).
+     * Safe no-op outside a Laravel Foundation app.
+     *
+     * @param  string|list<string>  $entrypoints
+     */
+    function extension_vite(string $id, string|array $entrypoints, ?string $buildDirectory = null): HtmlString
+    {
+        return app(ExtensionVite::class)($id, $entrypoints, $buildDirectory);
     }
 }
 

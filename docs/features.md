@@ -60,7 +60,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 
 ## Frontend glue
 - 🔶 View + Blade-component namespace registration per extension.
-- 🔶 Vite asset publishing + loading (`@vite`), per-extension build dirs.
+- ✅ Vite asset publishing + loading — `PublishesAssets` copies an extension's `public/` (incl. its Vite
+  `build/`) to `public/vendor/{slug}/`; the `extension_vite($id, $entrypoints)` helper renders that
+  extension's tags from its own build dir via a fresh `Vite` instance (no app-global mutation).
 - 🧭 Theme layer (like Botble `themes/`).
 
 ## Framework adapters
