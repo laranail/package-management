@@ -84,11 +84,19 @@ The same pages live under [`docs/`](docs/):
 - [Features](docs/features.md) — the full capability set + phasing
 - [Release](docs/release.md) — how releases are cut
 
-## Credits
+## Sister packages
 
-- [Simtabi LLC](https://github.com/simtabi)
-- [Imani Manyara](https://github.com/imanimanyara)
+- [`laranail/package-scaffolder`](https://github.com/laranail/package-scaffolder) — author-time generator that scaffolds the packages/modules/plugins this loader runs.
+- [`laranail/package-tools`](https://github.com/laranail/package-tools) — the `PackageServiceProvider` base + fluent `Package` builder this package is built on.
+- [`laranail/console`](https://github.com/laranail/console) — the command base enabling the `laranail::` namespaced Artisan commands.
+
+## Contributing & security
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — workflow, coding standards, command naming.
+- [SECURITY.md](SECURITY.md) — how to report a vulnerability.
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — community expectations.
+- [CHANGELOG.md](CHANGELOG.md) — release history.
 
 ## License
 
-The MIT License (MIT). See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). © Simtabi LLC.
