@@ -34,16 +34,74 @@ when unsupported, so an adapter degrades gracefully.
 
   $app->singleton(LoaderAdapter::class, fn ($app) => new LumenLoaderAdapter($app));
   ```
-- **`SymfonyLoaderAdapter`** (ships): same runtime PSR-4; sets each provider as a service instance on a
-  Symfony `ContainerInterface` (`$container->set($fqcn, new $provider())`). Symfony builds its container
-  at compile time, so runtime registration is limited to service instances — a compiler pass / bundle is
-  the build-time route for tags, autowiring and aliases. Providers must be no-arg constructible. Requires
-  `symfony/dependency-injection` (a `suggest`). Bind it in your kernel/container setup:
+- **`SymfonyLoaderAdapter`** (ships): same runtime PSR-4. Requires `symfony/dependency-injection` (a
+  `suggest`). Bind it in your kernel/container setup:
   ```php
   use Simtabi\Laranail\Package\Management\Adapters\SymfonyLoaderAdapter;
 
   $adapter = new SymfonyLoaderAdapter($container);
   ```
+
+  See the Symfony section below for exactly what it does + the compile-time escape hatch.
+
+## Symfony support (runtime service registration)
+
+Symfony compiles its DI container at **build time** (bundles + compiler passes → a frozen, dumped
+container), while this loader activates extensions at **runtime**. So Symfony support is scoped to
+**runtime service registration** — the surface `Container::set()` allows. For each declared provider the
+adapter:
+
+- **instantiates** it, injecting the container when the constructor takes an argument (else no-arg —
+  backward compatible);
+- **`set()`s** the instance under its FQCN **and** under every interface it implements, so consumers can
+  resolve by a stable interface;
+- calls an optional **`register()` / `boot()`** (duck-typed; the container is passed when the method
+  accepts it) — a runtime lifecycle seam mirroring the Lumen adapter.
+
+If the container is already **compiled** (`ContainerBuilder::isCompiled()`), registration is a **no-op**
+(not a fatal) — a stale manifest never breaks boot. Tags, autowiring, aliases, decoration and lazy
+services are **not** available at runtime by design.
+
+### Compile-time wiring (escape hatch)
+
+When you genuinely need full Symfony DI for loaded extensions, register a **CompilerPass** in your kernel
+that reads the loader's manifests and adds `Definition`s during compilation. Note the trade-off: compiler
+passes run at build time, so the set of active extensions must be known at `cache:warmup`, and
+enabling/disabling then requires a container rebuild — you give up this loader's runtime activation for
+those services.
+
+```php
+use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+final class ExtensionServicesPass implements CompilerPassInterface
+{
+    public function __construct(private readonly ExtensionManager $extensions) {}
+
+    public function process(ContainerBuilder $container): void
+    {
+        foreach ($this->extensions->query()->active()->get() as $extension) {
+            foreach ($extension->providers as $provider) {
+                if (! class_exists($provider)) {
+                    continue;
+                }
+                $container->register($provider, $provider)
+                    ->setAutowired(true)
+                    ->setPublic(true);
+                // ->addTag(...) as needed
+            }
+        }
+    }
+}
+
+// in your Kernel::build():
+$container->addCompilerPass(new ExtensionServicesPass($extensionManager));
+```
+
+A full Symfony **Bundle** (with a DI `Extension`, `services.php`, and a generated bundle artifact shape) is
+a distinct build-time product — deliberately out of scope here; it would replace runtime activation
+entirely.
 
 ## Adding a framework
 
