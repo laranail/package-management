@@ -81,7 +81,7 @@ it with your own auth middleware.
 ],
 ```
 
-When enabled it registers `GET {prefix}` (the list) + `POST {prefix}/{enable,disable,install,remove}`
+When enabled it registers `GET {prefix}` (the list) + `POST {prefix}/{enable,disable,install,update,remove,install-from}`
 (named `laranail.extensions.*`). Publish/override the Blade view with the
 `laranail::package-management-config` publish or the `package-management` view namespace.
 

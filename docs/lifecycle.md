@@ -66,8 +66,11 @@ missing a given method — is simply skipped (never fatal).
 
 ## Events
 
-Each transition also fires an event for host apps to react to — `ExtensionActivated` /
-`ExtensionDeactivated` (each carrying the `Extension`). Listen with the normal event dispatcher:
+Each transition fires a **pre/post event pair** for host apps to react to — `ExtensionActivating` /
+`ExtensionActivated`, `ExtensionDeactivating` / `ExtensionDeactivated`, `ExtensionInstalling` /
+`ExtensionInstalled`, `ExtensionUpdating` / `ExtensionUpdated`, `ExtensionRemoving` / `ExtensionRemoved`
+(each carries the `Extension`). See the full matrix in [extensibility.md §5](extensibility.md). Listen
+with the normal event dispatcher:
 
 ```php
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;

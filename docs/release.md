@@ -7,7 +7,7 @@ GitHub release.
 ## Steps
 
 1. Update `CHANGELOG.md`: move `## Next` entries under a new `## [X.Y.Z] - YYYY-MM-DD` heading.
-2. Commit on `main` (`git config user.email imanimanyara@users.noreply.github.com`).
+2. Commit on `main` (ensure `git config user.email` is set to your GitHub no-reply address).
 3. Tag + push:
    ```bash
    git tag vX.Y.Z

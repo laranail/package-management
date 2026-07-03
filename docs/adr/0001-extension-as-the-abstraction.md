@@ -52,3 +52,5 @@ plugin* are its three roles.
 - If a future maintainer wants "package" as the umbrella, that is a breaking rename of ~25 identifiers,
   the table, config keys, commands and events — and reintroduces the role/umbrella name collision. This
   ADR is the record of why we did not.
+
+[← Docs index](../../README.md#documentation)

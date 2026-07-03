@@ -51,15 +51,16 @@ see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `
   Frontend glue: views · Blade components · Vite assets · themes
         │
         ▼
-  Lifecycle:  activate → activated → deactivate → deactivated → remove → removed → updating → updated
-              (+ events)   guarded by dependency + version (`minimum_core_version`) checks
+  Lifecycle:  install · activate · update · deactivate · remove — each fires a pre/post event pair
+              (+ duck-typed hooks)   guarded by dependency + semver + `minimum_core_version` checks
+              (full event matrix: extensibility.md §5)
 ```
 
 ## Components
 
 | Component | Responsibility |
 |---|---|
-| **`Extension` (VO)** | Immutable value object: `id, name, namespace, providers[], version, require[], role, path, enabled`. Built from a manifest. |
+| **`Extension` (VO)** | Immutable value object: `id, name, namespace, providers[], version, require[], role, path, enabled` + manifest metadata `hook, defaultSettings, priority, type, minimumCoreVersion, requireVersions, menu`. Built from a manifest. |
 | **`ManifestReader`** | Parse + validate `composer.json` / `module.json` / `plugin.json` against the schema; merge into one `Extension`. |
 | **`ExtensionRepository`** | Discover extensions under the configured `platform/*` paths; produce/read the **compiled manifest cache**; query by role/name/enabled. |
 | **`DependencyResolver`** | Topologically sort by `require`; detect cycles + missing deps; enforce `minimum_core_version`. |
@@ -67,8 +68,8 @@ see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `
 | **`LoaderAdapter` (interface)** | Framework bridge: register PSR-4 (Composer `ClassLoader`) + register providers + publish/boot. `LaravelLoaderAdapter` ships first. |
 | **`ExtensionManager`** | Orchestrates the lifecycle: `activate/deactivate/install/remove/update` + hooks + events. |
 | **`ManagementServiceProvider`** | Built on `laranail/package-tools`' `PackageServiceProvider`: `configurePackage()` (namespaced config, migrations, commands) + `packageRegistered()` (loader + state bindings) + `packageBooted()` (register active extensions). |
-| **CLI commands** | `laranail::package-management.{list,enable,disable,install,remove,discover,cache}` (+ aliases). |
-| **`Extensions` facade / helpers** | Ergonomic runtime API (`extension()`, `is_extension_active()`, `extension_path()`). |
+| **CLI commands** | `laranail::package-management.{list,enable,disable,install,update,remove,discover,cache,install-from}` (+ `package-management:*` aliases). |
+| **`Extensions` facade / helpers** | Ergonomic runtime API (`extension()`, `is_extension_active()`, `extension_path()`, `extension_vite()`) + the `Extensions` facade (`query()`, `graph()`, `dependents()`, lifecycle). |
 
 ## Roles vs frameworks (two orthogonal axes)
 

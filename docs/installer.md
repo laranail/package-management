@@ -1,8 +1,6 @@
-# VCS installer — architecture
+# VCS installer
 
-> **Status: approved (2026-07-02) — all three drivers.**
-
-Install an extension straight from a VCS provider (GitHub → GitLab → Bitbucket) into
+Install an extension straight from a VCS provider (GitHub · GitLab · Bitbucket) into
 `platform/{packages|modules|plugins}/{name}` (lowercase folder — `Str::slug()` of the manifest name) and
 run it through the existing lifecycle, with a **rollback stack** so a failed install leaves no orphaned
 files or tables.
@@ -53,7 +51,12 @@ final class SourceDriverManager extends Illuminate\Support\Manager
 ```php
 final class ExtensionInstaller
 {
-    public function install(RepositoryRef $ref, ?string $asRole = null): Extension;
+    public function install(
+        RepositoryRef $ref,
+        ?string $asRole = null,
+        bool $force = false,
+        ?callable $confirmOverwrite = null,
+    ): Extension;
 }
 ```
 
@@ -118,21 +121,19 @@ php artisan laranail::package-management.install-from <url> [--ref=main] [--as=m
 | State | DB settings table required | reuses our **file-or-Eloquent** store; no new coupling |
 | Auth | license-server tokens | **per-provider VCS tokens** (env), never logged |
 
-## 7. Files + tests
+## 7. Behavior notes
 
-- `src/Installer/{RepositoryRef,SourceDriverManager,ExtensionInstaller,RollbackStack}.php`,
-  `src/Installer/Drivers/{Github,Gitlab,Bitbucket}SourceDriver.php`, `src/Contracts/SourceDriver.php`,
-  `src/Commands/InstallFromVcsCommand.php`, config `installer` block, provider bindings.
-- Tests: `RepositoryRef::parse()` URL matrix; driver endpoint + token header (faked `Http`); **full
-  install against a local tarball fixture** (no network) → lands in `platform/modules/{name}`, activated;
-  **rollback**: a forced failure at step 8 leaves **no** target dir and **no** migrated table.
-
-## 8. Resolved decisions (signed off)
-1. **Scope:** all three drivers (GitHub, GitLab, Bitbucket) now.
-2. **Existing target:** `--force` overwrites; otherwise **prompt** (overwrite / skip) in an interactive
-   TTY; non-interactive without `--force` refuses. Either way the rollback stack guards the overwrite.
-3. **Folder naming:** lowercase `platform/{role}s/{name}` (`Str::slug()` of the manifest name).
-4. **Tests:** local tarball fixture (default, offline, deterministic) **and** an opt-in live smoke that
-   hits a real public repo — skipped unless `PACKAGE_MANAGEMENT_LIVE_INSTALL_TEST` is set.
+- **Scope:** all three drivers (GitHub, GitLab, Bitbucket) ship.
+- **Existing target:** `--force` overwrites; otherwise the CLI **prompts** (overwrite / skip) in an
+  interactive TTY, and a non-interactive run without `--force` refuses. Either way the rollback stack
+  guards the overwrite (the old target is backed up and restored if the install fails).
+- **Folder naming:** lowercase `platform/{role}s/{name}` (`Str::slug()` of the manifest name).
+- **Source layout:** `src/Installer/{RepositoryRef,SourceDriverManager,ExtensionInstaller,RollbackStack}.php`
+  + `src/Installer/Drivers/{Github,Gitlab,Bitbucket}SourceDriver.php`, `src/Contracts/SourceDriver.php`,
+  `src/Commands/InstallFromVcsCommand.php`, the config `installer` block, and the provider bindings.
+- **Tests:** a `RepositoryRef::parse()` URL matrix; driver endpoint + token headers (faked `Http`); a full
+  install against a local tarball fixture (offline); a rollback test proving a mid-install failure leaves
+  no target dir + no migrated table; and an opt-in live smoke (skipped unless
+  `PACKAGE_MANAGEMENT_LIVE_INSTALL_TEST` is set).
 
 [← Docs index](../README.md#documentation)

@@ -35,8 +35,9 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
 - ✅ `activate` / `deactivate` with dependency + reverse-dependency guards.
 - ✅ Per-extension lifecycle hook (`LifecycleHook::activated/deactivated`), declared via the manifest
   `hook` FQCN and resolved from the container.
-- ✅ Events: `ExtensionActivated` / `ExtensionDeactivated` / `ExtensionInstalled` / `ExtensionUpdated` /
-  `ExtensionRemoved`.
+- ✅ Events: a **pre/post pair** per transition — `ExtensionActivating`/`Activated`,
+  `Deactivating`/`Deactivated`, `Installing`/`Installed`, `Updating`/`Updated`, `Removing`/`Removed`
+  (full matrix in [extensibility.md §5](extensibility.md)).
 - ✅ `install` (activate + run the extension's own `database/migrations` + publish its `public/` assets
   to `public/vendor/{slug}` + seed manifest **default settings** into the state, defaults filling gaps)
   / `update` (run pending migrations), via optional `RunsMigrations` / `PublishesAssets` /
@@ -52,14 +53,15 @@ core), **🔶 planned** (specified now, built incrementally), **🧭 future**.
   `installer.rollback_migrations_on_remove`, default off for data-safety).
 
 ## Backend glue
-- ✅ Service-provider registration (routes/config/commands come via the provider).
-- 🔶 Convention wiring: web/api/admin routes, migrations, translations, config publish.
-- 🔶 Permissions/policies registration; admin-menu contribution.
-- ✅ Artisan CLI: `laranail::package-management.{list,enable,disable,discover,cache,install,remove}` —
+- ✅ Service-provider registration (each extension's own provider owns its routes/migrations/
+  translations/config/policies — see [host-integration.md](host-integration.md)).
+- ✅ Admin-menu contribution: the `menu` manifest field + optional `ContributesNavigation` contract,
+  collected host-side via `Extensions::query()` (the loader never renders menus).
+- ✅ Artisan CLI: `laranail::package-management.{list,enable,disable,discover,cache,install,update,remove}` —
   each with a `package-management:<verb>` plain-colon alias.
 
 ## Frontend glue
-- 🔶 View + Blade-component namespace registration per extension.
+- ✅ View + Blade-component namespaces come via each extension's own provider (`->hasViews()` etc.).
 - ✅ Vite asset publishing + loading — `PublishesAssets` copies an extension's `public/` (incl. its Vite
   `build/`) to `public/vendor/{slug}/`; the `extension_vite($id, $entrypoints)` helper renders that
   extension's tags from its own build dir via a fresh `Vite` instance (no app-global mutation).

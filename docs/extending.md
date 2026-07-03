@@ -106,7 +106,8 @@ entirely.
 ## Adding a framework
 
 1. Implement `LoaderAdapter` for the framework.
-2. Bind it in the host (or auto-select from `config('laranail.package-management.adapter')`).
+2. Bind `LoaderAdapter::class` to it in a host service provider (the shipped provider binds
+   `LaravelLoaderAdapter`; rebind to swap frameworks).
 3. That's it — discovery, dependency resolution, activation store, cache, and the CLI are all
    framework-neutral and unchanged.
 

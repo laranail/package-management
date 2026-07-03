@@ -65,6 +65,7 @@ ExtensionState::deactivate('vendor/blog');
 ExtensionState::forget('vendor/blog');             // delete the state row (activation + version + settings)
 ExtensionState::recordInstall('vendor/blog', '1.2.0');
 ExtensionState::putSettings('vendor/blog', ['per_page' => 15]);
+ExtensionState::seedSettings('vendor/blog', ['per_page' => 15]); // defaults fill gaps; user values win
 ExtensionState::settings('vendor/blog');           // array
 ```
 

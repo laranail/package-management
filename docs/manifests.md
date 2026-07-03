@@ -12,8 +12,8 @@ All three normalize into a single **`Extension`** value object:
 | `name` | — (derived) | `name` | `name` |
 | `namespace` | `autoload.psr-4` key | derived from provider | `namespace` |
 | `providers[]` | `extra.laravel.providers` | `providers` | `provider` |
-| `version` | `version` | — | `version` |
-| `require[]` | `require` (composer) | — | `require` (extension ids) |
+| `version` | `version` | `version` | `version` |
+| `require[]` | — (composer `require` is not read as extension deps) | `require` | `require` (extension ids) |
 | `role` | `package` | `module` | `plugin` |
 | `path` | dir | dir | dir |
 
@@ -40,24 +40,26 @@ nwidart-compatible manifest for the module runtime. Activation-gated.
 {
     "name": "{Artifact}",
     "alias": "{artifact}",
-    "description": "",
-    "keywords": [],
+    "version": "1.0.0",
     "priority": 0,
     "providers": ["{Namespace}\\Providers\\{Artifact}ServiceProvider"],
-    "files": []
+    "require": { "acme/core": "^1.0" }
 }
 ```
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `name` | string | ✓ | StudlyCase identity |
-| `alias` | string | ✓ | lowercase slug |
+| `alias` | string | ✓ | lowercase slug (becomes the `Extension` id, `vendor/`-less) |
 | `providers` | string[] | ✓ | FQCN service providers |
+| `version` | semver | — | defaults to `0.0.0`; checked against dependents' `require` constraints |
+| `require` | string[] \| object | — | dependency ids that must be active first — a list (`["acme/core"]`, presence only) or a map of id → semver constraint (`{"acme/core": "^1.2"}`), verified on activation |
 | `priority` | int | — | load-order hint (dependencies still win) |
-| `files` | string[] | — | files to `include` at boot |
-| `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
+| `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version; `enable()` refuses below it |
+| `settings` | object | — | default settings, seeded into the extension's state on install (defaults fill gaps; user values win). DB store only. |
+| `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed/updating/updated), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
 | `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](host-integration.md)) |
-| `description`, `keywords` | | — | metadata |
+| `description`, `keywords` | | — | informational only — **not read** by the loader (not surfaced on `Extension`) |
 
 ## `plugin.json` (role: **plugin**)
 
@@ -89,12 +91,13 @@ dependencies + a minimum-runtime guard.
 | `provider` | string | ✓ | FQCN registered with the container |
 | `version` | semver | ✓ | |
 | `require` | string[] \| object | — | extension `id`s that must be active first (topologically ordered). Either a list (`["acme/core"]`, presence only) or a map of id → semver constraint (`{"acme/core": "^1.2"}`), checked against the dependency's `version` on activation |
-| `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version |
+| `priority` | int | — | load-order hint (dependencies still win) |
+| `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version; `enable()` refuses below it |
 | `type` | string | — | `plugin` \| `nova` \| `filament` (panel plugins) |
-| `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
+| `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed/updating/updated), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
 | `settings` | object | — | default settings, seeded into the extension's state on install (defaults fill gaps; user values win). DB store only. |
 | `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](host-integration.md)) |
-| `author`, `url`, `description` | | — | metadata |
+| `author`, `url`, `description` | | — | informational only — **not read** by the loader (not surfaced on `Extension`) |
 
 ## Which manifests each flavor emits
 
