@@ -1,5 +1,7 @@
 # Installation
 
+Requirements, the Composer install, and the `platform/` layout the loader scans.
+
 ```bash
 composer require laranail/package-management
 ```
@@ -17,7 +19,7 @@ Config resolves under the vendor-namespaced key `config('laranail.package-manage
 
 - PHP `^8.4.1 || ^8.5`
 - Laravel `^13` (the shipping adapter; other frameworks via a `LoaderAdapter` — see
-  [extending.md](extending.md)).
+  [Adapters](tools/adapters.md)).
 
 ## Layout
 

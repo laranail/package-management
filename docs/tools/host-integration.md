@@ -16,10 +16,22 @@ A scaffolder-generated Laravel extension self-wires all of this in its own provi
 | **Routes** | provider `->hasRoute('web')` / `->hasRoute('api')`, backed by config-driven `routes/*.php` (prefix / middleware / enabled all read from the extension's own config) |
 | **Permissions / policies** | provider `packageBooted()` → `Gate::policy(Post::class, PostPolicy::class)` / `Gate::define('blog.moderate', …)`; policy classes in `src/Policies/` |
 | **Views / translations** | provider `->hasViews('modules/blog')` (namespaced) + `->hasTranslations()`; overridable via Laravel's vendor view-publishing |
-| **Frontend assets** | provider `->hasAssets()` + the loader's `extension_vite($id, $entrypoints)` helper (loads the extension's published Vite build — see [installer.md](installer.md) / usage) |
+| **Frontend assets** | provider `->hasAssets()` + the loader's `extension_vite()` helper — see [Frontend assets (Vite)](#frontend-assets-vite) below |
 | **Panel plugins** | optional `FilamentXServiceProvider` / `NovaXServiceProvider`, each `class_exists()`-guarded so they self-disable when the panel isn't installed |
 
 The loader's job stops at `registerProviders()` — the provider does the rest on boot.
+
+## Frontend assets (Vite)
+
+`install()` publishes an extension's `public/` (including its Vite `build/`) to `public/vendor/{slug}/`.
+Load that extension's assets in a Blade view from its own build dir — a fresh `Vite` instance is used per
+call, so the app-global Vite is never mutated:
+
+```blade
+{!! extension_vite('vendor/blog', 'resources/js/app.js') !!}
+{{-- or several entrypoints, or a custom build dir: --}}
+{!! extension_vite('vendor/blog', ['resources/css/app.css', 'resources/js/app.js']) !!}
+```
 
 ## Host aggregation seams
 
@@ -27,9 +39,9 @@ When the **host** needs to react to or aggregate across extensions, use these (n
 
 - **Lifecycle events** — subscribe to build/refresh a cache (menu, permissions, sitemap) on state change:
   `ExtensionActivating`/`Activated`, `Deactivating`/`Deactivated`, `Installing`/`Installed`,
-  `Updating`/`Updated`, `Removing`/`Removed` (each carries `->extension`). See [lifecycle.md](lifecycle.md).
+  `Updating`/`Updated`, `Removing`/`Removed` (each carries `->extension`). See [lifecycle.md](../lifecycle.md).
 - **Query API** — enumerate + inspect: `Extensions::query()->active()->get()`, `->role('plugin')`,
-  `Extensions::graph()`, `Extensions::dependents($id)`. See [usage.md](usage.md).
+  `Extensions::graph()`, `Extensions::dependents($id)`. See [Facade & helpers](facade.md).
 
 ## Admin-menu contribution
 
@@ -70,4 +82,4 @@ theming: namespaced views (`->hasViews()`), a configurable layout (`config('modu
 Laravel's vendor view-override publishing, and per-extension Vite assets. Build a theme layer in the host
 (or a dedicated CMS package) on top of these + the aggregation seams above.
 
-[← Docs index](../README.md#documentation)
+[← Docs index](../../README.md#documentation)

@@ -10,7 +10,7 @@ use Simtabi\Laranail\Package\Management\Extension;
  * Framework bridge. The loader core is framework-agnostic; everything
  * framework-specific (autoload registration, provider/bootstrap registration,
  * resource publishing) lives behind this interface. A Laravel adapter ships;
- * Lumen/Symfony adapters plug in the same way. See docs/extending.md.
+ * Lumen/Symfony adapters plug in the same way. See docs/tools/adapters.md.
  */
 interface LoaderAdapter
 {

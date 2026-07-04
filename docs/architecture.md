@@ -12,8 +12,8 @@ ecosystem. It is the counterpart to `laranail/package-scaffolder`:
 The two packages share one contract: the **manifest schemas** ([manifests.md](manifests.md)).
 
 The first-class domain type is the **extension** — the role-neutral umbrella over package/module/plugin;
-see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `Extension*` and not
-`Package*`.
+see [Why "extension" is the abstraction](#why-extension-is-the-abstraction) for why the types are
+`Extension*` and not `Package*`.
 
 ## Design goals
 
@@ -53,7 +53,7 @@ see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `
         ▼
   Lifecycle:  install · activate · update · deactivate · remove — each fires a pre/post event pair
               (+ duck-typed hooks)   guarded by dependency + semver + `minimum_core_version` checks
-              (full event matrix: extensibility.md §5)
+              (full event matrix: tools/extensibility.md)
 ```
 
 ## Components
@@ -79,7 +79,7 @@ see [ADR 0001](adr/0001-extension-as-the-abstraction.md) for why the types are `
   flavor; drives which `LoaderAdapter` can host it. A vanilla package needs no runtime at all; a
   laravel module/plugin loads via the Laravel adapter.
 
-See [manifests.md](manifests.md) for how roles are encoded, and [extending.md](extending.md) for how a
+See [manifests.md](manifests.md) for how roles are encoded, and [Adapters](tools/adapters.md) for how a
 new framework adapter is added.
 
 ## Relationship to the scaffolder's existing module runtime
@@ -89,5 +89,30 @@ new framework adapter is added.
 this package is the clean, framework-adaptable home for loading. The scaffolder keeps its runtime for
 now; a future phase has it depend on / delegate to `package-management`. This avoids a risky big-bang
 extraction while establishing the correct architecture.
+
+## Why "extension" is the abstraction
+
+The product is published as `laranail/package-management`, yet the domain types are named `Extension*`
+(`Extension`, `ExtensionManager`, `ExtensionState`, the `Extensions` facade, the `laranail_extension_states`
+table) — not `Package*`. That is deliberate.
+
+One generated repository can play **three roles**, each keyed by its own manifest — `Extension->role` is
+exactly one of `package` | `module` | `plugin`. We therefore need a **role-neutral umbrella term** for "a
+thing this package discovers and manages, whichever role it is playing." Botble calls its equivalent a
+"plugin"; nwidart calls it a "module" — both bind the umbrella to one specific role, the very ambiguity we
+avoid. So:
+
+- **"extension" is the umbrella; package / module / plugin are its roles.** "package management" is the
+  *activity* (this package manages extensions), not the domain type.
+- **"package" is reserved for the role** — reusing it as the umbrella type would collide with itself
+  (`Extension` whose `role === 'package'` vs a top-level `Package`), the exact thing the abstraction prevents.
+- **No rename map** — the naming is already consistent across namespaces, the model + table, config,
+  commands, facades, events, UI routes, and helpers. Changing "extension" → "package" would be a breaking
+  rename of ~25 identifiers plus the table/config/commands, and would reintroduce the role/umbrella
+  collision. This section is the record of why we did not.
+
+Two related, intentional conventions: `Models\ExtensionState` and `Facades\ExtensionState` share a short
+name but are distinct FQCNs (the row vs the state API); and the `ExtensionState` model + its factory are
+not `final` (Eloquent/factory convention), while the rest of `src/` is.
 
 [← Docs index](../README.md#documentation)

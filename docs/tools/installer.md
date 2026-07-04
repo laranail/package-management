@@ -136,4 +136,4 @@ php artisan laranail::package-management.install-from <url> [--ref=main] [--as=m
   no target dir + no migrated table; and an opt-in live smoke (skipped unless
   `PACKAGE_MANAGEMENT_LIVE_INSTALL_TEST` is set).
 
-[← Docs index](../README.md#documentation)
+[← Docs index](../../README.md#documentation)

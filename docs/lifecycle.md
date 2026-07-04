@@ -1,5 +1,8 @@
 # Lifecycle
 
+The states an extension moves through (discovered → active/inactive → installed/removed), the transitions
+between them, and the hooks + events fired at each step.
+
 ## States
 
 An extension is **discovered** (found + valid manifest) and either **active** or **inactive**
@@ -69,7 +72,7 @@ missing a given method — is simply skipped (never fatal).
 Each transition fires a **pre/post event pair** for host apps to react to — `ExtensionActivating` /
 `ExtensionActivated`, `ExtensionDeactivating` / `ExtensionDeactivated`, `ExtensionInstalling` /
 `ExtensionInstalled`, `ExtensionUpdating` / `ExtensionUpdated`, `ExtensionRemoving` / `ExtensionRemoved`
-(each carries the `Extension`). See the full matrix in [extensibility.md §5](extensibility.md). Listen
+(each carries the `Extension`). See the full matrix in [the extensibility reference](tools/extensibility.md). Listen
 with the normal event dispatcher:
 
 ```php

@@ -95,7 +95,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Install extensions straight from a VCS provider. Tokens are read here (never
-    | logged) for private repos. See docs/installer.md.
+    | logged) for private repos. See docs/tools/installer.md.
     |
     */
     'installer' => [

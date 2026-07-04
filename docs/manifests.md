@@ -58,7 +58,7 @@ nwidart-compatible manifest for the module runtime. Activation-gated.
 | `minimum_core_version` | `X.Y.Z` | — | minimum `package-management` version; `enable()` refuses below it |
 | `settings` | object | — | default settings, seeded into the extension's state on install (defaults fill gaps; user values win). DB store only. |
 | `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed/updating/updated), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
-| `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](host-integration.md)) |
+| `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](tools/host-integration.md)) |
 | `description`, `keywords` | | — | informational only — **not read** by the loader (not surfaced on `Extension`) |
 
 ## `plugin.json` (role: **plugin**)
@@ -96,7 +96,7 @@ dependencies + a minimum-runtime guard.
 | `type` | string | — | `plugin` \| `nova` \| `filament` (panel plugins) |
 | `hook` | string | — | FQCN of a lifecycle hook — duck-typed (activated/deactivated/installed/removed/updating/updated), so a plain class works with no dependency on the loader; or implement `LifecycleHook`/`InstallHook` for type-safety |
 | `settings` | object | — | default settings, seeded into the extension's state on install (defaults fill gaps; user values win). DB store only. |
-| `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](host-integration.md)) |
+| `menu` | object[] | — | data-only nav entries (`label`, `url`, `icon?`, `group?`, `order?`) a host may render; the loader never renders them (see [host-integration.md](tools/host-integration.md)) |
 | `author`, `url`, `description` | | — | informational only — **not read** by the loader (not surfaced on `Extension`) |
 
 ## Which manifests each flavor emits

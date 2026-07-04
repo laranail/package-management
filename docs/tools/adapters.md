@@ -1,4 +1,4 @@
-# Extending — framework adapters
+# Framework adapters
 
 The loader is framework-agnostic at its core (manifest scan → dependency sort → Composer `ClassLoader`
 PSR-4 → provider registration → compiled cache). Everything framework-specific lives behind a
@@ -114,4 +114,4 @@ entirely.
 This mirrors the scaffolder's **flavors** (vanilla/laravel/lumen/symfony): the scaffolder *generates*
 per framework, this loader *runs* per framework — the two axes line up.
 
-[← Docs index](../README.md#documentation)
+[← Docs index](../../README.md#documentation)

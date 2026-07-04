@@ -67,7 +67,7 @@ Each transition dispatches a pre/post pair — subscribe to either:
 | remove | `ExtensionRemoving` | `ExtensionRemoved` |
 
 Each extension may also ship a duck-typed `hook` class implementing any of
-`activated`/`deactivated`/`installed`/`removed`/`updating`/`updated` (see [lifecycle.md](lifecycle.md)).
+`activated`/`deactivated`/`installed`/`removed`/`updating`/`updated` (see [lifecycle.md](../lifecycle.md)).
 
 ## 6. Facade spy seam
 
@@ -79,4 +79,4 @@ Extensions::spy();
 Extensions::shouldHaveReceived('install')->with('acme/blog');
 ```
 
-[← Docs index](../README.md#documentation)
+[← Docs index](../../README.md#documentation)

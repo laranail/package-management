@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provider registration is a **runtime** service registration — Symfony compiles its
  * container at build time, so this is the runtime surface `Container::set()` supports
  * (a compiler pass / bundle is the build-time route for richer wiring; see
- * docs/extending.md). For each declared provider the adapter:
+ * docs/tools/adapters.md). For each declared provider the adapter:
  *   - instantiates it, injecting the container when the constructor accepts an argument
  *     (else no-arg — backward compatible);
  *   - `set()`s the instance under its FQCN **and** under each interface it implements, so

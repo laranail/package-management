@@ -38,7 +38,7 @@ fresh from the store each request, never baked in). Build/clear it with
 Which extensions are active. `file` (default) keeps a JSON file so the loader has **no database
 requirement**; `database` uses the **Eloquent-backed store** — the `ExtensionState` model (rich state
 table) behind a layered subsystem (Facade → Manager → Actions/Service → Repository), also exposed to
-host apps via the [`ExtensionState` facade](usage.md).
+host apps via the [`ExtensionState` facade](tools/facade.md).
 
 ```php
 'activation' => [
@@ -51,7 +51,7 @@ host apps via the [`ExtensionState` facade](usage.md).
     'table' => env('PACKAGE_MANAGEMENT_TABLE', 'laranail_extension_states'),
     'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
 
-    // wrap the DB state repository in a caching decorator (see docs/extensibility.md)
+    // wrap the DB state repository in a caching decorator (see docs/tools/extensibility.md)
     'cache' => env('PACKAGE_MANAGEMENT_STATE_CACHE', false),
 ],
 ```
