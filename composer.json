@@ -10,7 +10,7 @@
         "extensions",
         "loader"
     ],
-    "homepage": "https://opensource.simtabi.com/package-management/",
+    "homepage": "https://opensource.simtabi.com/documentation/laranail/package-management/",
     "license": "MIT",
     "authors": [
         {
@@ -28,7 +28,7 @@
     "support": {
         "issues": "https://github.com/laranail/package-management/issues",
         "source": "https://github.com/laranail/package-management",
-        "docs": "https://opensource.simtabi.com/package-management/docs/"
+        "docs": "https://opensource.simtabi.com/documentation/laranail/package-management/"
     },
     "require": {
         "php": "^8.4.1 || ^8.5",
