@@ -2,9 +2,11 @@
 
 All notable changes to `laranail/package-management` will be documented in this file.
 
-## Next
+## [Unreleased]
 
-First working release of the runtime loader/manager for scaffolder-generated
+## [0.1.0] - 2026-07-06
+
+First release of the runtime loader/manager for scaffolder-generated
 packages/modules/plugins (discover → resolve → register → activate → wire).
 
 ### Added
