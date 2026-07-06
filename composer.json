@@ -41,7 +41,7 @@
         "illuminate/http": "^13.0",
         "illuminate/support": "^13.0",
         "laranail/console": "^1.0",
-        "laranail/package-tools": "^1.0"
+        "laranail/package-tools": "^2.0"
     },
     "require-dev": {
         "orchestra/testbench": "^11.0",
