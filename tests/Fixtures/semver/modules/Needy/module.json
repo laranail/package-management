@@ -1,0 +1,1 @@
+{ "name": "Needy", "alias": "needy", "version": "1.0.0", "providers": [], "require": { "core": "^2.0" } }

@@ -1,0 +1,17 @@
+## Summary
+
+<!-- What does this PR change, and why? -->
+
+## Checklist
+
+- [ ] Tests added/updated and `composer test` passes
+- [ ] `composer lint` is clean (Pint + PHPStan level 8 + Rector dry-run)
+- [ ] `CHANGELOG.md` updated under `## Next` (for user-facing changes)
+- [ ] Docs updated under `docs/` (if behavior or public API changed)
+- [ ] Manifest schema changes kept in sync with `laranail/package-scaffolder` (`docs/manifests.md`)
+- [ ] Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
+- [ ] New Artisan commands follow `laranail::package-management.<command>`
+
+## Related issues
+
+<!-- e.g. Closes #123 -->

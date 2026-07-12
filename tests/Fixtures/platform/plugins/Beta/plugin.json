@@ -1,0 +1,8 @@
+{
+    "id": "acme/beta",
+    "name": "Beta",
+    "namespace": "Acme\\Beta\\",
+    "provider": "Acme\\Beta\\Providers\\BetaServiceProvider",
+    "version": "1.0.0",
+    "require": ["alpha"]
+}
