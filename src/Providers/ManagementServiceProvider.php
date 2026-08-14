@@ -66,7 +66,7 @@ final class ManagementServiceProvider extends PackageServiceProvider
             ->hasConfigFile('package-management')
             ->discoversMigrations()
             ->runsMigrations()
-            ->hasViews('package-management')
+            ->hasViews('laranail-package-management')
             ->hasCommands([
                 ListExtensionsCommand::class,
                 EnableExtensionCommand::class,

@@ -28,7 +28,7 @@ final readonly class ExtensionController
 
     public function index(): View
     {
-        return view('package-management::extensions.index', [
+        return view('laranail-package-management::extensions.index', [
             'extensions' => $this->extensions->all(),
         ]);
     }
