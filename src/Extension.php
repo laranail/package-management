@@ -11,11 +11,11 @@ namespace Simtabi\Laranail\Package\Management;
 final readonly class Extension
 {
     /**
-     * @param  list<string>  $providers  service-provider FQCNs
-     * @param  list<string>  $require  extension ids that must load first
-     * @param  array<string, mixed>  $defaultSettings  manifest default settings, seeded on install
-     * @param  array<string, string>  $requireVersions  dep id => semver constraint (map require form)
-     * @param  list<array<string, mixed>>  $menu  data-only nav entries a host may render (loader never renders them)
+     * @param list<string> $providers service-provider FQCNs
+     * @param list<string> $require extension ids that must load first
+     * @param array<string, mixed> $defaultSettings manifest default settings, seeded on install
+     * @param array<string, string> $requireVersions dep id => semver constraint (map require form)
+     * @param list<array<string, mixed>> $menu data-only nav entries a host may render (loader never renders them)
      */
     public function __construct(
         public string $id,
@@ -35,6 +35,34 @@ final readonly class Extension
         public array $requireVersions = [],   // dep id => semver constraint (from the map require form)
         public array $menu = [],              // data-only nav entries; the HOST renders them, not the loader
     ) {}
+
+    /**
+     * Rehydrate from a {@see toArray()} payload — used by the compiled manifest cache.
+     * The `enabled` flag is intentionally not restored; activation is applied fresh
+     * from the ActivationStore on every request.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            id: (string) ($data['id'] ?? ''),
+            name: (string) ($data['name'] ?? ''),
+            namespace: (string) ($data['namespace'] ?? ''),
+            providers: array_values(array_map(strval(...), (array) ($data['providers'] ?? []))),
+            version: (string) ($data['version'] ?? '0.0.0'),
+            require: array_values(array_map(strval(...), (array) ($data['require'] ?? []))),
+            role: (string) ($data['role'] ?? 'package'),
+            path: (string) ($data['path'] ?? ''),
+            hook: isset($data['hook']) ? (string) $data['hook'] : null,
+            defaultSettings: (array) ($data['defaultSettings'] ?? []),
+            priority: (int) ($data['priority'] ?? 0),
+            type: (string) ($data['type'] ?? ''),
+            minimumCoreVersion: isset($data['minimumCoreVersion']) ? (string) $data['minimumCoreVersion'] : null,
+            requireVersions: array_map(strval(...), (array) ($data['requireVersions'] ?? [])),
+            menu: array_values((array) ($data['menu'] ?? [])),
+        );
+    }
 
     /** PSR-4 source root registered on the runtime autoloader. */
     public function sourcePath(): string
@@ -57,9 +85,22 @@ final readonly class Extension
     public function withEnabled(bool $enabled): self
     {
         return new self(
-            $this->id, $this->name, $this->namespace, $this->providers, $this->version,
-            $this->require, $this->role, $this->path, $enabled, $this->hook, $this->defaultSettings,
-            $this->priority, $this->type, $this->minimumCoreVersion, $this->requireVersions, $this->menu,
+            $this->id,
+            $this->name,
+            $this->namespace,
+            $this->providers,
+            $this->version,
+            $this->require,
+            $this->role,
+            $this->path,
+            $enabled,
+            $this->hook,
+            $this->defaultSettings,
+            $this->priority,
+            $this->type,
+            $this->minimumCoreVersion,
+            $this->requireVersions,
+            $this->menu,
         );
     }
 
@@ -67,50 +108,22 @@ final readonly class Extension
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'namespace' => $this->namespace,
-            'providers' => $this->providers,
-            'version' => $this->version,
-            'require' => $this->require,
-            'role' => $this->role,
-            'path' => $this->path,
-            'enabled' => $this->enabled,
-            'hook' => $this->hook,
-            'defaultSettings' => $this->defaultSettings,
-            'priority' => $this->priority,
-            'type' => $this->type,
+            'id'                 => $this->id,
+            'name'               => $this->name,
+            'namespace'          => $this->namespace,
+            'providers'          => $this->providers,
+            'version'            => $this->version,
+            'require'            => $this->require,
+            'role'               => $this->role,
+            'path'               => $this->path,
+            'enabled'            => $this->enabled,
+            'hook'               => $this->hook,
+            'defaultSettings'    => $this->defaultSettings,
+            'priority'           => $this->priority,
+            'type'               => $this->type,
             'minimumCoreVersion' => $this->minimumCoreVersion,
-            'requireVersions' => $this->requireVersions,
-            'menu' => $this->menu,
+            'requireVersions'    => $this->requireVersions,
+            'menu'               => $this->menu,
         ];
-    }
-
-    /**
-     * Rehydrate from a {@see toArray()} payload — used by the compiled manifest cache.
-     * The `enabled` flag is intentionally not restored; activation is applied fresh
-     * from the ActivationStore on every request.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            id: (string) ($data['id'] ?? ''),
-            name: (string) ($data['name'] ?? ''),
-            namespace: (string) ($data['namespace'] ?? ''),
-            providers: array_values(array_map(strval(...), (array) ($data['providers'] ?? []))),
-            version: (string) ($data['version'] ?? '0.0.0'),
-            require: array_values(array_map(strval(...), (array) ($data['require'] ?? []))),
-            role: (string) ($data['role'] ?? 'package'),
-            path: (string) ($data['path'] ?? ''),
-            hook: isset($data['hook']) ? (string) $data['hook'] : null,
-            defaultSettings: (array) ($data['defaultSettings'] ?? []),
-            priority: (int) ($data['priority'] ?? 0),
-            type: (string) ($data['type'] ?? ''),
-            minimumCoreVersion: isset($data['minimumCoreVersion']) ? (string) $data['minimumCoreVersion'] : null,
-            requireVersions: array_map(strval(...), (array) ($data['requireVersions'] ?? [])),
-            menu: array_values((array) ($data['menu'] ?? [])),
-        );
     }
 }

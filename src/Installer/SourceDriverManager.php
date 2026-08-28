@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Installer;
 
-use Illuminate\Support\Manager;
 use RuntimeException;
+use Illuminate\Support\Manager;
 use Simtabi\Laranail\Package\Management\Contracts\SourceDriver;
-use Simtabi\Laranail\Package\Management\Installer\Drivers\BitbucketSourceDriver;
 use Simtabi\Laranail\Package\Management\Installer\Drivers\GithubSourceDriver;
 use Simtabi\Laranail\Package\Management\Installer\Drivers\GitlabSourceDriver;
+use Simtabi\Laranail\Package\Management\Installer\Drivers\BitbucketSourceDriver;
 
 /**
  * Resolves a {@see SourceDriver} for a repository ref. Host apps register more providers

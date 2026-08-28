@@ -23,17 +23,6 @@ class SemverRequireTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/semver/packages',
-            'modules' => __DIR__ . '/Fixtures/semver/modules',
-            'plugins' => __DIR__ . '/Fixtures/semver/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-    }
-
     public function test_the_reader_parses_the_map_require_form(): void
     {
         $needy = Extensions::find('needy');
@@ -59,5 +48,16 @@ class SemverRequireTest extends TestCase
         $this->expectExceptionMessageMatches('/requires \[core\] \^2\.0, but \[1\.5\.0\]/');
 
         Extensions::enable('needy');
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/semver/packages',
+            'modules'  => __DIR__ . '/Fixtures/semver/modules',
+            'plugins'  => __DIR__ . '/Fixtures/semver/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
     }
 }

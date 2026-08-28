@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Manifests;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Illuminate\Filesystem\Filesystem;
 use Simtabi\Laranail\Package\Management\Extension;
 
 /**
@@ -20,10 +20,10 @@ final readonly class ManifestReader
     public function read(string $dir, string $role): ?Extension
     {
         return match ($role) {
-            'module' => $this->readModule($dir),
-            'plugin' => $this->readPlugin($dir),
+            'module'  => $this->readModule($dir),
+            'plugin'  => $this->readPlugin($dir),
             'package' => $this->readPackage($dir),
-            default => null,
+            default   => null,
         };
     }
 

@@ -128,7 +128,7 @@ function referencedPaths(array $composer): array
 }
 
 /**
- * @param  list<string>  $haystack
+ * @param list<string> $haystack
  */
 function contains(array $haystack, string $path): bool
 {

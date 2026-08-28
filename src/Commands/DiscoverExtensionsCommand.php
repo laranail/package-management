@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Commands;
 
 use Simtabi\Laranail\Console\Tools\Commands\Command;
-use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 final class DiscoverExtensionsCommand extends Command
 {

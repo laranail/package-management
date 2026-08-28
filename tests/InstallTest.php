@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\PlainRecordingHook;
 
 class InstallTest extends TestCase
@@ -33,31 +33,6 @@ class InstallTest extends TestCase
         @unlink($this->activationFile);
         (new Filesystem)->deleteDirectory($this->publicDir);
         parent::tearDown();
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app->usePublicPath($this->publicDir);
-
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/install/packages',
-            'modules' => __DIR__ . '/Fixtures/install/modules',
-            'plugins' => __DIR__ . '/Fixtures/install/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-    }
-
-    private function manager(): ExtensionManager
-    {
-        return $this->app->make(ExtensionManager::class);
     }
 
     public function test_install_runs_migrations_publishes_assets_and_activates(): void
@@ -104,5 +79,30 @@ class InstallTest extends TestCase
         $this->app->make(ExtensionManager::class)->install('migrated');
 
         Event::assertDispatched(ExtensionInstalled::class, static fn (ExtensionInstalled $e): bool => $e->extension->id === 'migrated');
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app->usePublicPath($this->publicDir);
+
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/install/packages',
+            'modules'  => __DIR__ . '/Fixtures/install/modules',
+            'plugins'  => __DIR__ . '/Fixtures/install/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
+    }
+
+    private function manager(): ExtensionManager
+    {
+        return $this->app->make(ExtensionManager::class);
     }
 }

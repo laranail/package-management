@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Schema;
 use Phar;
 use PharData;
-use Simtabi\Laranail\Package\Management\Installer\Drivers\GithubSourceDriver;
-use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
-use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
 use Throwable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
+use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
+use Simtabi\Laranail\Package\Management\Installer\Drivers\GithubSourceDriver;
 
 class InstallerTest extends TestCase
 {
@@ -39,25 +39,10 @@ class InstallerTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => $this->platform . '/packages',
-            'modules' => $this->platform . '/modules',
-            'plugins' => $this->platform . '/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-        $app['config']->set('laranail.package-management.activation.store', 'database');
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
-        ]);
-    }
-
     public function test_installs_a_module_from_a_vcs_tarball(): void
     {
         $gz = $this->tarball([
-            'module.json' => (string) json_encode(['name' => 'Widget', 'alias' => 'widget', 'providers' => []]),
+            'module.json'                                                         => (string) json_encode(['name' => 'Widget', 'alias' => 'widget', 'providers' => []]),
             'database/migrations/2026_01_01_000000_create_widget_items_table.php' => $this->migration('widget_items'),
         ]);
         Http::fake(['api.github.com/*' => Http::response((string) file_get_contents($gz))]);
@@ -73,7 +58,7 @@ class InstallerTest extends TestCase
     public function test_rollback_leaves_no_files_or_tables_on_failure(): void
     {
         $gz = $this->tarball([
-            'module.json' => (string) json_encode(['name' => 'Broken', 'alias' => 'broken', 'providers' => []]),
+            'module.json'                                    => (string) json_encode(['name' => 'Broken', 'alias' => 'broken', 'providers' => []]),
             'database/migrations/2026_01_01_000000_boom.php' => $this->throwingMigration(),
         ]);
         Http::fake(['api.github.com/*' => Http::response((string) file_get_contents($gz))]);
@@ -108,6 +93,21 @@ class InstallerTest extends TestCase
         $this->assertGreaterThan(0, (int) filesize($path));
 
         (new Filesystem)->deleteDirectory($temp);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => $this->platform . '/packages',
+            'modules'  => $this->platform . '/modules',
+            'plugins'  => $this->platform . '/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.activation.store', 'database');
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
+        ]);
     }
 
     /** @param  array<string, string>  $files */

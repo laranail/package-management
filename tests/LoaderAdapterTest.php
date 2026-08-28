@@ -6,24 +6,18 @@ namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Container\Container;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use Simtabi\Laranail\Package\Management\Adapters\LumenLoaderAdapter;
-use Simtabi\Laranail\Package\Management\Adapters\SymfonyLoaderAdapter;
 use Simtabi\Laranail\Package\Management\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Simtabi\Laranail\Package\Management\Adapters\LumenLoaderAdapter;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeProvider;
+use Simtabi\Laranail\Package\Management\Adapters\SymfonyLoaderAdapter;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyService;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyContract;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyBootableProvider;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyContainerAwareProvider;
-use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyContract;
-use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyService;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class LoaderAdapterTest extends BaseTestCase
 {
-    /** @param  list<string>  $providers */
-    private function extension(array $providers): Extension
-    {
-        return new Extension('demo', 'Demo', 'Demo\\', $providers, '1.0.0', [], 'plugin', '/tmp/demo', true);
-    }
-
     public function test_registers_providers_manually_on_a_bare_container(): void
     {
         $container = new Container;
@@ -140,5 +134,11 @@ class LoaderAdapterTest extends BaseTestCase
         @unlink($dir . '/src/Widget.php');
         @rmdir($dir . '/src');
         @rmdir($dir);
+    }
+
+    /** @param  list<string>  $providers */
+    private function extension(array $providers): Extension
+    {
+        return new Extension('demo', 'Demo', 'Demo\\', $providers, '1.0.0', [], 'plugin', '/tmp/demo', true);
     }
 }

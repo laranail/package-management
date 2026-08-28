@@ -5,24 +5,13 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Simtabi\Laranail\Package\Management\Models\ExtensionState;
 use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
-use Simtabi\Laranail\Package\Management\Models\ExtensionState;
 
 class ExtensionStateTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.activation.store', 'database');
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-    }
 
     public function test_model_factory_casts_and_active_scope(): void
     {
@@ -81,5 +70,16 @@ class ExtensionStateTest extends TestCase
     {
         ExtensionStateFacade::putSettings('blog', ['per_page' => 15]);
         $this->assertSame(['per_page' => 15], ExtensionStateFacade::settings('blog'));
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.activation.store', 'database');
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
     }
 }

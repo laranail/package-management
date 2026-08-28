@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Repositories;
 
 use Illuminate\Support\Facades\Schema;
-use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Models\ExtensionState;
+use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 
 /**
  * Eloquent-backed activation state. Reads degrade to empty/false until the state
@@ -56,7 +56,7 @@ final class EloquentExtensionStateRepository implements ExtensionStateRepository
     public function markInactive(string $name): void
     {
         ExtensionState::query()->where('name', $name)->update([
-            'is_active' => false,
+            'is_active'    => false,
             'activated_at' => null,
         ]);
     }

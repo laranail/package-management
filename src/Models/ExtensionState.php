@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Models;
 
+use Override;
+use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
-use Override;
 use Simtabi\Laranail\Package\Management\Database\Factories\ExtensionStateFactory;
 
 /**
@@ -31,6 +31,16 @@ class ExtensionState extends Model
 
     protected $table = 'laranail_extension_states';
 
+    /** @var list<string> */
+    protected $fillable = [
+        'name',
+        'is_active',
+        'version',
+        'settings',
+        'installed_at',
+        'activated_at',
+    ];
+
     /** @param  array<string, mixed>  $attributes */
     public function __construct(array $attributes = [])
     {
@@ -45,18 +55,9 @@ class ExtensionState extends Model
         parent::__construct($attributes);
     }
 
-    /** @var list<string> */
-    protected $fillable = [
-        'name',
-        'is_active',
-        'version',
-        'settings',
-        'installed_at',
-        'activated_at',
-    ];
-
     /**
-     * @param  Builder<ExtensionState>  $query
+     * @param Builder<ExtensionState> $query
+     *
      * @return Builder<ExtensionState>
      */
     public function scopeActive(Builder $query): Builder
@@ -64,20 +65,20 @@ class ExtensionState extends Model
         return $query->where('is_active', true);
     }
 
+    protected static function newFactory(): ExtensionStateFactory
+    {
+        return ExtensionStateFactory::new();
+    }
+
     /** @return array<string, string> */
     #[Override]
     protected function casts(): array
     {
         return [
-            'is_active' => 'boolean',
-            'settings' => 'array',
+            'is_active'    => 'boolean',
+            'settings'     => 'array',
             'installed_at' => 'datetime',
             'activated_at' => 'datetime',
         ];
-    }
-
-    protected static function newFactory(): ExtensionStateFactory
-    {
-        return ExtensionStateFactory::new();
     }
 }

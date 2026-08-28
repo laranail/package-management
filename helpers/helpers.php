@@ -37,7 +37,7 @@ if (! function_exists('extension_vite')) {
      * Render an extension's Vite tags from its published build dir (`public/vendor/{slug}/build`).
      * Safe no-op outside a Laravel Foundation app.
      *
-     * @param  string|list<string>  $entrypoints
+     * @param string|list<string> $entrypoints
      */
     function extension_vite(string $id, string|array $entrypoints, ?string $buildDirectory = null): HtmlString
     {

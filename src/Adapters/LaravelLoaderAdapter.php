@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Adapters;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Filesystem\Filesystem;
-use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
-use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
+use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Contracts\Foundation\Application;
 use Simtabi\Laranail\Package\Management\Extension;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
+use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
 
 /**
  * Laravel bridge. Runtime PSR-4 registration (via the shared trait) plus provider

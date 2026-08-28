@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Support\Facades\Event;
+use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
-use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\RecordingHook;
 
 class LifecycleTest extends TestCase
@@ -25,22 +25,6 @@ class LifecycleTest extends TestCase
     {
         @unlink($this->activationFile);
         parent::tearDown();
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules' => __DIR__ . '/Fixtures/platform/modules',
-            'plugins' => __DIR__ . '/Fixtures/platform/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-    }
-
-    private function manager(): ExtensionManager
-    {
-        return $this->app->make(ExtensionManager::class);
     }
 
     public function test_declared_hook_is_invoked_on_activate_and_deactivate(): void
@@ -87,5 +71,21 @@ class LifecycleTest extends TestCase
 
         $manager->disable('alpha');
         Event::assertDispatched(ExtensionDeactivated::class, static fn (ExtensionDeactivated $e): bool => $e->extension->id === 'alpha');
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+    }
+
+    private function manager(): ExtensionManager
+    {
+        return $this->app->make(ExtensionManager::class);
     }
 }

@@ -25,22 +25,6 @@ class LoaderTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules' => __DIR__ . '/Fixtures/platform/modules',
-            'plugins' => __DIR__ . '/Fixtures/platform/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-    }
-
-    private function manager(): ExtensionManager
-    {
-        return $this->app->make(ExtensionManager::class);
-    }
-
     public function test_discovers_extensions_with_correct_roles(): void
     {
         $all = $this->manager()->all();
@@ -135,5 +119,21 @@ class LoaderTest extends TestCase
         // booting must not fatal — missing provider classes are skipped
         $this->manager()->boot();
         $this->assertTrue(true);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+    }
+
+    private function manager(): ExtensionManager
+    {
+        return $this->app->make(ExtensionManager::class);
     }
 }

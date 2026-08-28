@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Simtabi\Laranail\Package\Management\Contracts\ContributesNavigation;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\Facades\Extensions;
+use Simtabi\Laranail\Package\Management\Contracts\ContributesNavigation;
 
 class HostSeamTest extends TestCase
 {
@@ -22,17 +22,6 @@ class HostSeamTest extends TestCase
     {
         @unlink($this->activationFile);
         parent::tearDown();
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules' => __DIR__ . '/Fixtures/platform/modules',
-            'plugins' => __DIR__ . '/Fixtures/platform/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
     }
 
     public function test_the_menu_manifest_field_is_read_and_exposed_on_the_vo(): void
@@ -87,5 +76,16 @@ class HostSeamTest extends TestCase
 
         $this->assertSame('Shop (dynamic)', $nav[0]['label']);
         $this->assertSame('/admin/acme-shop', $nav[0]['url']);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
     }
 }

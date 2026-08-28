@@ -13,18 +13,6 @@ use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
  */
 class ExtensionStateDegradationTest extends TestCase
 {
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.activation.store', 'database');
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-    }
-
     public function test_reads_return_empty_when_the_table_is_absent(): void
     {
         $store = $this->app->make(ActivationStore::class);
@@ -32,5 +20,17 @@ class ExtensionStateDegradationTest extends TestCase
         // no fatal, empty results — the app already booted with this store above
         $this->assertSame([], $store->active());
         $this->assertFalse($store->isActive('anything'));
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.activation.store', 'database');
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
     }
 }

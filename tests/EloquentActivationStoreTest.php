@@ -4,40 +4,18 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
-use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
-use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
 use Simtabi\Laranail\Package\Management\Models\ExtensionState;
+use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
+use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
 
 class EloquentActivationStoreTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules' => __DIR__ . '/Fixtures/platform/modules',
-            'plugins' => __DIR__ . '/Fixtures/platform/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-        $app['config']->set('laranail.package-management.activation.store', 'database');
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-    }
-
-    private function store(): ActivationStore
-    {
-        return $this->app->make(ActivationStore::class);
-    }
 
     public function test_database_store_is_the_eloquent_store(): void
     {
@@ -106,5 +84,27 @@ class EloquentActivationStoreTest extends TestCase
         $settings = ExtensionStateFacade::settings('acme/shop');
         $this->assertSame(99, $settings['per_page']);  // user value preserved
         $this->assertSame('shop', $settings['theme']); // default gap-filled
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.activation.store', 'database');
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
+    }
+
+    private function store(): ActivationStore
+    {
+        return $this->app->make(ActivationStore::class);
     }
 }

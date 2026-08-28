@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Phar;
 use PharData;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 class UiInstallFromTest extends TestCase
 {
@@ -35,24 +35,6 @@ class UiInstallFromTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => $this->platform . '/packages',
-            'modules' => $this->platform . '/modules',
-            'plugins' => $this->platform . '/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-        $app['config']->set('laranail.package-management.activation.store', 'database');
-        $app['config']->set('laranail.package-management.ui.enabled', true);
-        $app['config']->set('laranail.package-management.ui.prefix', 'ext');
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
-        ]);
-    }
-
     public function test_install_from_a_vcs_repo_through_the_ui(): void
     {
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -68,6 +50,24 @@ class UiInstallFromTest extends TestCase
 
         $this->assertDirectoryExists($this->platform . '/modules/gizmo');
         $this->assertTrue(is_extension_active('gizmo'));
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => $this->platform . '/packages',
+            'modules'  => $this->platform . '/modules',
+            'plugins'  => $this->platform . '/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.activation.store', 'database');
+        $app['config']->set('laranail.package-management.ui.enabled', true);
+        $app['config']->set('laranail.package-management.ui.prefix', 'ext');
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
+        ]);
     }
 
     /** @param  array<string, string>  $files */

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Filesystem\Filesystem;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 
 class CacheTest extends TestCase
 {
@@ -29,23 +29,6 @@ class CacheTest extends TestCase
         @unlink($this->activationFile);
         @unlink($this->cacheFile);
         parent::tearDown();
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules' => __DIR__ . '/Fixtures/platform/modules',
-            'plugins' => __DIR__ . '/Fixtures/platform/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', true);
-        $app['config']->set('laranail.package-management.cache.path', $this->cacheFile);
-    }
-
-    private function repo(): ExtensionRepository
-    {
-        return $this->app->make(ExtensionRepository::class);
     }
 
     public function test_discovery_warms_the_compiled_cache(): void
@@ -94,7 +77,7 @@ class CacheTest extends TestCase
         // warm the cache from the real fixtures, then overwrite it with a synthetic entry
         $this->repo()->rebuildCache();
         file_put_contents($this->cacheFile, "<?php\n\nreturn " . var_export([[
-            'id' => 'ghost/ext', 'name' => 'Ghost', 'namespace' => 'Ghost\\', 'providers' => [],
+            'id'      => 'ghost/ext', 'name' => 'Ghost', 'namespace' => 'Ghost\\', 'providers' => [],
             'version' => '1.0.0', 'require' => [], 'role' => 'plugin', 'path' => '/nowhere', 'enabled' => false,
         ]], true) . ";\n");
 
@@ -111,5 +94,22 @@ class CacheTest extends TestCase
 
         $ids = array_map(static fn (Extension $e): string => $e->id, $fresh->all());
         $this->assertContains('ghost/ext', $ids);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', true);
+        $app['config']->set('laranail.package-management.cache.path', $this->cacheFile);
+    }
+
+    private function repo(): ExtensionRepository
+    {
+        return $this->app->make(ExtensionRepository::class);
     }
 }

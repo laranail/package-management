@@ -4,32 +4,32 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management;
 
-use BadMethodCallException;
 use Closure;
-use Composer\Semver\Semver;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Traits\Macroable;
 use RuntimeException;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use BadMethodCallException;
+use Composer\Semver\Semver;
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Container\Container;
+use Simtabi\Laranail\Package\Management\Support\ExtensionQuery;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
+use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
 use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
-use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
-use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
-use Simtabi\Laranail\Package\Management\Events\ExtensionActivating;
-use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
-use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivating;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
-use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 use Simtabi\Laranail\Package\Management\Events\ExtensionRemoving;
-use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionUpdating;
-use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivating;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
 use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
-use Simtabi\Laranail\Package\Management\Support\ExtensionQuery;
+use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
+use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
+use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivating;
 
 /**
  * Orchestrates the runtime loader: registers active modules/plugins in dependency
@@ -54,6 +54,16 @@ class ExtensionManager
         private readonly Dispatcher $events,
         private readonly Container $container,
     ) {}
+
+    /** @param  array<int, mixed>  $parameters */
+    public function __call(string $method, array $parameters): mixed
+    {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
+        throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $method));
+    }
 
     /**
      * Register every active, runtime-loaded extension (modules/plugins), dependency
@@ -148,16 +158,6 @@ class ExtensionManager
         $this->container->make(ManifestPipeline::class)->pipe($stage);
 
         return $this;
-    }
-
-    /** @param  array<int, mixed>  $parameters */
-    public function __call(string $method, array $parameters): mixed
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $method));
     }
 
     public function enable(string $id): void

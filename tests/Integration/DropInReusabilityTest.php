@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests\Integration;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
-use Simtabi\Laranail\Package\Management\Facades\Extensions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Simtabi\Laranail\Package\Management\Tests\TestCase;
+use Simtabi\Laranail\Package\Management\Facades\Extensions;
 
 /**
  * Proves the package is drop-in reusable: with ONLY its own service provider registered
@@ -41,22 +41,6 @@ class DropInReusabilityTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => $this->platform . '/packages',
-            'modules' => $this->platform . '/modules',
-            'plugins' => $this->platform . '/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-        $app['config']->set('laranail.package-management.activation.store', 'database');
-        $app['config']->set('laranail.package-management.activation.table', 'custom_ext_states'); // configurable
-        $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
-        ]);
-    }
-
     public function test_a_dropped_extension_is_discovered_activated_and_recorded_in_the_configured_table(): void
     {
         // discovery — only ManagementServiceProvider is registered (see getPackageProviders)
@@ -70,5 +54,21 @@ class DropInReusabilityTest extends TestCase
         // the configurable table was created + used (drop-in reusability)
         $this->assertTrue(Schema::hasTable('custom_ext_states'));
         $this->assertDatabaseHas('custom_ext_states', ['name' => 'sample', 'is_active' => true]);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => $this->platform . '/packages',
+            'modules'  => $this->platform . '/modules',
+            'plugins'  => $this->platform . '/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.activation.store', 'database');
+        $app['config']->set('laranail.package-management.activation.table', 'custom_ext_states'); // configurable
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
+        ]);
     }
 }

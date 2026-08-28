@@ -22,20 +22,6 @@ class UiTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
-        $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules' => __DIR__ . '/Fixtures/platform/modules',
-            'plugins' => __DIR__ . '/Fixtures/platform/plugins',
-        ]);
-        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
-        $app['config']->set('laranail.package-management.cache.enabled', false);
-        $app['config']->set('laranail.package-management.ui.enabled', true);
-        $app['config']->set('laranail.package-management.ui.prefix', 'ext');
-    }
-
     public function test_index_lists_discovered_extensions(): void
     {
         $this->get('/ext')
@@ -85,5 +71,19 @@ class UiTest extends TestCase
             ->assertSessionHas('status', fn (string $s): bool => str_contains($s, 'requires'));
 
         $this->assertFalse(is_extension_active('acme/beta'));
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
+        $app['config']->set('laranail.package-management.paths', [
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+        ]);
+        $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
+        $app['config']->set('laranail.package-management.cache.enabled', false);
+        $app['config']->set('laranail.package-management.ui.enabled', true);
+        $app['config']->set('laranail.package-management.ui.prefix', 'ext');
     }
 }

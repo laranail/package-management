@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Installer;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use PharData;
+use Throwable;
 use RuntimeException;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
+use Illuminate\Support\Str;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Foundation\Application;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
-use Throwable;
 
 /**
  * Installs an extension from a VCS archive into `platform/{role}s/{name}` (lowercase) and
@@ -38,8 +38,8 @@ final readonly class ExtensionInstaller
     ) {}
 
     /**
-     * @param  callable(string):bool|null  $confirmOverwrite  called with the target dir when it exists
-     *                                                        and `$force` is false; return true to overwrite
+     * @param callable(string):bool|null $confirmOverwrite called with the target dir when it exists
+     *                                                     and `$force` is false; return true to overwrite
      */
     public function install(RepositoryRef $ref, ?string $asRole = null, bool $force = false, ?callable $confirmOverwrite = null): Extension
     {

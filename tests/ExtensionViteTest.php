@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\HtmlString;
+use Illuminate\Filesystem\Filesystem;
 
 class ExtensionViteTest extends TestCase
 {
@@ -31,12 +31,6 @@ class ExtensionViteTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app->usePublicPath($this->publicDir);
-        $app['config']->set('app.url', 'http://localhost');
-    }
-
     public function test_it_renders_tags_from_the_extensions_published_build_dir(): void
     {
         $html = extension_vite('acme/blog', 'resources/js/app.js');
@@ -59,5 +53,11 @@ class ExtensionViteTest extends TestCase
         $rendered = (string) extension_vite('acme/blog', 'resources/js/app.js', 'custom/build');
 
         $this->assertStringContainsString('custom/build/assets/app-xyz789.js', $rendered);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app->usePublicPath($this->publicDir);
+        $app['config']->set('app.url', 'http://localhost');
     }
 }

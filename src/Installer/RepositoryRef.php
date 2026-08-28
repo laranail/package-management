@@ -14,8 +14,8 @@ use InvalidArgumentException;
 final readonly class RepositoryRef
 {
     private const array HOSTS = [
-        'github.com' => 'github',
-        'gitlab.com' => 'gitlab',
+        'github.com'    => 'github',
+        'gitlab.com'    => 'gitlab',
         'bitbucket.org' => 'bitbucket',
     ];
 
