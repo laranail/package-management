@@ -82,7 +82,6 @@
             "@phpstan",
             "@rector"
         ],
-        "audit": "@composer audit",
         "composer-audit": "@composer audit --no-interaction",
         "pint": "@php vendor/bin/laranail-pint --test",
         "pint-fix": "@php vendor/bin/laranail-pint --parallel",
