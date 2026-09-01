@@ -6,15 +6,15 @@ namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Container\Container;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use Simtabi\Laranail\Package\Management\Extension;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Simtabi\Laranail\Package\Management\Adapters\LumenLoaderAdapter;
-use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeProvider;
 use Simtabi\Laranail\Package\Management\Adapters\SymfonyLoaderAdapter;
-use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyService;
-use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyContract;
+use Simtabi\Laranail\Package\Management\Extension;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeProvider;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyBootableProvider;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyContainerAwareProvider;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyContract;
+use Simtabi\Laranail\Package\Management\Tests\Fixtures\FakeSymfonyService;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class LoaderAdapterTest extends BaseTestCase
 {
@@ -122,17 +122,17 @@ class LoaderAdapterTest extends BaseTestCase
 
     public function test_symfony_adapter_registers_runtime_autoload(): void
     {
-        $dir = sys_get_temp_dir() . '/laranail-pm-sfauto-' . uniqid();
-        @mkdir($dir . '/src', 0777, true);
-        file_put_contents($dir . '/src/Widget.php', "<?php\nnamespace SfAuto;\nclass Widget {}\n");
+        $dir = sys_get_temp_dir().'/laranail-pm-sfauto-'.uniqid();
+        @mkdir($dir.'/src', 0777, true);
+        file_put_contents($dir.'/src/Widget.php', "<?php\nnamespace SfAuto;\nclass Widget {}\n");
 
         $extension = new Extension('sfauto', 'SfAuto', 'SfAuto\\', [], '1.0.0', [], 'plugin', $dir, true);
         (new SymfonyLoaderAdapter(new ContainerBuilder))->registerAutoload($extension);
 
         $this->assertTrue(class_exists('SfAuto\\Widget')); // PSR-4 registered at runtime, no composer dump
 
-        @unlink($dir . '/src/Widget.php');
-        @rmdir($dir . '/src');
+        @unlink($dir.'/src/Widget.php');
+        @rmdir($dir.'/src');
         @rmdir($dir);
     }
 

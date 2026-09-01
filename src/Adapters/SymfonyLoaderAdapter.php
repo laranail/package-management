@@ -6,11 +6,11 @@ namespace Simtabi\Laranail\Package\Management\Adapters;
 
 use ReflectionClass;
 use ReflectionMethod;
+use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
 
 /**
  * Symfony bridge. Autoloading is shared with the other adapters (runtime PSR-4).
@@ -60,7 +60,7 @@ final class SymfonyLoaderAdapter implements LoaderAdapter
     /**
      * Inject the container when the constructor takes an argument; else construct no-arg.
      *
-     * @param class-string $provider
+     * @param  class-string  $provider
      */
     private function instantiate(string $provider): object
     {

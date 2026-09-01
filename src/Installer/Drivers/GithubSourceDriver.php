@@ -31,7 +31,7 @@ final readonly class GithubSourceDriver implements SourceDriver
         }
 
         $body = $request->get($url)->throw()->body();
-        $path = rtrim($toDir, DIRECTORY_SEPARATOR) . '/source.tar.gz';
+        $path = rtrim($toDir, DIRECTORY_SEPARATOR).'/source.tar.gz';
         file_put_contents($path, $body);
 
         return $path;

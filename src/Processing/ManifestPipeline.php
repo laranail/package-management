@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Processing;
 
 use Closure;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Pipeline\Pipeline;
 use Simtabi\Laranail\Package\Management\Extension;
 
 /**

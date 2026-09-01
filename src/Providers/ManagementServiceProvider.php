@@ -4,50 +4,50 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Providers;
 
-use Override;
+use Illuminate\Contracts\Cache\Factory as CacheFactory;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Contracts\Events\Dispatcher;
-use Simtabi\Laranail\Package\Tools\Package;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Cache\Factory as CacheFactory;
+use Override;
+use Simtabi\Laranail\Package\Management\Actions\ActivateExtension;
+use Simtabi\Laranail\Package\Management\Actions\DeactivateExtension;
+use Simtabi\Laranail\Package\Management\Adapters\LaravelLoaderAdapter;
+use Simtabi\Laranail\Package\Management\Commands\CacheExtensionsCommand;
+use Simtabi\Laranail\Package\Management\Commands\DisableExtensionCommand;
+use Simtabi\Laranail\Package\Management\Commands\DiscoverExtensionsCommand;
+use Simtabi\Laranail\Package\Management\Commands\EnableExtensionCommand;
+use Simtabi\Laranail\Package\Management\Commands\InstallExtensionCommand;
+use Simtabi\Laranail\Package\Management\Commands\InstallFromVcsCommand;
+use Simtabi\Laranail\Package\Management\Commands\ListExtensionsCommand;
+use Simtabi\Laranail\Package\Management\Commands\RemoveExtensionCommand;
+use Simtabi\Laranail\Package\Management\Commands\UpdateExtensionCommand;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\ExtensionStateManager;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
-use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
-use Simtabi\Laranail\Package\Management\Actions\ActivateExtension;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
-use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
-use Simtabi\Laranail\Package\Management\Stores\FileActivationStore;
-use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
-use Simtabi\Laranail\Package\Management\Actions\DeactivateExtension;
-use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
-use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
-use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
-use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
-use Simtabi\Laranail\Package\Management\Adapters\LaravelLoaderAdapter;
-use Simtabi\Laranail\Package\Management\Installer\SourceDriverManager;
-use Simtabi\Laranail\Package\Management\Commands\InstallFromVcsCommand;
-use Simtabi\Laranail\Package\Management\Commands\ListExtensionsCommand;
-use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
-use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
-use Simtabi\Laranail\Package\Management\Commands\CacheExtensionsCommand;
-use Simtabi\Laranail\Package\Management\Commands\EnableExtensionCommand;
-use Simtabi\Laranail\Package\Management\Commands\RemoveExtensionCommand;
-use Simtabi\Laranail\Package\Management\Commands\UpdateExtensionCommand;
-use Simtabi\Laranail\Package\Management\Commands\DisableExtensionCommand;
-use Simtabi\Laranail\Package\Management\Commands\InstallExtensionCommand;
-use Simtabi\Laranail\Package\Management\Commands\DiscoverExtensionsCommand;
-use Simtabi\Laranail\Package\Management\Listeners\FlushExtensionStateCache;
 use Simtabi\Laranail\Package\Management\Http\Controllers\ExtensionController;
-use Simtabi\Laranail\Package\Tools\Support\Definitions\AboutSectionDefinition;
-use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
+use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
+use Simtabi\Laranail\Package\Management\Installer\SourceDriverManager;
+use Simtabi\Laranail\Package\Management\Listeners\FlushExtensionStateCache;
+use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
 use Simtabi\Laranail\Package\Management\Repositories\CachingExtensionStateRepository;
 use Simtabi\Laranail\Package\Management\Repositories\EloquentExtensionStateRepository;
+use Simtabi\Laranail\Package\Management\Services\ExtensionStateService;
+use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
+use Simtabi\Laranail\Package\Management\Stores\FileActivationStore;
+use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
+use Simtabi\Laranail\Package\Tools\Package;
+use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
+use Simtabi\Laranail\Package\Tools\Support\Definitions\AboutSectionDefinition;
 
 /**
  * Entry point for laranail/package-management — the runtime loader. Built on
@@ -85,10 +85,10 @@ final class ManagementServiceProvider extends PackageServiceProvider
 
                         return [
                             'Discovered' => (string) count($manager->all()),
-                            'Active'     => (string) count($manager->active()),
-                            'Modules'    => (string) count($manager->modules()),
-                            'Plugins'    => (string) count($manager->plugins()),
-                            'Store'      => (string) config('laranail.package-management.activation.store', 'file'),
+                            'Active' => (string) count($manager->active()),
+                            'Modules' => (string) count($manager->modules()),
+                            'Plugins' => (string) count($manager->plugins()),
+                            'Store' => (string) config('laranail.package-management.activation.store', 'file'),
                         ];
                     }),
             );
@@ -133,8 +133,8 @@ final class ManagementServiceProvider extends PackageServiceProvider
                 $app->make(ActivationStore::class),
                 [
                     'package' => (string) ($paths['packages'] ?? ''),
-                    'module'  => (string) ($paths['modules'] ?? ''),
-                    'plugin'  => (string) ($paths['plugins'] ?? ''),
+                    'module' => (string) ($paths['modules'] ?? ''),
+                    'plugin' => (string) ($paths['plugins'] ?? ''),
                 ],
                 (bool) ($cache['enabled'] ?? false),
                 $cachePath === '' || str_starts_with($cachePath, DIRECTORY_SEPARATOR)

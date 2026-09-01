@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Phar;
 use PharData;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 class UiInstallFromTest extends TestCase
 {
@@ -22,7 +22,7 @@ class UiInstallFromTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->platform = sys_get_temp_dir() . '/laranail-pm-uivcs-' . getmypid() . '-' . uniqid();
+        $this->platform = sys_get_temp_dir().'/laranail-pm-uivcs-'.getmypid().'-'.uniqid();
         parent::setUp();
     }
 
@@ -48,17 +48,17 @@ class UiInstallFromTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('status', fn (string $s): bool => str_contains($s, 'Installed [gizmo]'));
 
-        $this->assertDirectoryExists($this->platform . '/modules/gizmo');
+        $this->assertDirectoryExists($this->platform.'/modules/gizmo');
         $this->assertTrue(is_extension_active('gizmo'));
     }
 
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
+        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => $this->platform . '/packages',
-            'modules'  => $this->platform . '/modules',
-            'plugins'  => $this->platform . '/plugins',
+            'packages' => $this->platform.'/packages',
+            'modules' => $this->platform.'/modules',
+            'plugins' => $this->platform.'/plugins',
         ]);
         $app['config']->set('laranail.package-management.cache.enabled', false);
         $app['config']->set('laranail.package-management.activation.store', 'database');
@@ -73,14 +73,14 @@ class UiInstallFromTest extends TestCase
     /** @param  array<string, string>  $files */
     private function tarball(array $files, string $wrap = 'acme-gizmo-abc123'): string
     {
-        $src = sys_get_temp_dir() . '/laranail-pm-uivcs-src-' . uniqid();
+        $src = sys_get_temp_dir().'/laranail-pm-uivcs-src-'.uniqid();
         foreach ($files as $relative => $content) {
-            $path = $src . '/' . $wrap . '/' . $relative;
+            $path = $src.'/'.$wrap.'/'.$relative;
             @mkdir(dirname($path), 0777, true);
             file_put_contents($path, $content);
         }
 
-        $tar = sys_get_temp_dir() . '/laranail-pm-uivcs-tar-' . bin2hex(random_bytes(6)) . '.tar';
+        $tar = sys_get_temp_dir().'/laranail-pm-uivcs-tar-'.bin2hex(random_bytes(6)).'.tar';
         $phar = new PharData($tar);
         $phar->buildFromDirectory($src);
         $phar->compress(Phar::GZ);
@@ -89,8 +89,8 @@ class UiInstallFromTest extends TestCase
         (new Filesystem)->deleteDirectory($src);
         @unlink($tar);
 
-        $this->tarballs[] = $tar . '.gz';
+        $this->tarballs[] = $tar.'.gz';
 
-        return $tar . '.gz';
+        return $tar.'.gz';
     }
 }

@@ -4,32 +4,32 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management;
 
-use Closure;
-use RuntimeException;
 use BadMethodCallException;
+use Closure;
 use Composer\Semver\Semver;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Container\Container;
-use Simtabi\Laranail\Package\Management\Support\ExtensionQuery;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Traits\Macroable;
+use RuntimeException;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
-use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
-use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
+use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
 use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
-use Simtabi\Laranail\Package\Management\Events\ExtensionRemoving;
-use Simtabi\Laranail\Package\Management\Events\ExtensionUpdating;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
-use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivating;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
-use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
-use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivating;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoving;
+use Simtabi\Laranail\Package\Management\Events\ExtensionUpdated;
+use Simtabi\Laranail\Package\Management\Events\ExtensionUpdating;
+use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
+use Simtabi\Laranail\Package\Management\Support\DependencyResolver;
+use Simtabi\Laranail\Package\Management\Support\ExtensionQuery;
 
 /**
  * Orchestrates the runtime loader: registers active modules/plugins in dependency
@@ -167,7 +167,7 @@ class ExtensionManager
         if ($extension->minimumCoreVersion !== null
             && version_compare(self::VERSION, $extension->minimumCoreVersion, '<')) {
             throw new RuntimeException(
-                "Extension [{$id}] requires package-management >= {$extension->minimumCoreVersion} (running " . self::VERSION . ').',
+                "Extension [{$id}] requires package-management >= {$extension->minimumCoreVersion} (running ".self::VERSION.').',
             );
         }
 

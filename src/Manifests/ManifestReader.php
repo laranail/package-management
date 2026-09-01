@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Manifests;
 
-use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Simtabi\Laranail\Package\Management\Extension;
 
 /**
@@ -20,10 +20,10 @@ final readonly class ManifestReader
     public function read(string $dir, string $role): ?Extension
     {
         return match ($role) {
-            'module'  => $this->readModule($dir),
-            'plugin'  => $this->readPlugin($dir),
+            'module' => $this->readModule($dir),
+            'plugin' => $this->readPlugin($dir),
             'package' => $this->readPackage($dir),
-            default   => null,
+            default => null,
         };
     }
 
@@ -41,7 +41,7 @@ final readonly class ManifestReader
 
     private function readModule(string $dir): ?Extension
     {
-        $m = $this->json($dir . '/module.json');
+        $m = $this->json($dir.'/module.json');
         if ($m === null || empty($m['name'])) {
             return null;
         }
@@ -69,7 +69,7 @@ final readonly class ManifestReader
 
     private function readPlugin(string $dir): ?Extension
     {
-        $p = $this->json($dir . '/plugin.json');
+        $p = $this->json($dir.'/plugin.json');
         if ($p === null || empty($p['name']) || empty($p['provider'])) {
             return null;
         }
@@ -80,7 +80,7 @@ final readonly class ManifestReader
         return new Extension(
             id: (string) ($p['id'] ?? Str::kebab((string) $p['name'])),
             name: (string) $p['name'],
-            namespace: rtrim($namespace, '\\') . '\\',
+            namespace: rtrim($namespace, '\\').'\\',
             providers: [(string) $p['provider']],
             version: (string) ($p['version'] ?? '0.0.0'),
             require: $require,
@@ -98,7 +98,7 @@ final readonly class ManifestReader
 
     private function readPackage(string $dir): ?Extension
     {
-        $c = $this->json($dir . '/composer.json');
+        $c = $this->json($dir.'/composer.json');
         if ($c === null || empty($c['name'])) {
             return null;
         }
@@ -150,6 +150,6 @@ final readonly class ManifestReader
             $parts = array_slice($parts, 0, -2);
         }
 
-        return $parts === [] ? '' : implode('\\', $parts) . '\\';
+        return $parts === [] ? '' : implode('\\', $parts).'\\';
     }
 }

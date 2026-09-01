@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Stores;
 
-use Simtabi\Laranail\Package\Management\ExtensionStateManager;
-use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
-use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
 use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
+use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
+use Simtabi\Laranail\Package\Management\Contracts\SeedsSettings;
+use Simtabi\Laranail\Package\Management\ExtensionStateManager;
 
 /**
  * Database activation store: bridges the loader's ActivationStore contract to the

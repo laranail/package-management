@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Commands;
 
 use Override;
-use Throwable;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Simtabi\Laranail\Console\Tools\Commands\Command;
-use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
-use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
 use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
+use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
+use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 final class InstallFromVcsCommand extends Command
 {

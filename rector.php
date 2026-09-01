@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\SetList;
 use Rector\DowngradePhp84\Rector\MethodCall\DowngradeNewMethodCallWithoutParenthesesRector;
+use Rector\Set\ValueObject\SetList;
 
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/src',
-        __DIR__ . '/tests',
+        __DIR__.'/src',
+        __DIR__.'/tests',
     ])
     ->withSkip([
-        __DIR__ . '/vendor',
-        __DIR__ . '/tests/Fixtures',
+        __DIR__.'/vendor',
+        __DIR__.'/tests/Fixtures',
     ])
     ->withPhpSets(php83: true)
     ->withSets([

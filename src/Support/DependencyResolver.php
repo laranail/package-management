@@ -27,8 +27,7 @@ final class DependencyResolver
     private array $sorted = [];
 
     /**
-     * @param list<Extension> $extensions
-     *
+     * @param  list<Extension>  $extensions
      * @return list<Extension>
      */
     public function sort(array $extensions): array
