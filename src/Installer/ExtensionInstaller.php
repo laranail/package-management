@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Installer;
 
-use PharData;
-use Throwable;
-use RuntimeException;
-use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+use PharData;
+use RuntimeException;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Throwable;
 
 /**
  * Installs an extension from a VCS archive into `platform/{role}s/{name}` (lowercase) and
@@ -38,8 +38,8 @@ final readonly class ExtensionInstaller
     ) {}
 
     /**
-     * @param callable(string):bool|null $confirmOverwrite called with the target dir when it exists
-     *                                                     and `$force` is false; return true to overwrite
+     * @param  callable(string):bool|null  $confirmOverwrite  called with the target dir when it exists
+     *                                                        and `$force` is false; return true to overwrite
      */
     public function install(RepositoryRef $ref, ?string $asRole = null, bool $force = false, ?callable $confirmOverwrite = null): Extension
     {
@@ -51,7 +51,7 @@ final readonly class ExtensionInstaller
             $archive = $this->sources->forRef($ref)->download($ref, $temp);
             $this->verify($archive);
 
-            $root = $this->locateRoot($this->extract($archive, $temp . '/extracted'));
+            $root = $this->locateRoot($this->extract($archive, $temp.'/extracted'));
 
             $role = $asRole ?? $this->detectRole($root);
             $name = $this->detectName($root, $role);
@@ -97,7 +97,7 @@ final readonly class ExtensionInstaller
             }
 
             // back the existing target up so a rollback can restore it
-            $backup = $temp . '/backup';
+            $backup = $temp.'/backup';
             $this->files->moveDirectory($target, $backup);
             $stack->push(function () use ($target, $backup): void {
                 $this->files->deleteDirectory($target);
@@ -149,13 +149,13 @@ final readonly class ExtensionInstaller
 
     private function hasAnyManifest(string $dir): bool
     {
-        return array_any(self::MANIFESTS, fn (string $file) => $this->files->isFile($dir . '/' . $file));
+        return array_any(self::MANIFESTS, fn (string $file) => $this->files->isFile($dir.'/'.$file));
     }
 
     private function detectRole(string $root): string
     {
         foreach (self::MANIFESTS as $role => $file) {
-            if ($this->files->isFile($root . '/' . $file)) {
+            if ($this->files->isFile($root.'/'.$file)) {
                 return $role;
             }
         }
@@ -181,12 +181,12 @@ final readonly class ExtensionInstaller
             $this->app->basePath("platform/{$role}s"),
         );
 
-        return rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . Str::slug($name);
+        return rtrim($root, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.Str::slug($name);
     }
 
     private function tempDir(): string
     {
-        $dir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . '/laranail-install-' . bin2hex(random_bytes(6));
+        $dir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).'/laranail-install-'.bin2hex(random_bytes(6));
         $this->files->ensureDirectoryExists($dir);
 
         return $dir;

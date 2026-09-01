@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Http\Controllers;
 
-use Throwable;
-use Illuminate\Http\Request;
-use InvalidArgumentException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use InvalidArgumentException;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
-use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
 use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
+use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
+use Throwable;
 
 /**
  * The optional management UI. Lists discovered extensions and drives the lifecycle

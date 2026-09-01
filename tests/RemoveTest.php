@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\Models\ExtensionState;
-use Simtabi\Laranail\Package\Management\Events\ExtensionRemoved;
 
 class RemoveTest extends TestCase
 {
@@ -20,7 +20,7 @@ class RemoveTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->publicDir = sys_get_temp_dir() . '/laranail-pm-rm-' . getmypid() . '-' . uniqid();
+        $this->publicDir = sys_get_temp_dir().'/laranail-pm-rm-'.getmypid().'-'.uniqid();
         parent::setUp();
     }
 
@@ -37,7 +37,7 @@ class RemoveTest extends TestCase
 
         // preconditions after install
         $this->assertTrue(is_extension_active('migrated'));
-        $this->assertFileExists($this->publicDir . '/vendor/migrated/css/app.css');
+        $this->assertFileExists($this->publicDir.'/vendor/migrated/css/app.css');
         $this->assertNotNull(ExtensionState::query()->where('name', 'migrated')->first());
         $this->assertTrue(Schema::hasTable('migrated_items'));
 
@@ -45,7 +45,7 @@ class RemoveTest extends TestCase
 
         $this->assertFalse(is_extension_active('migrated'), 'remove should deactivate');
         $this->assertFileDoesNotExist(
-            $this->publicDir . '/vendor/migrated/css/app.css',
+            $this->publicDir.'/vendor/migrated/css/app.css',
             'remove should unpublish assets',
         );
         $this->assertNull(
@@ -75,17 +75,17 @@ class RemoveTest extends TestCase
         $app->usePublicPath($this->publicDir);
 
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/install/packages',
-            'modules'  => __DIR__ . '/Fixtures/install/modules',
-            'plugins'  => __DIR__ . '/Fixtures/install/plugins',
+            'packages' => __DIR__.'/Fixtures/install/packages',
+            'modules' => __DIR__.'/Fixtures/install/modules',
+            'plugins' => __DIR__.'/Fixtures/install/plugins',
         ]);
         $app['config']->set('laranail.package-management.cache.enabled', false);
         $app['config']->set('laranail.package-management.activation.store', 'database');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
 

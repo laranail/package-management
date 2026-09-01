@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Adapters;
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Contracts\Foundation\Application;
-use Simtabi\Laranail\Package\Management\Extension;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
-use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
-use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Filesystem\Filesystem;
 use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Contracts\PublishesAssets;
+use Simtabi\Laranail\Package\Management\Contracts\RunsMigrations;
+use Simtabi\Laranail\Package\Management\Extension;
 
 /**
  * Laravel bridge. Runtime PSR-4 registration (via the shared trait) plus provider
@@ -37,7 +37,7 @@ final class LaravelLoaderAdapter implements LoaderAdapter, PublishesAssets, Runs
 
     public function runMigrations(Extension $extension): void
     {
-        $path = rtrim($extension->path, DIRECTORY_SEPARATOR) . '/database/migrations';
+        $path = rtrim($extension->path, DIRECTORY_SEPARATOR).'/database/migrations';
 
         if (! is_dir($path)) {
             return;
@@ -58,7 +58,7 @@ final class LaravelLoaderAdapter implements LoaderAdapter, PublishesAssets, Runs
 
     public function rollbackMigrations(Extension $extension): void
     {
-        $path = rtrim($extension->path, DIRECTORY_SEPARATOR) . '/database/migrations';
+        $path = rtrim($extension->path, DIRECTORY_SEPARATOR).'/database/migrations';
 
         if (! is_dir($path)) {
             return;
@@ -77,17 +77,17 @@ final class LaravelLoaderAdapter implements LoaderAdapter, PublishesAssets, Runs
 
     public function publishAssets(Extension $extension): void
     {
-        $source = rtrim($extension->path, DIRECTORY_SEPARATOR) . '/public';
+        $source = rtrim($extension->path, DIRECTORY_SEPARATOR).'/public';
 
         if (! is_dir($source)) {
             return;
         }
 
-        (new Filesystem)->copyDirectory($source, public_path('vendor/' . $extension->slug()));
+        (new Filesystem)->copyDirectory($source, public_path('vendor/'.$extension->slug()));
     }
 
     public function unpublishAssets(Extension $extension): void
     {
-        (new Filesystem)->deleteDirectory(public_path('vendor/' . $extension->slug()));
+        (new Filesystem)->deleteDirectory(public_path('vendor/'.$extension->slug()));
     }
 }

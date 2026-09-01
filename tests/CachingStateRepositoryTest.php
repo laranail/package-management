@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Repositories\CachingExtensionStateRepository;
 

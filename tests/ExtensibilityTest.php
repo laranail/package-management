@@ -6,12 +6,12 @@ namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Closure;
 use Illuminate\Support\Facades\Event;
+use Simtabi\Laranail\Package\Management\Events\ExtensionActivating;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\Facades\Extensions;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
-use Simtabi\Laranail\Package\Management\Events\ExtensionActivating;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalling;
 
 class ExtensibilityTest extends TestCase
 {
@@ -19,7 +19,7 @@ class ExtensibilityTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-ext-' . getmypid() . '-' . uniqid() . '.json';
+        $this->activationFile = sys_get_temp_dir().'/laranail-pm-ext-'.getmypid().'-'.uniqid().'.json';
         parent::setUp();
     }
 
@@ -89,9 +89,9 @@ class ExtensibilityTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules'  => __DIR__ . '/Fixtures/platform/modules',
-            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+            'packages' => __DIR__.'/Fixtures/platform/packages',
+            'modules' => __DIR__.'/Fixtures/platform/modules',
+            'plugins' => __DIR__.'/Fixtures/platform/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);

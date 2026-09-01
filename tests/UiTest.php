@@ -12,7 +12,7 @@ class UiTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-ui-' . getmypid() . '-' . uniqid() . '.json';
+        $this->activationFile = sys_get_temp_dir().'/laranail-pm-ui-'.getmypid().'-'.uniqid().'.json';
         parent::setUp();
     }
 
@@ -75,11 +75,11 @@ class UiTest extends TestCase
 
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
+        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/platform/packages',
-            'modules'  => __DIR__ . '/Fixtures/platform/modules',
-            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
+            'packages' => __DIR__.'/Fixtures/platform/packages',
+            'modules' => __DIR__.'/Fixtures/platform/modules',
+            'plugins' => __DIR__.'/Fixtures/platform/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);

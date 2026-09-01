@@ -18,7 +18,7 @@ use Illuminate\Support\HtmlString;
 final class ExtensionVite
 {
     /**
-     * @param string|list<string> $entrypoints
+     * @param  string|list<string>  $entrypoints
      */
     public function __invoke(string $id, string|array $entrypoints, ?string $buildDirectory = null): HtmlString
     {

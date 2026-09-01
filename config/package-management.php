@@ -16,8 +16,8 @@ return [
     */
     'paths' => [
         'packages' => base_path('platform/packages'),
-        'modules'  => base_path('platform/modules'),
-        'plugins'  => base_path('platform/plugins'),
+        'modules' => base_path('platform/modules'),
+        'plugins' => base_path('platform/plugins'),
     ],
 
     /*
@@ -32,7 +32,7 @@ return [
     */
     'cache' => [
         'enabled' => env('PACKAGE_MANAGEMENT_CACHE', true),
-        'path'    => 'bootstrap/cache/laranail-extensions.php',
+        'path' => 'bootstrap/cache/laranail-extensions.php',
     ],
 
     /*
@@ -53,7 +53,7 @@ return [
         'file' => storage_path('app/laranail/extensions_statuses.json'),
 
         // database store — table + connection (null = the app's default connection)
-        'table'      => env('PACKAGE_MANAGEMENT_TABLE', 'laranail_extension_states'),
+        'table' => env('PACKAGE_MANAGEMENT_TABLE', 'laranail_extension_states'),
         'connection' => env('PACKAGE_MANAGEMENT_DB_CONNECTION'),
 
         // wrap the database state repository in a caching decorator (reads cached, writes flush)
@@ -84,8 +84,8 @@ return [
     |
     */
     'ui' => [
-        'enabled'    => env('PACKAGE_MANAGEMENT_UI', false),
-        'prefix'     => env('PACKAGE_MANAGEMENT_UI_PREFIX', 'laranail/extensions'),
+        'enabled' => env('PACKAGE_MANAGEMENT_UI', false),
+        'prefix' => env('PACKAGE_MANAGEMENT_UI_PREFIX', 'laranail/extensions'),
         'middleware' => ['web'],
     ],
 
@@ -100,12 +100,12 @@ return [
     */
     'installer' => [
         'default_provider' => env('PACKAGE_MANAGEMENT_VCS', 'github'),
-        'tokens'           => [
-            'github'    => env('GITHUB_TOKEN'),
-            'gitlab'    => env('GITLAB_TOKEN'),
+        'tokens' => [
+            'github' => env('GITHUB_TOKEN'),
+            'gitlab' => env('GITLAB_TOKEN'),
             'bitbucket' => env('BITBUCKET_TOKEN'),
         ],
-        'timeout'   => 60,          // seconds
+        'timeout' => 60,          // seconds
         'max_bytes' => 104857600, // 100 MB archive cap
         // remove() rolls back the extension's migrations only when this is true (data-safety default off)
         'rollback_migrations_on_remove' => env('PACKAGE_MANAGEMENT_ROLLBACK_ON_REMOVE', false),

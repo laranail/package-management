@@ -13,7 +13,7 @@ class MinCoreVersionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-mcv-' . getmypid() . '-' . uniqid() . '.json';
+        $this->activationFile = sys_get_temp_dir().'/laranail-pm-mcv-'.getmypid().'-'.uniqid().'.json';
         parent::setUp();
     }
 
@@ -35,9 +35,9 @@ class MinCoreVersionTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__ . '/Fixtures/incompatible/packages',
-            'modules'  => __DIR__ . '/Fixtures/incompatible/modules',
-            'plugins'  => __DIR__ . '/Fixtures/incompatible/plugins',
+            'packages' => __DIR__.'/Fixtures/incompatible/packages',
+            'modules' => __DIR__.'/Fixtures/incompatible/modules',
+            'plugins' => __DIR__.'/Fixtures/incompatible/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);

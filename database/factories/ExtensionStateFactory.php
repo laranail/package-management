@@ -18,10 +18,10 @@ class ExtensionStateFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'         => fake()->unique()->slug(2),
-            'is_active'    => false,
-            'version'      => '1.0.0',
-            'settings'     => [],
+            'name' => fake()->unique()->slug(2),
+            'is_active' => false,
+            'version' => '1.0.0',
+            'settings' => [],
             'installed_at' => null,
             'activated_at' => null,
         ];
@@ -30,7 +30,7 @@ class ExtensionStateFactory extends Factory
     public function active(): static
     {
         return $this->state(fn (): array => [
-            'is_active'    => true,
+            'is_active' => true,
             'installed_at' => now(),
             'activated_at' => now(),
         ]);
