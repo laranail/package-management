@@ -13,7 +13,7 @@ class SemverRequireTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir().'/laranail-pm-semver-'.getmypid().'-'.uniqid().'.json';
+        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-semver-' . getmypid() . '-' . uniqid() . '.json';
         parent::setUp();
     }
 
@@ -53,9 +53,9 @@ class SemverRequireTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__.'/Fixtures/semver/packages',
-            'modules' => __DIR__.'/Fixtures/semver/modules',
-            'plugins' => __DIR__.'/Fixtures/semver/plugins',
+            'packages' => __DIR__ . '/Fixtures/semver/packages',
+            'modules'  => __DIR__ . '/Fixtures/semver/modules',
+            'plugins'  => __DIR__ . '/Fixtures/semver/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);

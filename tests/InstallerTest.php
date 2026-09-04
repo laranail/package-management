@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Schema;
 use Phar;
 use PharData;
-use Simtabi\Laranail\Package\Management\Installer\Drivers\GithubSourceDriver;
-use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
-use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
 use Throwable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Simtabi\Laranail\Package\Management\Installer\RepositoryRef;
+use Simtabi\Laranail\Package\Management\Installer\ExtensionInstaller;
+use Simtabi\Laranail\Package\Management\Installer\Drivers\GithubSourceDriver;
 
 class InstallerTest extends TestCase
 {
@@ -26,7 +26,7 @@ class InstallerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->platform = sys_get_temp_dir().'/laranail-pm-platform-'.getmypid().'-'.uniqid();
+        $this->platform = sys_get_temp_dir() . '/laranail-pm-platform-' . getmypid() . '-' . uniqid();
         parent::setUp();
     }
 
@@ -42,7 +42,7 @@ class InstallerTest extends TestCase
     public function test_installs_a_module_from_a_vcs_tarball(): void
     {
         $gz = $this->tarball([
-            'module.json' => (string) json_encode(['name' => 'Widget', 'alias' => 'widget', 'providers' => []]),
+            'module.json'                                                         => (string) json_encode(['name' => 'Widget', 'alias' => 'widget', 'providers' => []]),
             'database/migrations/2026_01_01_000000_create_widget_items_table.php' => $this->migration('widget_items'),
         ]);
         Http::fake(['api.github.com/*' => Http::response((string) file_get_contents($gz))]);
@@ -50,7 +50,7 @@ class InstallerTest extends TestCase
         $extension = $this->app->make(ExtensionInstaller::class)->install(RepositoryRef::parse('acme/widget'));
 
         $this->assertSame('widget', $extension->id);
-        $this->assertDirectoryExists($this->platform.'/modules/widget');       // lowercase target
+        $this->assertDirectoryExists($this->platform . '/modules/widget');       // lowercase target
         $this->assertTrue(is_extension_active('widget'));                       // activated
         $this->assertTrue(Schema::hasTable('widget_items'));                    // migrated
     }
@@ -58,7 +58,7 @@ class InstallerTest extends TestCase
     public function test_rollback_leaves_no_files_or_tables_on_failure(): void
     {
         $gz = $this->tarball([
-            'module.json' => (string) json_encode(['name' => 'Broken', 'alias' => 'broken', 'providers' => []]),
+            'module.json'                                    => (string) json_encode(['name' => 'Broken', 'alias' => 'broken', 'providers' => []]),
             'database/migrations/2026_01_01_000000_boom.php' => $this->throwingMigration(),
         ]);
         Http::fake(['api.github.com/*' => Http::response((string) file_get_contents($gz))]);
@@ -70,7 +70,7 @@ class InstallerTest extends TestCase
             // expected
         }
 
-        $this->assertDirectoryDoesNotExist($this->platform.'/modules/broken'); // target removed
+        $this->assertDirectoryDoesNotExist($this->platform . '/modules/broken'); // target removed
         $this->assertFalse(Schema::hasTable('broken_items'));                  // no orphan table
         $this->assertFalse(is_extension_active('broken'));                    // state unwound
     }
@@ -81,7 +81,7 @@ class InstallerTest extends TestCase
             $this->markTestSkipped('Set PACKAGE_MANAGEMENT_LIVE_INSTALL_TEST=1 to run the live VCS download smoke.');
         }
 
-        $temp = sys_get_temp_dir().'/laranail-pm-live-'.uniqid();
+        $temp = sys_get_temp_dir() . '/laranail-pm-live-' . uniqid();
         (new Filesystem)->ensureDirectoryExists($temp);
 
         // hits the real GitHub tarball API for the canonical public test repo
@@ -98,9 +98,9 @@ class InstallerTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => $this->platform.'/packages',
-            'modules' => $this->platform.'/modules',
-            'plugins' => $this->platform.'/plugins',
+            'packages' => $this->platform . '/packages',
+            'modules'  => $this->platform . '/modules',
+            'plugins'  => $this->platform . '/plugins',
         ]);
         $app['config']->set('laranail.package-management.cache.enabled', false);
         $app['config']->set('laranail.package-management.activation.store', 'database');
@@ -113,14 +113,14 @@ class InstallerTest extends TestCase
     /** @param  array<string, string>  $files */
     private function tarball(array $files, string $wrap = 'acme-widget-abc123'): string
     {
-        $src = sys_get_temp_dir().'/laranail-pm-tarsrc-'.uniqid();
+        $src = sys_get_temp_dir() . '/laranail-pm-tarsrc-' . uniqid();
         foreach ($files as $relative => $content) {
-            $path = $src.'/'.$wrap.'/'.$relative;
+            $path = $src . '/' . $wrap . '/' . $relative;
             @mkdir(dirname($path), 0777, true);
             file_put_contents($path, $content);
         }
 
-        $tar = sys_get_temp_dir().'/laranail-pm-tar-'.bin2hex(random_bytes(6)).'.tar';
+        $tar = sys_get_temp_dir() . '/laranail-pm-tar-' . bin2hex(random_bytes(6)) . '.tar';
         $phar = new PharData($tar);
         $phar->buildFromDirectory($src);
         $phar->compress(Phar::GZ);
@@ -129,22 +129,22 @@ class InstallerTest extends TestCase
         (new Filesystem)->deleteDirectory($src);
         @unlink($tar);
 
-        $this->tarballs[] = $tar.'.gz';
+        $this->tarballs[] = $tar . '.gz';
 
-        return $tar.'.gz';
+        return $tar . '.gz';
     }
 
     private function migration(string $table): string
     {
         return '<?php return new class extends \Illuminate\Database\Migrations\Migration {'
-            .' public function up(): void { \Illuminate\Support\Facades\Schema::create("'.$table.'", function ($t) { $t->id(); }); }'
-            .' public function down(): void { \Illuminate\Support\Facades\Schema::dropIfExists("'.$table.'"); } };';
+            . ' public function up(): void { \Illuminate\Support\Facades\Schema::create("' . $table . '", function ($t) { $t->id(); }); }'
+            . ' public function down(): void { \Illuminate\Support\Facades\Schema::dropIfExists("' . $table . '"); } };';
     }
 
     private function throwingMigration(): string
     {
         return '<?php return new class extends \Illuminate\Database\Migrations\Migration {'
-            .' public function up(): void { throw new \RuntimeException("boom"); }'
-            .' public function down(): void {} };';
+            . ' public function up(): void { throw new \RuntimeException("boom"); }'
+            . ' public function down(): void {} };';
     }
 }

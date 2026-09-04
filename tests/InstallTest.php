@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Package\Management\Events\ExtensionInstalled;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\PlainRecordingHook;
 
 class InstallTest extends TestCase
@@ -22,8 +22,8 @@ class InstallTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir().'/laranail-pm-install-'.getmypid().'-'.uniqid().'.json';
-        $this->publicDir = sys_get_temp_dir().'/laranail-pm-public-'.getmypid().'-'.uniqid();
+        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-install-' . getmypid() . '-' . uniqid() . '.json';
+        $this->publicDir = sys_get_temp_dir() . '/laranail-pm-public-' . getmypid() . '-' . uniqid();
         PlainRecordingHook::$calls = [];
         parent::setUp();
     }
@@ -38,13 +38,13 @@ class InstallTest extends TestCase
     public function test_install_runs_migrations_publishes_assets_and_activates(): void
     {
         $this->assertFalse(Schema::hasTable('migrated_items'));
-        $this->assertFileDoesNotExist($this->publicDir.'/vendor/migrated/css/app.css');
+        $this->assertFileDoesNotExist($this->publicDir . '/vendor/migrated/css/app.css');
 
         $this->manager()->install('migrated');
 
         $this->assertTrue(Schema::hasTable('migrated_items'), 'install should run the extension migrations');
         $this->assertFileExists(
-            $this->publicDir.'/vendor/migrated/css/app.css',
+            $this->publicDir . '/vendor/migrated/css/app.css',
             'install should publish the extension public assets',
         );
         $this->assertTrue(is_extension_active('migrated'), 'install should activate the extension');
@@ -86,18 +86,18 @@ class InstallTest extends TestCase
         $app->usePublicPath($this->publicDir);
 
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__.'/Fixtures/install/packages',
-            'modules' => __DIR__.'/Fixtures/install/modules',
-            'plugins' => __DIR__.'/Fixtures/install/plugins',
+            'packages' => __DIR__ . '/Fixtures/install/packages',
+            'modules'  => __DIR__ . '/Fixtures/install/modules',
+            'plugins'  => __DIR__ . '/Fixtures/install/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);
 
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
     }
 

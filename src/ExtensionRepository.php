@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management;
 
 use Illuminate\Filesystem\Filesystem;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Processing\ManifestPipeline;
 
 /**
@@ -23,7 +23,7 @@ final class ExtensionRepository
     private ?array $cache = null;
 
     /**
-     * @param  array<string, string>  $paths  role => container directory (package|module|plugin)
+     * @param array<string, string> $paths role => container directory (package|module|plugin)
      */
     public function __construct(
         private readonly Filesystem $files,
@@ -159,6 +159,6 @@ final class ExtensionRepository
         $rows = array_map(static fn (Extension $e): array => $e->toArray(), $extensions);
 
         $this->files->ensureDirectoryExists(dirname($this->cachePath));
-        $this->files->put($this->cachePath, "<?php\n\nreturn ".var_export($rows, true).";\n");
+        $this->files->put($this->cachePath, "<?php\n\nreturn " . var_export($rows, true) . ";\n");
     }
 }

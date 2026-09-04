@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Commands;
 
 use Override;
-use Simtabi\Laranail\Console\Tools\Commands\Command;
-use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
-use Simtabi\Laranail\Package\Management\ExtensionManager;
-use Symfony\Component\Console\Input\InputArgument;
 use Throwable;
+use Symfony\Component\Console\Input\InputArgument;
+use Simtabi\Laranail\Console\Tools\Commands\Command;
+use Simtabi\Laranail\Package\Management\ExtensionManager;
+use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 final class RemoveExtensionCommand extends Command
 {
