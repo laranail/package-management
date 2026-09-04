@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
-use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
-use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
 use Simtabi\Laranail\Package\Management\Models\ExtensionState;
+use Simtabi\Laranail\Package\Management\Contracts\RecordsInstall;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Stores\EloquentActivationStore;
+use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
 
 class EloquentActivationStoreTest extends TestCase
 {
@@ -89,17 +89,17 @@ class EloquentActivationStoreTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__.'/Fixtures/platform/packages',
-            'modules' => __DIR__.'/Fixtures/platform/modules',
-            'plugins' => __DIR__.'/Fixtures/platform/plugins',
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
         ]);
         $app['config']->set('laranail.package-management.cache.enabled', false);
         $app['config']->set('laranail.package-management.activation.store', 'database');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
     }
 

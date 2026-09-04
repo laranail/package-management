@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Support\Facades\Event;
+use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\Events\ExtensionActivated;
 use Simtabi\Laranail\Package\Management\Events\ExtensionDeactivated;
-use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\Tests\Fixtures\RecordingHook;
 
 class LifecycleTest extends TestCase
@@ -16,7 +16,7 @@ class LifecycleTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir().'/laranail-pm-life-'.getmypid().'-'.uniqid().'.json';
+        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-life-' . getmypid() . '-' . uniqid() . '.json';
         RecordingHook::$calls = [];
         parent::setUp();
     }
@@ -76,9 +76,9 @@ class LifecycleTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__.'/Fixtures/platform/packages',
-            'modules' => __DIR__.'/Fixtures/platform/modules',
-            'plugins' => __DIR__.'/Fixtures/platform/plugins',
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);

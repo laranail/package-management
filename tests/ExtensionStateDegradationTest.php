@@ -28,9 +28,9 @@ class ExtensionStateDegradationTest extends TestCase
         $app['config']->set('laranail.package-management.cache.enabled', false);
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Repositories;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Models\ExtensionState;
+use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 
 /**
  * Caching decorator over an {@see ExtensionStateRepositoryInterface} — the hot

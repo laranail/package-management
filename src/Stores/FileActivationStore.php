@@ -62,7 +62,7 @@ final readonly class FileActivationStore implements ActivationStore
         $this->files->ensureDirectoryExists(dirname($this->path));
 
         $encoded = json_encode(array_values($ids), JSON_PRETTY_PRINT);
-        $tmp = $this->path.'.tmp'.getmypid();
+        $tmp = $this->path . '.tmp' . getmypid();
         $this->files->put($tmp, $encoded === false ? '[]' : $encoded);
         $this->files->move($tmp, $this->path);
     }

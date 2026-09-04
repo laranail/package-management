@@ -11,11 +11,11 @@ namespace Simtabi\Laranail\Package\Management;
 final readonly class Extension
 {
     /**
-     * @param  list<string>  $providers  service-provider FQCNs
-     * @param  list<string>  $require  extension ids that must load first
-     * @param  array<string, mixed>  $defaultSettings  manifest default settings, seeded on install
-     * @param  array<string, string>  $requireVersions  dep id => semver constraint (map require form)
-     * @param  list<array<string, mixed>>  $menu  data-only nav entries a host may render (loader never renders them)
+     * @param list<string> $providers service-provider FQCNs
+     * @param list<string> $require extension ids that must load first
+     * @param array<string, mixed> $defaultSettings manifest default settings, seeded on install
+     * @param array<string, string> $requireVersions dep id => semver constraint (map require form)
+     * @param list<array<string, mixed>> $menu data-only nav entries a host may render (loader never renders them)
      */
     public function __construct(
         public string $id,
@@ -41,7 +41,7 @@ final readonly class Extension
      * The `enabled` flag is intentionally not restored; activation is applied fresh
      * from the ActivationStore on every request.
      *
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): self
     {
@@ -67,7 +67,7 @@ final readonly class Extension
     /** PSR-4 source root registered on the runtime autoloader. */
     public function sourcePath(): string
     {
-        return rtrim($this->path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'src';
+        return rtrim($this->path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'src';
     }
 
     /** Filesystem-safe id (e.g. `acme/blog` → `acme-blog`), used for published-asset paths. */
@@ -108,22 +108,22 @@ final readonly class Extension
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'namespace' => $this->namespace,
-            'providers' => $this->providers,
-            'version' => $this->version,
-            'require' => $this->require,
-            'role' => $this->role,
-            'path' => $this->path,
-            'enabled' => $this->enabled,
-            'hook' => $this->hook,
-            'defaultSettings' => $this->defaultSettings,
-            'priority' => $this->priority,
-            'type' => $this->type,
+            'id'                 => $this->id,
+            'name'               => $this->name,
+            'namespace'          => $this->namespace,
+            'providers'          => $this->providers,
+            'version'            => $this->version,
+            'require'            => $this->require,
+            'role'               => $this->role,
+            'path'               => $this->path,
+            'enabled'            => $this->enabled,
+            'hook'               => $this->hook,
+            'defaultSettings'    => $this->defaultSettings,
+            'priority'           => $this->priority,
+            'type'               => $this->type,
             'minimumCoreVersion' => $this->minimumCoreVersion,
-            'requireVersions' => $this->requireVersions,
-            'menu' => $this->menu,
+            'requireVersions'    => $this->requireVersions,
+            'menu'               => $this->menu,
         ];
     }
 }
