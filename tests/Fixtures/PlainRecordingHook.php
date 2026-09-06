@@ -15,21 +15,21 @@ final class PlainRecordingHook
 
     public function activated(object $extension): void
     {
-        self::$calls[] = 'activated:' . $extension->id;
+        self::$calls[] = 'activated:'.$extension->id;
     }
 
     public function deactivated(object $extension): void
     {
-        self::$calls[] = 'deactivated:' . $extension->id;
+        self::$calls[] = 'deactivated:'.$extension->id;
     }
 
     public function installed(object $extension): void
     {
-        self::$calls[] = 'installed:' . $extension->id;
+        self::$calls[] = 'installed:'.$extension->id;
     }
 
     public function removed(object $extension): void
     {
-        self::$calls[] = 'removed:' . $extension->id;
+        self::$calls[] = 'removed:'.$extension->id;
     }
 }
