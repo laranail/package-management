@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Package\Management\Tests;
 
-use Simtabi\Laranail\Package\Management\Contracts\ContributesNavigation;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\Facades\Extensions;
+use Simtabi\Laranail\Package\Management\Contracts\ContributesNavigation;
 
 class HostSeamTest extends TestCase
 {
@@ -14,7 +14,7 @@ class HostSeamTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir().'/laranail-pm-host-'.getmypid().'-'.uniqid().'.json';
+        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-host-' . getmypid() . '-' . uniqid() . '.json';
         parent::setUp();
     }
 
@@ -65,7 +65,7 @@ class HostSeamTest extends TestCase
         {
             public function navigation(Extension $extension): array
             {
-                return [['label' => $extension->name.' (dynamic)', 'url' => '/admin/'.$extension->slug()]];
+                return [['label' => $extension->name . ' (dynamic)', 'url' => '/admin/' . $extension->slug()]];
             }
         };
 
@@ -81,9 +81,9 @@ class HostSeamTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__.'/Fixtures/platform/packages',
-            'modules' => __DIR__.'/Fixtures/platform/modules',
-            'plugins' => __DIR__.'/Fixtures/platform/plugins',
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', false);

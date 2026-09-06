@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Simtabi\Laranail\Package\Management\Models\ExtensionState;
 use Simtabi\Laranail\Package\Management\Contracts\ExtensionStateRepositoryInterface;
 use Simtabi\Laranail\Package\Management\Facades\ExtensionState as ExtensionStateFacade;
-use Simtabi\Laranail\Package\Management\Models\ExtensionState;
 
 class ExtensionStateTest extends TestCase
 {
@@ -77,9 +77,9 @@ class ExtensionStateTest extends TestCase
         $app['config']->set('laranail.package-management.activation.store', 'database');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
     }
 }

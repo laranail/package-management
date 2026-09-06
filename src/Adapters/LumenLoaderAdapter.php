@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Adapters;
 
 use Illuminate\Contracts\Container\Container;
-use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
-use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
 use Simtabi\Laranail\Package\Management\Extension;
+use Simtabi\Laranail\Package\Management\Contracts\LoaderAdapter;
+use Simtabi\Laranail\Package\Management\Adapters\Concerns\RegistersRuntimeAutoload;
 
 /**
  * Lumen (and bare-container) bridge. Autoloading is shared with the Laravel adapter;

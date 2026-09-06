@@ -14,8 +14,8 @@ use InvalidArgumentException;
 final readonly class RepositoryRef
 {
     private const array HOSTS = [
-        'github.com' => 'github',
-        'gitlab.com' => 'gitlab',
+        'github.com'    => 'github',
+        'gitlab.com'    => 'gitlab',
         'bitbucket.org' => 'bitbucket',
     ];
 
@@ -38,7 +38,7 @@ final readonly class RepositoryRef
         $raw = str_replace(':', '/', $raw);                   // git@host:owner/repo → host/owner/repo
 
         foreach (self::HOSTS as $host => $name) {
-            if (str_starts_with($raw, $host.'/')) {
+            if (str_starts_with($raw, $host . '/')) {
                 $provider = $name;
                 $raw = substr($raw, strlen($host) + 1);
                 break;

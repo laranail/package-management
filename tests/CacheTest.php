@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests;
 
 use Illuminate\Filesystem\Filesystem;
-use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 use Simtabi\Laranail\Package\Management\Extension;
 use Simtabi\Laranail\Package\Management\ExtensionManager;
 use Simtabi\Laranail\Package\Management\ExtensionRepository;
 use Simtabi\Laranail\Package\Management\Manifests\ManifestReader;
+use Simtabi\Laranail\Package\Management\Contracts\ActivationStore;
 
 class CacheTest extends TestCase
 {
@@ -19,8 +19,8 @@ class CacheTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->activationFile = sys_get_temp_dir().'/laranail-pm-act-'.getmypid().'-'.uniqid().'.json';
-        $this->cacheFile = sys_get_temp_dir().'/laranail-pm-cache-'.getmypid().'-'.uniqid().'.php';
+        $this->activationFile = sys_get_temp_dir() . '/laranail-pm-act-' . getmypid() . '-' . uniqid() . '.json';
+        $this->cacheFile = sys_get_temp_dir() . '/laranail-pm-cache-' . getmypid() . '-' . uniqid() . '.php';
         parent::setUp();
     }
 
@@ -76,10 +76,10 @@ class CacheTest extends TestCase
     {
         // warm the cache from the real fixtures, then overwrite it with a synthetic entry
         $this->repo()->rebuildCache();
-        file_put_contents($this->cacheFile, "<?php\n\nreturn ".var_export([[
-            'id' => 'ghost/ext', 'name' => 'Ghost', 'namespace' => 'Ghost\\', 'providers' => [],
+        file_put_contents($this->cacheFile, "<?php\n\nreturn " . var_export([[
+            'id'      => 'ghost/ext', 'name' => 'Ghost', 'namespace' => 'Ghost\\', 'providers' => [],
             'version' => '1.0.0', 'require' => [], 'role' => 'plugin', 'path' => '/nowhere', 'enabled' => false,
-        ]], true).";\n");
+        ]], true) . ";\n");
 
         // a repository pointed at non-existent paths must still return the ghost — proving
         // it read the compiled cache rather than scanning the filesystem.
@@ -99,9 +99,9 @@ class CacheTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => __DIR__.'/Fixtures/platform/packages',
-            'modules' => __DIR__.'/Fixtures/platform/modules',
-            'plugins' => __DIR__.'/Fixtures/platform/plugins',
+            'packages' => __DIR__ . '/Fixtures/platform/packages',
+            'modules'  => __DIR__ . '/Fixtures/platform/modules',
+            'plugins'  => __DIR__ . '/Fixtures/platform/plugins',
         ]);
         $app['config']->set('laranail.package-management.activation.file', $this->activationFile);
         $app['config']->set('laranail.package-management.cache.enabled', true);

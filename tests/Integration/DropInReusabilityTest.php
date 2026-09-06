@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Package\Management\Tests\Integration;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
-use Simtabi\Laranail\Package\Management\Facades\Extensions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Simtabi\Laranail\Package\Management\Tests\TestCase;
+use Simtabi\Laranail\Package\Management\Facades\Extensions;
 
 /**
  * Proves the package is drop-in reusable: with ONLY its own service provider registered
@@ -23,12 +23,12 @@ class DropInReusabilityTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->platform = sys_get_temp_dir().'/laranail-pm-dropin-'.getmypid().'-'.uniqid();
+        $this->platform = sys_get_temp_dir() . '/laranail-pm-dropin-' . getmypid() . '-' . uniqid();
 
         // drop a brand-new module into the platform BEFORE the app boots
-        $dir = $this->platform.'/modules/Sample';
+        $dir = $this->platform . '/modules/Sample';
         @mkdir($dir, 0777, true);
-        file_put_contents($dir.'/module.json', (string) json_encode([
+        file_put_contents($dir . '/module.json', (string) json_encode([
             'name' => 'Sample', 'alias' => 'sample', 'providers' => [],
         ]));
 
@@ -59,9 +59,9 @@ class DropInReusabilityTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('laranail.package-management.paths', [
-            'packages' => $this->platform.'/packages',
-            'modules' => $this->platform.'/modules',
-            'plugins' => $this->platform.'/plugins',
+            'packages' => $this->platform . '/packages',
+            'modules'  => $this->platform . '/modules',
+            'plugins'  => $this->platform . '/plugins',
         ]);
         $app['config']->set('laranail.package-management.cache.enabled', false);
         $app['config']->set('laranail.package-management.activation.store', 'database');

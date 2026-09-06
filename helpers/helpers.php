@@ -26,9 +26,9 @@ if (! function_exists('extension_path')) {
     function extension_path(string $role, string $name, string $path = ''): string
     {
         $base = (string) config("laranail.package-management.paths.{$role}s", base_path("platform/{$role}s"));
-        $full = $base.DIRECTORY_SEPARATOR.$name;
+        $full = $base . DIRECTORY_SEPARATOR . $name;
 
-        return $path === '' ? $full : $full.DIRECTORY_SEPARATOR.ltrim($path, DIRECTORY_SEPARATOR);
+        return $path === '' ? $full : $full . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
     }
 }
 
@@ -37,7 +37,7 @@ if (! function_exists('extension_vite')) {
      * Render an extension's Vite tags from its published build dir (`public/vendor/{slug}/build`).
      * Safe no-op outside a Laravel Foundation app.
      *
-     * @param  string|list<string>  $entrypoints
+     * @param string|list<string> $entrypoints
      */
     function extension_vite(string $id, string|array $entrypoints, ?string $buildDirectory = null): HtmlString
     {
