@@ -8,6 +8,13 @@ parameters:
     excludePaths:
         - vendor
     ignoreErrors:
+        # larastan validates a view-string literal against a skeleton app that never
+        # boots this package's provider, so a namespace registered at RUNTIME is
+        # invisible to it and every `view()` / `View::make()` call reads as an error.
+        # The views exist; the suite renders them. Broad on purpose -- the narrow
+        # forms missed `static method`, `Contracts\View\Factory` and the helper,
+        # each of which had to be discovered from a red run.
+        - '#expects view-string, string given#'
         # Facade @method tags + generic array docblocks are not enforced (laranail convention).
         -
             identifier: missingType.iterableValue
@@ -16,3 +23,8 @@ parameters:
             message: '#Parameter \#1 \$view of function view expects view-string#'
             path: src/Http/Controllers/ExtensionController.php
     treatPhpDocTypesAsCertain: false
+
+    # Required BECAUSE of the ignore above: only larastan 3.x emits that error, so
+    # where an older one is installed the pattern would itself become an
+    # unmatched-ignore ERROR -- moving the failure rather than fixing it.
+    reportUnmatchedIgnoredErrors: false
