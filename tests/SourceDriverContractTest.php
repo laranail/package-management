@@ -32,53 +32,13 @@ use Simtabi\Laranail\Package\Management\Installer\SourceDriverManager;
  */
 final class SourceDriverContractTest extends TestCase
 {
-    /** The provider names the URL parser can actually produce, read from its own host map. */
-    private function parsedProviders(): array
-    {
-        $hosts = (new ReflectionClass(RepositoryRef::class))->getConstant('HOSTS');
-
-        $this->assertNotEmpty($hosts, 'RepositoryRef::HOSTS is empty, so this guard would be vacuous');
-
-        // Driven through the real parser rather than trusting the map: this covers the mapping and
-        // the host-stripping together, which is what a consumer's pasted URL actually exercises.
-        return array_map(
-            static fn (string $host): string => RepositoryRef::parse("https://{$host}/acme/widget")->provider,
-            array_keys($hosts),
-        );
-    }
-
-    private function shippedInstallerConfig(): array
-    {
-        return (require __DIR__ . '/../config/package-management.php')['installer'];
-    }
-
-    private static function createMethodFor(string $provider): string
-    {
-        // Manager studlies the name: 'azure-devops' would become createAzureDevopsDriver.
-        return 'create' . str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $provider))) . 'Driver';
-    }
-
-    /** The provider names the manager can build, read back off the class. */
-    private function buildableProviders(): array
-    {
-        $providers = [];
-
-        foreach ((new ReflectionClass(SourceDriverManager::class))->getMethods() as $method) {
-            if (preg_match('/^create(.+)Driver$/', $method->getName(), $m) === 1) {
-                $providers[] = strtolower($m[1]);
-            }
-        }
-
-        return $providers;
-    }
-
     public function test_every_provider_the_url_parser_can_produce_has_a_driver(): void
     {
         foreach ($this->parsedProviders() as $provider) {
             $this->assertTrue(
-                method_exists(SourceDriverManager::class, self::createMethodFor($provider)),
+                method_exists(SourceDriverManager::class, $this->createMethodFor($provider)),
                 "a repository URL parses to the provider [{$provider}], which SourceDriverManager "
-                . 'cannot build: ' . self::createMethodFor($provider) . '() does not exist',
+                . 'cannot build: ' . $this->createMethodFor($provider) . '() does not exist',
             );
         }
     }
@@ -91,7 +51,7 @@ final class SourceDriverContractTest extends TestCase
 
         $this->assertIsString($default);
         $this->assertTrue(
-            method_exists(SourceDriverManager::class, self::createMethodFor($default)),
+            method_exists(SourceDriverManager::class, $this->createMethodFor($default)),
             "the shipped default provider [{$default}] has no driver",
         );
     }
@@ -102,7 +62,7 @@ final class SourceDriverContractTest extends TestCase
         // that nothing ever reads.
         foreach (array_keys($this->shippedInstallerConfig()['tokens']) as $provider) {
             $this->assertTrue(
-                method_exists(SourceDriverManager::class, self::createMethodFor((string) $provider)),
+                method_exists(SourceDriverManager::class, $this->createMethodFor((string) $provider)),
                 "config offers a token for [{$provider}], which has no driver",
             );
         }
@@ -134,5 +94,45 @@ final class SourceDriverContractTest extends TestCase
         app(SourceDriverManager::class)->forRef(
             new RepositoryRef('not-a-real-provider', 'acme', 'widget'),
         );
+    }
+
+    private function createMethodFor(string $provider): string
+    {
+        // Manager studlies the name: 'azure-devops' would become createAzureDevopsDriver.
+        return 'create' . str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $provider))) . 'Driver';
+    }
+
+    /** The provider names the URL parser can actually produce, read from its own host map. */
+    private function parsedProviders(): array
+    {
+        $hosts = (new ReflectionClass(RepositoryRef::class))->getConstant('HOSTS');
+
+        $this->assertNotEmpty($hosts, 'RepositoryRef::HOSTS is empty, so this guard would be vacuous');
+
+        // Driven through the real parser rather than trusting the map: this covers the mapping and
+        // the host-stripping together, which is what a consumer's pasted URL actually exercises.
+        return array_map(
+            static fn (string $host): string => RepositoryRef::parse("https://{$host}/acme/widget")->provider,
+            array_keys($hosts),
+        );
+    }
+
+    private function shippedInstallerConfig(): array
+    {
+        return (require __DIR__ . '/../config/package-management.php')['installer'];
+    }
+
+    /** The provider names the manager can build, read back off the class. */
+    private function buildableProviders(): array
+    {
+        $providers = [];
+
+        foreach ((new ReflectionClass(SourceDriverManager::class))->getMethods() as $method) {
+            if (preg_match('/^create(.+)Driver$/', $method->getName(), $m) === 1) {
+                $providers[] = strtolower($m[1]);
+            }
+        }
+
+        return $providers;
     }
 }
