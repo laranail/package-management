@@ -1,7 +1,7 @@
 # Getting started
 
 A guided walkthrough: drop an extension into a Laravel app, discover it, activate it, and verify it loaded.
-For the 30-second version see the README [Quick start](../README.md#quick-start).
+For the 30-second version see the README [Quick start](../README.md#quick-start-guide-and-usage).
 
 ## 1. Install the loader
 
