@@ -16,6 +16,17 @@ The run-time counterpart to [`laranail/package-scaffolder`](https://opensource.s
 composer require laranail/package-management
 ```
 
+## Quick start
+
+```bash
+# With a module dropped in at platform/modules/Blog/ (module.json alias: "blog")
+php artisan laranail::package-management.discover
+php artisan laranail::package-management.list          # blog · module · 1.0.0 · inactive
+php artisan laranail::package-management.install blog  # activate, migrate, publish, seed
+```
+
+The full walkthrough is in [Getting started](docs/getting-started.md); everything else is in the [documentation index](#documentation).
+
 ## Documentation
 
 Full documentation is at **[opensource.simtabi.com/documentation/laranail/package-management](https://opensource.simtabi.com/documentation/laranail/package-management/)** — discovery, load-order resolution, runtime registration, the guarded lifecycle, VCS installs, safety, and configuration.
