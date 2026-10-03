@@ -16,13 +16,41 @@ The run-time counterpart to [`laranail/package-scaffolder`](https://opensource.s
 composer require laranail/package-management
 ```
 
-## Quick start
+## Quick start guide and usage
+
+### Getting started
+
+1. Optionally publish the config to customise discovery paths, the cache and the activation store:
+
+   ```bash
+   php artisan vendor:publish --tag=laranail::package-management-config
+   ```
+
+2. If you set `PACKAGE_MANAGEMENT_STORE=database`, run the auto-loaded migration:
+
+   ```bash
+   php artisan migrate
+   ```
+
+3. Place extensions under `platform/packages/`, `platform/modules/` or `platform/plugins/`.
+
+### Usage
 
 ```bash
 # With a module dropped in at platform/modules/Blog/ (module.json alias: "blog")
 php artisan laranail::package-management.discover
 php artisan laranail::package-management.list          # blog · module · 1.0.0 · inactive
 php artisan laranail::package-management.install blog  # activate, migrate, publish, seed
+```
+
+Then verify it loaded, from code:
+
+```php
+use Simtabi\Laranail\Package\Management\Facades\Extensions;
+
+is_extension_active('blog');                 // true
+Extensions::query()->active()->ids();        // ['blog']
+extension('blog')->version;                  // '1.0.0'
 ```
 
 The full walkthrough is in [Getting started](docs/getting-started.md); everything else is in the [documentation index](#documentation).
