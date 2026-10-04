@@ -55,7 +55,7 @@ extension('blog')->version;                  // '1.0.0'
 
 The full walkthrough is in [Getting started](docs/getting-started.md); everything else is in the [documentation index](#documentation).
 
-## Documentation
+## <a name="documentation"></a>Documentation
 
 Full documentation is at **[opensource.simtabi.com/documentation/laranail/package-management](https://opensource.simtabi.com/documentation/laranail/package-management/)** — discovery, load-order resolution, runtime registration, the guarded lifecycle, VCS installs, safety, and configuration.
 
