@@ -3,7 +3,7 @@
 `laranail/package-management` is the **runtime loader/manager** for the laranail scaffolding
 ecosystem. It is the counterpart to `laranail/package-scaffolder`:
 
-- **`package-scaffolder`** — *author-time*. Generates an artifact (via `make:artifact`) that carries
+- **`package-scaffolder`** — *author-time*. Generates an artifact (via `laranail::package-scaffolder.new`) that carries
   manifests (`composer.json`, `module.json`, `plugin.json`).
 - **`package-management`** — *run-time*. Discovers those artifacts in a host project, resolves their
   dependencies, registers their autoloading + service providers, activates them, and wires their
