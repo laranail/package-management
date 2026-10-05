@@ -68,7 +68,7 @@ see [Why "extension" is the abstraction](#why-extension-is-the-abstraction) for 
 | **`LoaderAdapter` (interface)** | Framework bridge: register PSR-4 (Composer `ClassLoader`) + register providers + publish/boot. `LaravelLoaderAdapter` ships first. |
 | **`ExtensionManager`** | Orchestrates the lifecycle: `activate/deactivate/install/remove/update` + hooks + events. |
 | **`ManagementServiceProvider`** | Built on `laranail/package-tools`' `PackageServiceProvider`: `configurePackage()` (namespaced config, migrations, commands) + `packageRegistered()` (loader + state bindings) + `packageBooted()` (register active extensions). |
-| **CLI commands** | `laranail::package-management.{list,enable,disable,install,update,remove,discover,cache,install-from}` (+ `package-management:*` aliases). |
+| **CLI commands** | `laranail::package-management.{list,enable,disable,install,update,remove,discover,cache,install-from}` (`package-management:*` are deprecated aliases that warn). |
 | **`Extensions` facade / helpers** | Ergonomic runtime API (`extension()`, `is_extension_active()`, `extension_path()`, `extension_vite()`) + the `Extensions` facade (`query()`, `graph()`, `dependents()`, lifecycle). |
 
 ## Roles vs frameworks (two orthogonal axes)

@@ -16,7 +16,15 @@ final class CacheExtensionsCommand extends Command
 
     protected $name = 'laranail::package-management.cache';
 
-    protected $aliases = ['package-management:cache'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:cache` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:cache'];
 
     protected $description = 'Compile the discovered-extensions cache (or --clear it).';
 

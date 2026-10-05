@@ -15,7 +15,15 @@ final class ListExtensionsCommand extends Command
 
     protected $name = 'laranail::package-management.list';
 
-    protected $aliases = ['package-management:list'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:list` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:list'];
 
     protected $description = 'List discovered extensions (role, version, state).';
 
