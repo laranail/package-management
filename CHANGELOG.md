@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `laravel/framework ^13.0` is now declared in `require`. `src/` uses `Vite` from `Illuminate\Foundation`, which no `illuminate/*` component ships, so the dependency only arrived through the host application.
 - **Requires `laranail/console ^0.1.5` and `laranail/package-tools ^0.1.3`**, the first releases
   with deprecated command aliases and the dual view namespace this package now relies on.
 - **`docs/architecture.md` names `laranail::package-scaffolder.new`** as the command that generates
