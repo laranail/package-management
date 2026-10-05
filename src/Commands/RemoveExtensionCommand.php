@@ -17,7 +17,15 @@ final class RemoveExtensionCommand extends Command
 
     protected $name = 'laranail::package-management.remove';
 
-    protected $aliases = ['package-management:remove'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:remove` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:remove'];
 
     protected $description = 'Remove an extension: deactivate, unpublish assets, forget state (keeps DB tables).';
 

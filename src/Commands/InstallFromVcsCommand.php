@@ -19,7 +19,15 @@ final class InstallFromVcsCommand extends Command
 
     protected $name = 'laranail::package-management.install-from';
 
-    protected $aliases = ['package-management:install-from'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:install-from` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:install-from'];
 
     protected $description = 'Install an extension from a VCS repository (GitHub / GitLab / Bitbucket).';
 

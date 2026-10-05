@@ -17,7 +17,15 @@ final class EnableExtensionCommand extends Command
 
     protected $name = 'laranail::package-management.enable';
 
-    protected $aliases = ['package-management:enable'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:enable` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:enable'];
 
     protected $description = 'Activate an extension (and verify its dependencies).';
 

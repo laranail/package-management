@@ -17,7 +17,15 @@ final class UpdateExtensionCommand extends Command
 
     protected $name = 'laranail::package-management.update';
 
-    protected $aliases = ['package-management:update'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:update` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:update'];
 
     protected $description = 'Run any pending migrations for an already-installed extension.';
 

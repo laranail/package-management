@@ -17,7 +17,15 @@ final class DisableExtensionCommand extends Command
 
     protected $name = 'laranail::package-management.disable';
 
-    protected $aliases = ['package-management:disable'];
+    /**
+     * The bare name this command answered to before the `laranail::` shape. It stays registered
+     * and prints a line naming the replacement when used.
+     *
+     * @deprecated `package-management:disable` is removed no earlier than the next minor after 0.1.
+     *
+     * @var list<string>
+     */
+    protected array $deprecatedCommandAliases = ['package-management:disable'];
 
     protected $description = 'Deactivate an extension (guarded by reverse dependencies).';
 

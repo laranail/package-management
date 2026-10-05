@@ -1,8 +1,10 @@
 # Commands
 
-The `laranail::package-management.*` Artisan commands drive discovery and the activation lifecycle. Every
-command also has a plain-colon alias (`package-management:<verb>`) for environments that don't accept the
-`::` separator.
+The `laranail::package-management.*` Artisan commands drive discovery and the activation lifecycle.
+
+> The plain-colon names `package-management:<verb>` are deprecated aliases. They still run the same
+> command, print one line naming the `laranail::package-management.<verb>` replacement first, and will
+> be removed no earlier than the next minor after 0.1. Use the scoped names in scripts and schedules.
 
 ## `…​.list`
 

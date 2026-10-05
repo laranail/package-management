@@ -99,7 +99,8 @@ fetch/extract/place + orchestration.
 ```
 php artisan laranail::package-management.install-from <url> [--ref=main] [--as=module] [--token=…] [--force]
 ```
-(+ `package-management:install-from` alias). `<url>` accepts `owner/repo`, `github.com/owner/repo`,
+(`package-management:install-from` still works as a deprecated alias that prints a line naming this
+command; it is removed no earlier than the next minor after 0.1). `<url>` accepts `owner/repo`, `github.com/owner/repo`,
 `https://github.com/owner/repo(.git)`, and the GitLab/Bitbucket equivalents.
 
 ## 5. Lifecycle completion (bundled with the installer)
