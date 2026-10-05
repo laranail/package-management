@@ -40,6 +40,7 @@
         "illuminate/filesystem": "^13.0",
         "illuminate/http": "^13.0",
         "illuminate/support": "^13.0",
+        "laravel/framework": "^13.0",
         "laranail/console": "^0.1.5",
         "laranail/package-tools": "^0.1.3"
     },
