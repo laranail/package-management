@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`docs/architecture.md` names `laranail::package-scaffolder.new`** as the command that generates
+  an artifact. It said `make:artifact`, which `laranail/package-scaffolder` now keeps only as a
+  deprecated alias that prints a warning.
+
 ## [0.1.0] - 2026-07-11
 
 Initial public release.
