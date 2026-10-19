@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **A guard now keeps literal credentials out of the tests**, and every generated credential's
+  purpose a single word. `NoLiteralCredentialsTest` runs package-tools' `AssertsNoLiteralCredentials`
+  over `tests/` and `database/factories/`, so secret scanning has nothing to report. Requires
+  `laranail/package-tools ^0.1.10`.
 - `laravel/framework ^13.0` is now declared in `require`. `src/` uses `Vite` from `Illuminate\Foundation`, which no `illuminate/*` component ships, so the dependency only arrived through the host application.
 - **Requires `laranail/console ^0.1.5` and `laranail/package-tools ^0.1.3`**, the first releases
   with deprecated command aliases and the dual view namespace this package now relies on.
