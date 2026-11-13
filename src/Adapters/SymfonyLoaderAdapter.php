@@ -66,7 +66,7 @@ final class SymfonyLoaderAdapter implements LoaderAdapter
     {
         $constructor = (new ReflectionClass($provider))->getConstructor();
 
-        return $constructor !== null && $constructor->getNumberOfParameters() > 0
+        return $constructor instanceof ReflectionMethod && $constructor->getNumberOfParameters() > 0
             ? new $provider($this->container)
             : new $provider;
     }
